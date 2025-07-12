@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../../../../documentation2html.xsl"?>
+<p1:documents xmlns:p1="http://rapid-i.com/schemas/documentation/reference/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://rapid-i.com/schemas/documentation/reference/1.0                http://rapid-i.com/schemas/documentation/reference/1.0/documentation.xsd">
+
+    <operator key="operator.streaming:sde" locale="en" version="7.6.000">
+
+    <title>Synopsis Data Engine</title>
+
+    <synopsis>
+        This operator uses the provided Synopsis Data Engine Service to compute synopsis of the streamed data events in a streaming analytic workflow.
+    </synopsis>
+
+    <text>
+        <paragraph>
+            To utilize this operators functionality a Synopsis Data Engine Service (SDE Service) has to be set up.
+            The Kafka cluster and the names of the request, data and output topic used by the SDE Service has to be provided to the operator.
+        </paragraph>
+        <paragraph>
+            The operator sends configuration messages to the request topic of the kafka cluster to configure the required synopsis computation.
+            Then the input data events received at the <em>input stream</em> port are pushed to the data topic of the Kafka cluster.
+            The SDE Service will compute the synopsis.
+            The operator will send estimate requests through the request topic to the SDE Service (frequency: <em>estimate frequency</em>) to request the resulting estimates from the SDE Service (they will be pushed to the output topic of the Kafka cluster).
+            If <em>estimate continuous</em> is selected, the synopsis is configured to produce continuous estimates, hence the estimate requests are not send in this case.
+        </paragraph>
+        <paragraph>
+            The operator reads from the output topic of the kafka cluster and pushes the computed estimated events further downstream (to the <em>output stream</em> port).
+        </paragraph>
+        <paragraph>
+            This is a streaming operator and needs to be placed inside a Streaming Nest or a Streaming Optimization operator.
+            The operator defines the logical functionality and can be used in all streaming analytic workflow for any supported streaming platform (currently Flink and Spark).
+            The actual implementation used depends on the type of connection connected to the Streaming Nest operator in which this operator is placed.
+        </paragraph>
+    </text>
+
+
+
+    <inputPorts>
+        <port name = "connection" type = "com.rapidminer.connection.ConnectionInformationContainerIOObject">
+            <paragraph>
+                The connection to the Kafka Cluster which is used by the Synopsis Data Engine Service for communication.
+            </paragraph>
+        </port>
+        <port name = "input stream" type = "com.rapidminer.extension.streaming.ioobject.StreamDataContainer">
+            <paragraph>
+                The input of this streaming operation.
+                It needs to receive the output of a preceding streaming operator, to define the flow of data events in the streaming analytic workflow.
+            </paragraph>
+        </port>
+    </inputPorts>
+    
+
+    <outputPorts>
+        <port name = "output stream" type = "com.rapidminer.extension.streaming.ioobject.StreamDataContainer">
+            <paragraph>
+                The output of this streaming operation.
+                Connect it to the next Streaming operator to define the flow of the data events in the designed streaming analytic workflow.
+            </paragraph>
+        </port>
+    </outputPorts>
+    
+
+    <parameters>
+        <parameter key = "synopsis_type" >
+            <paragraph>
+                The synopsis applied on the stream.
+            </paragraph>
+            <values>
+                <value value = "count min">
+                    count min synopsis.
+                </value>
+                <value value = "bloom filter">
+                    bloom filter synopsis.
+                </value>
+                <value value = "ams">
+                    ams synopsis.
+                </value>
+                <value value = "dft">
+                    dft correlations synopsis.
+                </value>
+                <value value = "lsh">
+                    lsh synopsis.
+                </value>
+                <value value = "core sets">
+                    core sets synopsis.
+                </value>
+                <value value = "hyper log log">
+                    hyper log log synopsis.
+                </value>
+                <value value = "sticky sampling">
+                    sticky sampling synopsis.
+                </value>
+                <value value = "lossy counting">
+                    lossy counting synopsis.
+                </value>
+                <value value = "chain sampler">
+                    chain sampler synopsis.
+                </value>
+                <value value = "gk quantiles">
+                    gk quantiles synopsis.
+                </value>
+                <value value = "maritime">
+                    maritime synopsis (used for Use Case 3 of the INFORE project).
+                </value>
+                <value value = "top k">
+                    top k synopsis.
+                </value>
+                <value value = "optimal distributed window sampling">
+                    optimal distributed window sampling synopsis.
+                </value>
+                <value value = "optimal distributed sampling">
+                    optimal distributed sampling synopsis.
+                </value>
+                <value value = "window quantiles">
+                    window quantiles synopsis.
+                </value>
+            </values>
+        </parameter>
+        <parameter key = "data_set_key" >
+            <paragraph>
+                Data set key.
+            </paragraph>
+        </parameter>
+        <parameter key = "synopsis_params" >
+            <paragraph>
+                The parameters of the selected <em>synopsis type</em> (comma separated).
+            </paragraph>
+        </parameter>
+        <parameter key = "synopsis_parallelism" >
+            <paragraph>
+                The parallelism level of the computation of the synopsis in the SDE Service
+            </paragraph>
+        </parameter>
+        <parameter key = "u_id" >
+            <paragraph>
+                The unique ID used by the synopsis computation.
+            </paragraph>
+        </parameter>
+        <parameter key = "stream_id_key" >
+            <paragraph>
+                Key in the data that should be used as StreamId.
+            </paragraph>
+        </parameter>
+        <parameter key = "estimate_type" >
+            <paragraph>
+                Configure the estimation type for the selected <em>synopsis type</em>.
+            </paragraph>
+        </parameter>
+        <parameter key = "estimate_frequency" >
+            <paragraph>
+                Frequency in which estimate requests are send to the SDE Service
+            </paragraph>
+        </parameter>
+        <parameter key = "estimate_params" >
+            <paragraph>
+                Parameters used in the estimate requests (comma separated).
+            </paragraph>
+        </parameter>
+        <parameter key = "request_topic" >
+            <paragraph>
+                Name of the Kafka topic used by the SDE Service to receive request/configuration messages.
+            </paragraph>
+        </parameter>
+        <parameter key = "data_topic" >
+            <paragraph>
+                Name of the Kafka topic used by the SDE Service to receive input data events
+            </paragraph>
+        </parameter>
+        <parameter key = "output_topic" >
+            <paragraph>
+                Name of the Kafka topic used by the SDE Service to push output data events to.
+            </paragraph>
+        </parameter>
+    </parameters>
+
+    <tutorialProcesses>
+        <tutorialProcess key = "process.streaming.sde.simple_sde" title = "Simple SDE">
+            <description>
+                <paragraph>
+                    In this tutorial process the usage of the Synopsis Data Engine operator is demonstrated.
+                </paragraph>
+            </description>
+            <process version="9.8.000">
+                <context>
+                    <input/>
+                    <output/>
+                    <macros/>
+                </context>
+                <operator activated="true" class="process" compatibility="9.8.000" expanded="true" name="Process" origin="GENERATED_TUTORIAL">
+                    <parameter key="logverbosity" value="init"/>
+                    <parameter key="random_seed" value="2001"/>
+                    <parameter key="send_mail" value="never"/>
+                    <parameter key="notification_email" value=""/>
+                    <parameter key="process_duration_for_mail" value="30"/>
+                    <parameter key="encoding" value="SYSTEM"/>
+                    <process expanded="true">
+                        <operator activated="true" class="retrieve" compatibility="9.8.000" expanded="true" height="68" name="Retrieve Flink Cluster" origin="GENERATED_TUTORIAL" width="90" x="179" y="34">
+                            <parameter key="repository_entry" value="//Local Repository/Connections/Flink Cluster"/>
+                        </operator>
+                        <operator activated="true" class="streaming:streaming_nest" compatibility="0.3.000-SNAPSHOT" expanded="true" height="82" name="Streaming Nest" origin="GENERATED_TUTORIAL" width="90" x="380" y="34">
+                            <parameter key="job_name" value="test job"/>
+                            <process expanded="true">
+                                <operator activated="true" class="retrieve" compatibility="9.8.000" expanded="true" height="68" name="Retrieve Kafka Cluster (2)" origin="GENERATED_TUTORIAL" width="90" x="45" y="34">
+                                    <parameter key="repository_entry" value="//Local Repository/Connections/Kafka Cluster"/>
+                                </operator>
+                                <operator activated="true" class="multiply" compatibility="9.8.000" expanded="true" height="103" name="Multiply" origin="GENERATED_TUTORIAL" width="90" x="179" y="34"/>
+                                <operator activated="true" class="streaming:kafka_source" compatibility="0.3.000-SNAPSHOT" expanded="true" height="68" name="Kafka Source" origin="GENERATED_TUTORIAL" width="90" x="313" y="238">
+                                    <parameter key="topic" value="input"/>
+                                    <parameter key="start_from_earliest" value="false"/>
+                                    <description align="center" color="transparent" colored="false" width="126">Receive input events from the input kafka topic</description>
+                                </operator>
+                                <operator activated="true" class="retrieve" compatibility="9.8.000" expanded="true" height="68" name="Retrieve Kafka - Internal Communication" origin="GENERATED_TUTORIAL" width="90" x="313" y="85">
+                                    <parameter key="repository_entry" value="//Local Repository/Connections/Kafka - Internal Communication"/>
+                                </operator>
+                                <operator activated="true" class="streaming:sde" compatibility="0.3.000-SNAPSHOT" expanded="true" height="82" name="Synopsis Data Engine" origin="GENERATED_TUTORIAL" width="90" x="514" y="238">
+                                    <parameter key="synopsis_type" value="count min"/>
+                                    <parameter key="data_set_key" value="data set"/>
+                                    <parameter key="synopsis_params" value="2"/>
+                                    <parameter key="synopsis_parallelism" value="1"/>
+                                    <parameter key="u_id" value="1"/>
+                                    <parameter key="stream_id_key" value="stream_id"/>
+                                    <parameter key="estimate_type" value="Normal"/>
+                                    <parameter key="estimate_frequency" value="5"/>
+                                    <parameter key="estimate_params" value="2"/>
+                                    <parameter key="request_topic" value="request"/>
+                                    <parameter key="data_topic" value="data"/>
+                                    <parameter key="output_topic" value="output"/>
+                                    <description align="center" color="transparent" colored="false" width="126">Use the Synopsis Data Engine Service to compute the count min synopsis</description>
+                                </operator>
+                                <operator activated="true" class="streaming:kafka_sink" compatibility="0.3.000-SNAPSHOT" expanded="true" height="82" name="Kafka Sink" origin="GENERATED_TUTORIAL" width="90" x="849" y="34">
+                                    <parameter key="topic" value="output"/>
+                                    <description align="center" color="transparent" colored="false" width="126">Push output events to the output kafka topic</description>
+                                </operator>
+                                <connect from_op="Retrieve Kafka Cluster (2)" from_port="output" to_op="Multiply" to_port="input"/>
+                                <connect from_op="Multiply" from_port="output 1" to_op="Kafka Sink" to_port="connection"/>
+                                <connect from_op="Multiply" from_port="output 2" to_op="Kafka Source" to_port="connection"/>
+                                <connect from_op="Kafka Source" from_port="output stream" to_op="Synopsis Data Engine" to_port="input stream"/>
+                                <connect from_op="Retrieve Kafka - Internal Communication" from_port="output" to_op="Synopsis Data Engine" to_port="connection"/>
+                                <connect from_op="Synopsis Data Engine" from_port="output stream" to_op="Kafka Sink" to_port="input stream"/>
+                                <portSpacing port="source_in 1" spacing="0"/>
+                                <portSpacing port="sink_out 1" spacing="0"/>
+                            </process>
+                            <description align="center" color="transparent" colored="false" width="126">Deploy the designed Streaming Analytic process on the provided Flink Cluster.&lt;br&gt;</description>
+                        </operator>
+                        <connect from_op="Retrieve Flink Cluster" from_port="output" to_op="Streaming Nest" to_port="connection"/>
+                        <portSpacing port="source_input 1" spacing="0"/>
+                        <portSpacing port="sink_result 1" spacing="0"/>
+                    </process>
+                </operator>
+            </process>
+        </tutorialProcess>
+    </tutorialProcesses>
+    </operator>
+</p1:documents>

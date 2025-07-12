@@ -1,0 +1,50 @@
+{
+  "preset": "ts-jest",
+  "testRegex": "-test\\.(ts|tsx)$",
+  "verbose": true,
+  "testURL": "http://localhost/",
+  "setupFilesAfterEnv": ["<rootDir>/setupTests.js"],
+  "moduleNameMapper": {
+    "\\.(css|less)$": "identity-obj-proxy",
+    "\\.(png)$": "<rootDir>/src/ts/__mocks__/fileMock.js"
+  },
+  "transform": {
+	"^.+\\.(ts|tsx)$": "ts-jest",
+	"^.+\\.(js)$": "babel-jest"
+  },
+  "reporters": [ "default", ["jest-junit",  {
+	"outputDirectory": "<rootDir>/ci",
+	"outputName": "junit.xml" } ]
+  ],
+  "collectCoverageFrom": [
+	"<rootDir>/src/ts/**/*.{ts,tsx}",
+	"!<rootDir>/src/ts/server/**",
+	"!**/node_modules/**",
+	"!<rootDir>/src/ts/index.tsx",
+	"!<rootDir>/src/ts/configuration.ts",
+	"!<rootDir>/src/ts/global.d.ts",
+	"!<rootDir>/src/ts/**/type/**/*.ts",
+	"!<rootDir>/src/ts/**/__tests__/**/*.ts",
+	"!<rootDir>/src/ts/**/__mocks__/**/*.ts",
+	"!<rootDir>/src/ts/constants/**",
+	"!<rootDir>/src/ts/i18n/**",
+	"!<rootDir>/src/ts/app/**"
+  ],
+  "coverageThreshold": {
+    "global": {
+      "branches": 50,
+      "functions": 50,
+      "lines": 50,
+      "statements": 50
+    }
+  },
+  "coverageReporters": [
+    "text"
+  ],
+  "testEnvironment": "jsdom",
+  "globals": {
+	"ts-jest": {
+	  "isolatedModules": true
+	}
+  }
+}

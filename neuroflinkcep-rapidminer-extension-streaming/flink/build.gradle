@@ -1,0 +1,61 @@
+configurations {
+    // dependencies which go into the shadowJar
+    flinkShadowJar
+
+    // always exclude these (also from transitive dependencies) since they are provided by Flink
+    flinkShadowJar.exclude group: 'org.apache.flink', module: 'force-shading'
+    flinkShadowJar.exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    flinkShadowJar.exclude group: 'org.slf4j'
+    flinkShadowJar.exclude group: 'log4j'
+}
+
+// make compileOnly dependencies available for tests:
+sourceSets {
+    main.compileClasspath += configurations.flinkShadowJar
+    main.runtimeClasspath += configurations.flinkShadowJar
+
+    test.compileClasspath += configurations.flinkShadowJar
+    test.runtimeClasspath += configurations.flinkShadowJar
+
+    javadoc.classpath += configurations.flinkShadowJar
+}
+
+shadowJar {
+    configurations = [project.configurations.flinkShadowJar]
+
+    // We want to make sure, we are actually using our own libraries from :utility
+    relocate('com.esotericsoftware', 'com.rapidminer.extension.streaming.utility.shaded.com.esotericsoftware')
+
+}
+
+// For helping Eclipse recognize extra configuration (for some reason it could not do it on its own)
+eclipse {
+    classpath {
+        plusConfigurations.add configurations.flinkShadowJar
+    }
+}
+
+dependencies {
+    compile group: 'org.apache.flink', name: 'flink-java', version: flinkVersion
+    compile group: 'org.apache.flink', name: 'flink-streaming-java_' + flinkScalaVersion, version: flinkVersion
+    compile group: 'org.apache.flink', name: 'flink-table-common', version: '1.19.0'
+
+    compile group: 'org.tensorflow', name: 'tensorflow', version: '1.15.0'
+//    compile group: 'org.tensorflow', name: 'libtensorflow_jni', version: '1.15.0'
+//    compile group: 'org.tensorflow', name: 'libtensorflow', version: '1.15.0'
+
+    flinkShadowJar group: 'org.tensorflow', name: 'tensorflow', version: '1.15.0'
+//    flinkShadowJar group: 'org.tensorflow', name: 'libtensorflow_jni', version: '1.15.0'
+//    flinkShadowJar group: 'org.tensorflow', name: 'libtensorflow', version: '1.15.0'
+
+    // Dependencies that need to be in the shadow JAR
+    flinkShadowJar group: 'org.apache.flink', name: 'flink-connector-kafka_' + flinkScalaVersion, version: flinkVersion
+
+    // Module
+    compileOnly project(":rapidminer-as-plugin-common")
+
+    flinkShadowJar(project(":utility")) {
+        // since we are not using the HDFS utility yet
+        exclude group: 'org.apache.hadoop'
+    }
+}

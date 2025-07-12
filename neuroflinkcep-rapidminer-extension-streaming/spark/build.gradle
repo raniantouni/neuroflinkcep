@@ -1,0 +1,20 @@
+dependencies {
+    // Dependencies will already be present in the cluster
+    compileOnly group: 'org.apache.spark', name: 'spark-core_' + sparkScalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: 'spark-streaming_' + sparkScalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: 'spark-sql_' + sparkScalaVersion, version: sparkVersion
+
+    compile group: 'org.apache.spark', name: 'spark-sql-kafka-0-10_' + sparkScalaVersion, version: sparkVersion
+    compile group: 'org.apache.spark', name: 'spark-avro_' + sparkScalaVersion, version: sparkVersion
+    compile group: 'org.apache.spark', name: 'spark-streaming-kafka-0-10_' + sparkScalaVersion, version: sparkVersion
+
+    // Module
+    compileOnly project(":rapidminer-as-plugin-common")
+
+    compile project(":utility")
+}
+
+shadowJar {
+    // We want to make sure, we are actually using our own libraries from :utility
+    relocate('com.esotericsoftware', 'com.rapidminer.extension.streaming.utility.shaded.com.esotericsoftware')
+}

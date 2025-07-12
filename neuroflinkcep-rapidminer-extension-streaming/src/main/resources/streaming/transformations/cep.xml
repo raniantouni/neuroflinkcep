@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../../../../documentation2html.xsl"?>
+<p1:documents xmlns:p1="http://rapid-i.com/schemas/documentation/reference/1.0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://rapid-i.com/schemas/documentation/reference/1.0                http://rapid-i.com/schemas/documentation/reference/1.0/documentation.xsd">
+
+    <operator key="operator.streaming:cep" locale="en" version="7.6.000">
+
+        <title>CEP Stream</title>
+
+        <synopsis>
+            This operator performs a cep operation
+        </synopsis>
+
+        <text>
+            <paragraph>
+                This is a streaming operator and needs to be placed inside a Streaming Nest or a Streaming Optimization operator.
+                The operator defines the logical functionality and can be used in all streaming analytic workflow for any supported streaming platform (currently Flink and Spark).
+                The actual implementation used depends on the type of connection connected to the Streaming Nest operator in which this operator is placed.
+            </paragraph>
+        </text>
+
+
+
+        <inputPorts>
+            <port name = "Kafka stream" type = "com.rapidminer.extension.streaming.ioobject.StreamDataContainer">
+                <paragraph>
+                    The input of this streaming operation.
+                    It needs to receive the output of a preceding streaming operator, to define the flow of data events in the streaming analytic workflow.
+                </paragraph>
+            </port>
+        </inputPorts>
+
+
+        <outputPorts>
+            <port name = "output stream" type = "com.rapidminer.extension.streaming.ioobject.StreamDataContainer">
+                <paragraph>
+                    The output of this streaming operation.
+                    Connect it to the next Streaming operator to define the flow of the data events in the designed streaming analytic workflow.
+                </paragraph>
+            </port>
+        </outputPorts>
+
+
+        <parameters>
+            <parameter key="regural_expression" >
+                <paragraph>
+                    Pattern to be detected.
+                </paragraph>
+            </parameter>
+        </parameters>
+
+        <tutorialProcesses>
+        </tutorialProcesses>
+    </operator>
+</p1:documents>

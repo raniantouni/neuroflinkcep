@@ -1,0 +1,140 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.rapidminer.com/content/groups/public/' }
+    }
+}
+
+plugins {
+    id 'com.rapidminer.extension' version '0.9.6'
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+extensionConfig {
+    name 'Streaming'
+    groupId = 'com.rapidminer.extension'
+    vendor = "RapidMiner GmbH"
+    homepage = "www.rapidminer.com"
+
+    // define RapidMiner version and extension dependencies
+    dependencies {
+        rapidminer rapidminerVersion
+        extension namespace: 'browser', version: browserExtensionVersion
+        // Only enable the dependency to the kafka_connector extension for release. Disable it for SNAPSHOT builds and
+        // use the compile files dependency below
+        //extension namespace: 'kafka_connector', version: kafkaConnectorVersion
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+
+    repositories {
+        jcenter()
+        maven { url 'https://maven.rapidminer.com/content/groups/public/' }
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+}
+
+// Modules that need to be included as (sub-)JAR-s in the main JAR
+def shadowModules = subprojects
+    .findAll { ['spark', 'flink', 'rapidminer-as-plugin' , 'rapidminer-as-plugin-common'].contains(it.name) }
+
+// Configure shadow plugin for selected modules only
+configure(shadowModules) { p ->
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    shadowJar {
+        zip64 true
+    }
+
+    p.group = project.group
+    p.version = project.version
+    p.sourceCompatibility = project.sourceCompatibility
+}
+
+// Prepare module (sub-)JAR-s for the main JAR building process
+task shadowModuleJars(type: Zip) {
+    from(shadowModules.collect { p -> p.shadowJar.archivePath })
+
+    baseName = "shadowModuleJars"
+    version = project.version
+    extension = "jar"
+    destinationDir = shadowJar.destinationDir
+
+    dependsOn = shadowModules.collect { p -> p.shadowJar }
+}
+
+// Configure the dependency on the preparation task
+shadowJar.dependsOn(shadowModuleJars)
+
+// Configure shadowing process for the main JAR, among other things add the modules
+shadowJar {
+    zip64 true
+    from shadowModuleJars
+}
+
+dependencies {
+    // For launching Flink jobs
+    compile group: 'org.apache.flink', name: 'flink-runtime-web_' + flinkScalaVersion, version: flinkVersion
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.11'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.11'
+    compile group: 'org.apache.flink', name: 'flink-cep', version: '1.19.0'
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '2.4.0'
+    compile group: 'org.json', name: 'json', version: '20190722'
+    compile group: 'com.google.guava', name: 'guava', version: 'r05'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    compile group: 'org.springframework', name: 'spring-web', version: '5.2.9.RELEASE'
+    compile group: 'org.springframework', name: 'spring-websocket', version: '5.2.9.RELEASE'
+    compile group: 'org.springframework', name: 'spring-messaging', version: '5.2.9.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.5.3'
+
+    // Make sure this file is always up-to-date with the latest release of the Kafka extension
+    // Only enable this in SNAPSHOT builds. Disable it for release and enable the rapidminer internal dependency mechanism
+    compile files("libs/kafka_connector-${kafkaConnectorVersion}-all.jar")
+
+    // Module
+    compile project(path: ':utility')
+    compile project(path: ':rapidminer-as-plugin-common')
+    compile project(path: ':rapidminer-as-plugin-bridge')
+}
+
+// Web-UI (dashboard) task (build)
+class NpmTask extends Exec {
+    private String npmExecutable = Os.isFamily(Os.FAMILY_WINDOWS) ? 'npm.cmd' : 'npm'
+    private String switches = "--no-color"
+
+    NpmTask() { this.setExecutable(npmExecutable) }
+
+    void setNpmArgs(String npmArgs) { this.args = "$switches $npmArgs".trim().split(" ") as List }
+}
+
+/*task npmInstall(type: NpmTask) {
+    workingDir = "./dashboard"
+    npmArgs = "install"
+}
+
+task npmProduction(type: NpmTask) {
+    workingDir = "./dashboard"
+    dependsOn npmInstall
+    npmArgs = "run build:production"
+}
+
+task npmCheckstyle(type: NpmTask) {
+    workingDir = "./dashboard"
+    dependsOn npmInstall
+    npmArgs = "run lint:checkstyle"
+}
+
+installExtension.dependsOn npmProduction*/

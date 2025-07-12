@@ -1,0 +1,12 @@
+
+dependencies {
+    compile group: 'org.apache.hadoop', name: 'hadoop-client', version: '3.2.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
+    compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.2'
+    compile group: 'com.google.guava', name: 'guava', version: 'r05'
+    compile group: 'org.json', name: 'json', version: '20190722'
+    compile group: 'org.apache.flink', name: 'flink-cep', version: '1.19.0'
+
+    // For safety's sake, just keep it compile-only, the clients of this library can make more granular decisions
+    compileOnly project(path: ':rapidminer-as-plugin-common')
+}

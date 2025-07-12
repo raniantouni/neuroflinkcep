@@ -1,0 +1,13 @@
+repositories {
+    flatDir {
+        dirs '../libs/'
+    }
+}
+
+dependencies {
+    compile project(":rapidminer-as-plugin-bridge")
+    compileOnly project(":rapidminer-as-plugin-common")
+
+    compileOnly group: 'com.rapidminer.studio', name: 'rapidminer-studio-core', version: raapCoreVersion
+    compileOnly group: 'com.rapidminer.license', name: 'rapidminer-license-core', version: raapLicense
+}

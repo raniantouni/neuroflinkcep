@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-0",
+    "blobWrite" : "cloud-1-1-1-1",
+    "decisionTreeTrain" : "cloud-1",
+    "mqttPublish" : "cloud-0",
+    "multiVarLinearRegTrain" : "cloud-1",
+    "sink" : "cloud-0-0-1",
+    "source" : "cloud-0-1-1-0",
+    "tableRead" : "cloud-1-1-0-1"
+  },
+  "appLoopLatency" : 11.981856030303012,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 8.342519522254243,
+    "sink_TUPLE" : 0.6949356559625081,
+    "annotation_TUPLE" : 0.7439360606062676,
+    "decisionTreeTrain_TUPLE" : 7.3336771235797436,
+    "mqttPublish_TUPLE" : 1.1966830938417312,
+    "tableRead_TUPLE" : 0.7728711979166824,
+    "blobWrite_TUPLE" : 1.9045265885430487,
+    "TUPLE" : 0.08884830729165973
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2048,
+    "decisionTreeTrain" : 2048,
+    "sink" : 4011,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4096,
+    "mqttPublish" : 4011
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0328857214206455,
+    "multiVarLinearRegTrain" : 1.0331984748417515,
+    "decisionTreeTrain" : 1.0318894273059638,
+    "sink" : 2.015621290328485,
+    "source" : 1.0366449956570243,
+    "tableRead" : 1.0344964528267055,
+    "blobWrite" : 2.053084773602166,
+    "mqttPublish" : 2.0164268113833876
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.0322550994708826,
+    "multiVarLinearRegTrain" : 1.0274696242433536,
+    "decisionTreeTrain" : 1.0274696242433536,
+    "sink" : 2.0154672573742567,
+    "source" : 1.0365908864149083,
+    "tableRead" : 1.0340361603147075,
+    "blobWrite" : 2.050252254553906,
+    "mqttPublish" : 2.0162294651004586
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 425000,
+    "mqttPublish" : 0
+  },
+  "executionTime" : 2133.0,
+  "networkUsage" : 134672.63,
+  "tuplesSentBySensors" : 2048
+}

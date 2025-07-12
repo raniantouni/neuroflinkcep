@@ -1,0 +1,784 @@
+{
+  "optimizationParameters": {
+    "continuous": true,
+    "networkName": "network_1_3",
+    "dictionaryName": "dict_1_3",
+    "algorithm": "auto",
+    "parallelism": 1,
+    "description": "MyDescription",
+    "timeout_ms": 60000,
+    "numOfPlans": 1
+  },
+  "workflowName": "life_science_workflow",
+  "enclosingOperatorName": "Streaming Optimization",
+  "innerSourcesPortsAndSchemas": [],
+  "innerSinksPortsAndSchemas": [],
+  "operatorConnections": [
+    {
+      "fromOperator": "Kafka input (unlabeled)",
+      "fromPort": "output",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Kafka Source",
+      "toPort": "connection",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Kafka Source",
+      "fromPort": "output stream",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Tag Simulations",
+      "toPort": "input stream 2",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Flink input (labeled)",
+      "fromPort": "output",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Flink Source",
+      "toPort": "connection",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Flink Source",
+      "fromPort": "output stream",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Synopsis Data Engine",
+      "toPort": "input stream",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "SDE Service",
+      "fromPort": "output",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Synopsis Data Engine",
+      "toPort": "connection",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Synopsis Data Engine",
+      "fromPort": "output stream",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Train Online SVM",
+      "toPort": "input stream",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Train Online SVM",
+      "fromPort": "output stream 1",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Validate Model",
+      "toPort": "input stream",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Train Online SVM",
+      "fromPort": "output stream 2",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Tag Simulations",
+      "toPort": "input stream 1",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Output Kafka Cluster",
+      "fromPort": "output",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Visualization Topic",
+      "toPort": "connection",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Simulation Control Cluster",
+      "fromPort": "output",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Simulation Control Topic",
+      "toPort": "connection",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Tag Simulations",
+      "fromPort": "output stream",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Split Stream",
+      "toPort": "input stream",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Split Stream",
+      "fromPort": "output stream 1",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Simulation Control Topic",
+      "toPort": "input stream",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Split Stream",
+      "fromPort": "output stream 2",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Filter Stream",
+      "toPort": "input stream",
+      "toPortType": "INPUT_PORT"
+    },
+    {
+      "fromOperator": "Filter Stream",
+      "fromPort": "output stream",
+      "fromPortType": "OUTPUT_PORT",
+      "toOperator": "Visualization Topic",
+      "toPort": "input stream",
+      "toPortType": "INPUT_PORT"
+    }
+  ],
+  "operators": [
+    {
+      "name": "Kafka input (unlabeled)",
+      "classKey": "retrieve",
+      "operatorClass": "com.rapidminer.operator.io.RepositorySource",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "repository_entry",
+          "value": "/Connections/kafka_1",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeRepositoryLocation"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Kafka Source",
+      "classKey": "streaming:kafka_source",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamKafkaSource",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "connection",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "topic",
+          "value": "unlabelled",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Flink input (labeled)",
+      "classKey": "retrieve",
+      "operatorClass": "com.rapidminer.operator.io.RepositorySource",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "repository_entry",
+          "value": "/Connections/flink_barcelona_1",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeRepositoryLocation"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Flink Source",
+      "classKey": "streaming:kafka_source",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamKafkaSource",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "connection",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "topic",
+          "value": "labeled data",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "SDE Service",
+      "classKey": "retrieve",
+      "operatorClass": "com.rapidminer.operator.io.RepositorySource",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "repository_entry",
+          "value": "/Connections/spark_barcelona_1",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeRepositoryLocation"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Synopsis Data Engine",
+      "classKey": "streaming:sde",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamSDEOperator",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "connection",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        },
+        {
+          "name": "input stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "synopsis_type",
+          "value": "count min",
+          "defaultValue": "count min",
+          "range": "count min, bloom filter, ams, dft, lsh, core sets, hyper log log, sticky sampling, lossy couting, chain sampler, gk quantiles; default: count min",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeCategory"
+        },
+        {
+          "key": "data_set_key",
+          "value": "dfa",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "synopsis_params",
+          "value": "df",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "synopsis_parallelism",
+          "value": "fd",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "u_id",
+          "value": "12",
+          "defaultValue": "",
+          "range": "integer; 0-+?",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeInt"
+        },
+        {
+          "key": "stream_id",
+          "value": "fd",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "estimate_frequency",
+          "value": "2",
+          "defaultValue": "",
+          "range": "integer; 1-+?",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeInt"
+        },
+        {
+          "key": "estimate_key",
+          "value": "fshg",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "estimate_params",
+          "value": "daf",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "data_value_key",
+          "value": "df",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "request_topic",
+          "value": "d",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "data_topic",
+          "value": "s",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "output_topic",
+          "value": "a",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Train Online SVM",
+      "classKey": "streaming:duplicate",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamDuplicate",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "input stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream 1",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        },
+        {
+          "name": "output stream 2",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Validate Model",
+      "classKey": "streaming:filter",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamFilter",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "input stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": false,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "key",
+          "value": "prediction",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "value",
+          "value": "0.4",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "operator",
+          "value": "Greater than",
+          "defaultValue": "Equal to",
+          "range": "Equal to, Not equal to, Greater than, Greater than or equal to, Less than, Less than or equal to; default: Equal to",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeCategory"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Output Kafka Cluster",
+      "classKey": "retrieve",
+      "operatorClass": "com.rapidminer.operator.io.RepositorySource",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "repository_entry",
+          "value": "/Connections/kafka_1",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeRepositoryLocation"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Simulation Control Cluster",
+      "classKey": "retrieve",
+      "operatorClass": "com.rapidminer.operator.io.RepositorySource",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "repository_entry",
+          "value": "/Connections/kafka_1",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeRepositoryLocation"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Tag Simulations",
+      "classKey": "streaming:join",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamJoin",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "input stream 1",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        },
+        {
+          "name": "input stream 2",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "left_key",
+          "value": "dsf",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "right_key",
+          "value": "df",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "window_length",
+          "value": "f",
+          "defaultValue": "",
+          "range": "Long; 0-+?",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeLong"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Split Stream",
+      "classKey": "streaming:duplicate",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamDuplicate",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "input stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream 1",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        },
+        {
+          "name": "output stream 2",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Filter Stream",
+      "classKey": "streaming:filter",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamFilter",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "input stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [
+        {
+          "name": "output stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "OUTPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "parameters": [
+        {
+          "key": "key",
+          "value": "prediction",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "value",
+          "value": "0.4",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        },
+        {
+          "key": "operator",
+          "value": "Greater than",
+          "defaultValue": "Equal to",
+          "range": "Equal to, Not equal to, Greater than, Greater than or equal to, Less than, Less than or equal to; default: Equal to",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeCategory"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Visualization Topic",
+      "classKey": "streaming:kafka_sink",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "connection",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        },
+        {
+          "name": "input stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [],
+      "parameters": [
+        {
+          "key": "topic",
+          "value": "output",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    },
+    {
+      "name": "Simulation Control Topic",
+      "classKey": "streaming:kafka_sink",
+      "operatorClass": "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+      "isEnabled": true,
+      "inputPortsAndSchemas": [
+        {
+          "name": "connection",
+          "objectClass": "com.rapidminer.connection.ConnectionInformationContainerIOObject",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        },
+        {
+          "name": "input stream",
+          "objectClass": "com.rapidminer.extension.streaming.ioobject.StreamDataContainer",
+          "portType": "INPUT_PORT",
+          "isConnected": true,
+          "schema": null
+        }
+      ],
+      "outputPortsAndSchemas": [],
+      "parameters": [
+        {
+          "key": "topic",
+          "value": "output",
+          "defaultValue": "",
+          "range": "string",
+          "typeClass": "com.rapidminer.parameter.ParameterTypeString"
+        }
+      ],
+      "hasSubprocesses": false,
+      "numberOfSubprocesses": null,
+      "innerWorkflows": null,
+      "platformName": null
+    }
+  ],
+  "placementSites": []
+}

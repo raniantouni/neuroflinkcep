@@ -1,0 +1,23 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="e-esc" type="Application" factoryName="Application" activateToolWindowBeforeRun="false">
+    <output_file path="logs/exp.log" is_save="true" />
+    <option name="MAIN_CLASS_NAME" value="optimizer.StandaloneRunner" />
+    <module name="optimizer" />
+    <option name="PROGRAM_PARAMETERS" value="./input/workflows/custom2.json ./input/topologies/topology1/dictionary.json ./input/topologies/topology1/network.json e-esc 300000 1" />
+    <option name="VM_PARAMETERS" value="-Xmx24g -Xms256m -XX:+UnlockExperimentalVMOptions" />
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="true" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+      </ENTRIES>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

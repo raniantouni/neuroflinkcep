@@ -1,0 +1,59 @@
+input {
+  file {
+    id => "metrics_id1"
+    add_field => { "id" => "metrics_id1" }
+    path => "/tmp/metrics/*.csv"
+    start_position =>"beginning"
+    sincedb_path => "/dev/null"
+    stat_interval => "1 second"
+  }
+}
+
+filter {
+  # Documentation for CSV plugin
+  # https://www.elastic.co/guide/en/logstash/current/plugins-filters-csv.html
+  csv {
+    # Define columns and separator
+    separator => ","
+    columns => ["timestamp","throughput","network","memory","cores","sim_id","param1","param2","param3","status"]
+
+    # Possible conversions are integer, float, date, date_time, boolean
+    # If the timestamp is being parsed with date {} then set it to string!
+    convert => {
+      "throughput" => "float"
+      "network" => "float"
+      "memory" => "float"
+      "cores" => "integer"
+    }
+
+    # Skip irrelevant info
+    skip_empty_rows => true
+    skip_empty_columns => false
+    skip_header => true
+  }
+
+  # Drop fields iff necessary
+  mutate {
+    remove_field => "headers"
+    remove_field => "message"
+  }
+
+  # Extract timestamp
+  # ISO8601 -> 2011-04-19T03:44:01.103Z
+  # UNIX_MS -> 1366125117000
+  # Custom support as well, e.g: "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"
+  date {
+    match => ["timestamp", "UNIX_MS"]
+    target => "@timestamp"
+  }
+}
+
+output {
+#  stdout {}
+  elasticsearch {
+    hosts => ["${ES_URL}"]
+    index => "${ES_INDEX_METRICS}"
+    user => "${ES_USERNAME}"
+    password => "${ES_PASSWORD}"
+  }
+}

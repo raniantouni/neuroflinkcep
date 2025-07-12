@@ -1,0 +1,33 @@
+input {
+  http {
+    host => "0.0.0.0"
+    port => 60001
+  }
+}
+
+filter {
+  json {
+    source => "message"
+  }
+  ruby {
+    code => "event.set('systemtime', Time.now());"
+  }
+  mutate {
+    remove_field => "headers"
+    remove_field => "message"
+    convert => { "op_latency" => "float" }
+    convert => { "parallelism" => "integer" }
+    convert => { "records_in" => "integer" }
+    convert => { "records_out" => "integer" }
+    convert => { "throughput" => "integer" }
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["${ES_URL}"]
+    index => "${ES_INDEX_RAW_STATS}"
+    user => "${ES_USERNAME}"
+    password => "${ES_PASSWORD}"
+  }
+}

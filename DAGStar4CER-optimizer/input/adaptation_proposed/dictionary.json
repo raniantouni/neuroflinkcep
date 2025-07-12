@@ -1,0 +1,522 @@
+{
+  "dictionaryName": "dict_1_3",
+  "operators": [
+    {
+      "classKey": "streaming:aggregate",
+      "costCoefficients": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:aggregate",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:aggregate",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:aggregate",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:connect",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:connect",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:connect",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:connect",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:duplicate",
+      "costCoefficients": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:duplicate",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:duplicate",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:duplicate",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:filter",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:filter",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:filter",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:filter",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:join",
+      "costCoefficients": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:join",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:join",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:join",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:kafka_sink",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:kafka_sink",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:kafka_sink",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:kafka_sink",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:kafka_source",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:kafka_source",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:kafka_source",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:kafka_source",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:map",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:map",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:map",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:map",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:sde",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:sde",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_streaming:sde",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_streaming:sde",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "multiply",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_multiply",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_multiply",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_multiply",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "retrieve",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_retrieve",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 0,
+            "platform_1": 333,
+            "platform_2": 1000
+          }
+        },
+        "platform_1": {
+          "operatorName": "platform_1_retrieve",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 333,
+            "platform_1": 0,
+            "platform_2": 333
+          }
+        },
+        "platform_2": {
+          "operatorName": "platform_2_retrieve",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 1000,
+            "platform_1": 333,
+            "platform_2": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0
+          }
+        }
+      }
+    }
+  ]
+}

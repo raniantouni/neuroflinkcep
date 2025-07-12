@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-0-0-1-0",
+    "blobWrite" : "cloud-0-0-1",
+    "decisionTreeTrain" : "cloud-1-1-0",
+    "mqttPublish" : "cloud-1-1",
+    "multiVarLinearRegTrain" : "cloud-0",
+    "sink" : "cloud-1-1-0-0",
+    "source" : "cloud-0-1-1-1",
+    "tableRead" : "cloud-1-1"
+  },
+  "appLoopLatency" : 12.435395242424173,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 1.958088052083419,
+    "sink_TUPLE" : 0.6494705434788565,
+    "annotation_TUPLE" : 5.127386632102248,
+    "mqttPublish_TUPLE" : 0.3763567405308985,
+    "decisionTreeTrain_TUPLE" : 1.823384531250601,
+    "tableRead_TUPLE" : 0.12178671590907879,
+    "blobWrite_TUPLE" : 1.0306001786224481,
+    "TUPLE" : 0.08887955729167234
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2048,
+    "decisionTreeTrain" : 2048,
+    "sink" : 4048,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4096,
+    "mqttPublish" : 4096
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0335403544354005,
+    "multiVarLinearRegTrain" : 1.0342188702543376,
+    "decisionTreeTrain" : 1.029224168713422,
+    "sink" : 2.033482688475731,
+    "source" : 1.03659252600592,
+    "tableRead" : 1.0349146620246912,
+    "blobWrite" : 2.053546035908337,
+    "mqttPublish" : 2.050153874747029
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.0308871008027407,
+    "multiVarLinearRegTrain" : 1.0330600978950404,
+    "decisionTreeTrain" : 1.028010094415616,
+    "sink" : 2.033316707478254,
+    "source" : 1.0365384222409866,
+    "tableRead" : 1.0348460263928592,
+    "blobWrite" : 2.0519000705739594,
+    "mqttPublish" : 2.0495383665892595
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 0,
+    "mqttPublish" : 240000
+  },
+  "executionTime" : 1213.0,
+  "networkUsage" : 185782.72,
+  "tuplesSentBySensors" : 2048
+}

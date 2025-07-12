@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-0-0-0-0-0",
+    "blobWrite" : "cloud-0-0-1-1-1-1",
+    "decisionTreeTrain" : "cloud-0-1-0-1-0-0",
+    "mqttPublish" : "cloud-0-1-0-1-1",
+    "multiVarLinearRegTrain" : "cloud-1-1-0-0-0",
+    "sink" : "cloud-0-0",
+    "source" : "cloud-1-0-1",
+    "tableRead" : "cloud-0-0-1-1-0-0"
+  },
+  "appLoopLatency" : 20.74118241666642,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 16.45354543739674,
+    "sink_TUPLE" : 0.29383531515941913,
+    "annotation_TUPLE" : 0.6065720859375655,
+    "decisionTreeTrain_TUPLE" : 0.7980553932292705,
+    "mqttPublish_TUPLE" : 0.29383531515941913,
+    "tableRead_TUPLE" : 0.15195264843752457,
+    "blobWrite_TUPLE" : 1.338411763076225,
+    "TUPLE" : 0.09328125000000363
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2018,
+    "decisionTreeTrain" : 2048,
+    "sink" : 4035,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4066,
+    "mqttPublish" : 4035
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0328057460291575,
+    "multiVarLinearRegTrain" : 1.032649526996439,
+    "decisionTreeTrain" : 1.0308908410349873,
+    "sink" : 2.0195108451240844,
+    "source" : 1.036488651765118,
+    "tableRead" : 1.0348105793710694,
+    "blobWrite" : 2.0354940457341173,
+    "mqttPublish" : 2.021378339111704
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.032710266861892,
+    "multiVarLinearRegTrain" : 1.012417976578345,
+    "decisionTreeTrain" : 1.0304985616313156,
+    "sink" : 2.0192623967388585,
+    "source" : 1.0364340124781999,
+    "tableRead" : 1.0347365117566616,
+    "blobWrite" : 2.0334199578181424,
+    "mqttPublish" : 2.0211294310490278
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 155000,
+    "mqttPublish" : 0
+  },
+  "executionTime" : 1264.0,
+  "networkUsage" : 320760.83,
+  "tuplesSentBySensors" : 2048
+}

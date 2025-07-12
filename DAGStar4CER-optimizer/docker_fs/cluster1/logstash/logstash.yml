@@ -1,0 +1,8 @@
+http.host: 0.0.0.0
+xpack.monitoring.elasticsearch.hosts:
+- http://${CLUSTER_1_ES_URL}
+xpack.monitoring.elasticsearch.username: ${ES_USERNAME}
+xpack.monitoring.elasticsearch.password: ${ES_PASSWORD}
+xpack.monitoring.enabled: false
+config.reload.automatic: true
+config.reload.interval: 1m

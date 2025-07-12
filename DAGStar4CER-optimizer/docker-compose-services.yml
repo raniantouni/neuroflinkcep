@@ -1,0 +1,51 @@
+version: "3.4"
+
+services:
+  elasticsearch:
+    build:
+      context: ./deployment/elk/elasticsearch
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    volumes:
+      - type: bind
+        source: ./docker_fs/services/elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: bind
+        source: ./docker_fs/services/elasticsearch/volume1/data
+        target: /usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx4g -Xms256m"
+      ELASTIC_PASSWORD: ${ES_PASSWORD}
+    networks:
+      - es_kibana_net
+    env_file:
+      - .env
+
+  kibana:
+    build:
+      context: ./deployment/elk/kibana
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    volumes:
+      - type: bind
+        source: ./docker_fs/services/kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - es_kibana_net
+    env_file:
+      - .env
+
+networks:
+  athena_services_net:
+    driver: bridge
+  es_kibana_net:
+    driver: bridge

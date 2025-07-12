@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: BenchmarkingApplication
+  profiles:
+    active: dev
+  main:
+    banner-mode: console
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+logging:
+  register-shutdown-hook: true
+  file:
+    path: ${BENCHMARKING_LOG_DIR}
+    name: benchmarking.log
+  level:
+    org:
+      springframework:
+        web:
+          HttpLogging: INFO
+          client:
+            RestTemplate: INFO
+server:
+  address: 0.0.0.0
+  port: ${ATHENA_BENCHMARKING_PORT}
+  error:
+    whitelabel:
+      enabled: false

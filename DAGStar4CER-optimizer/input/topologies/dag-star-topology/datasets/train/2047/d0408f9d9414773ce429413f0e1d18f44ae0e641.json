@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-1-0-0-1-1-1-0-0-1-0",
+    "blobWrite" : "cloud-0-1-0-0-1-0-1-1",
+    "decisionTreeTrain" : "cloud-1-1-1-1-0-0-1-0-0-1",
+    "mqttPublish" : "cloud-0-0-1-0-0-1-0-1",
+    "multiVarLinearRegTrain" : "cloud-1-0-1-1-1-0-1-1-0",
+    "sink" : "cloud-1-1-0-1-1-0-1-1-1-0",
+    "source" : "cloud-0-0-1-0-1-0-1-1-0-1",
+    "tableRead" : "cloud-0-0-0-1-1-1-1-0-0-1"
+  },
+  "appLoopLatency" : 80.8731304619992,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 9.299521716502625,
+    "sink_TUPLE" : 2.0740382582187635,
+    "annotation_TUPLE" : 16.322375668602177,
+    "decisionTreeTrain_TUPLE" : 24.963571368247685,
+    "mqttPublish_TUPLE" : 1.0760955863629973,
+    "tableRead_TUPLE" : 0.2743653262625509,
+    "blobWrite_TUPLE" : 38.204805509802966,
+    "TUPLE" : 0.09801585858585081
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 4666,
+    "multiVarLinearRegTrain" : 4679,
+    "decisionTreeTrain" : 4567,
+    "sink" : 8946,
+    "source" : 4800,
+    "tableRead" : 4800,
+    "blobWrite" : 9029,
+    "mqttPublish" : 8946
+  },
+  "recsInPerModule" : {
+    "annotation" : 2.367235297270461,
+    "multiVarLinearRegTrain" : 2.3996556214846874,
+    "decisionTreeTrain" : 2.35796340015401,
+    "sink" : 4.506247983853641,
+    "source" : 2.4226505715184117,
+    "tableRead" : 2.4122992295158983,
+    "blobWrite" : 4.61361462997471,
+    "mqttPublish" : 4.525791880084343
+  },
+  "recsOutPerModule" : {
+    "annotation" : 2.333582176247375,
+    "multiVarLinearRegTrain" : 2.339651823729015,
+    "decisionTreeTrain" : 2.304190725703555,
+    "sink" : 4.505720128597584,
+    "source" : 2.4225259863513755,
+    "tableRead" : 2.4121527484462106,
+    "blobWrite" : 4.519020014541295,
+    "mqttPublish" : 4.525396004124734
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 328000,
+    "multiVarLinearRegTrain" : 140000,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 1340000,
+    "blobWrite" : 415000,
+    "mqttPublish" : 0
+  },
+  "executionTime" : 2156.0,
+  "networkUsage" : 2058967.41,
+  "tuplesSentBySensors" : 4800
+}

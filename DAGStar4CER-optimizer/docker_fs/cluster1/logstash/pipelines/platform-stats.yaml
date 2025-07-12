@@ -1,0 +1,359 @@
+input {
+  file {
+    id => "cluster1_site1_jobmanager"
+    add_field => { "id" => "cluster1_site1_jobmanager" }
+    path => "/tmp/flink_metrics/jobmanager/*.csv"
+    start_position =>"beginning"
+    sincedb_path => "/dev/null"
+    stat_interval => "1 second"
+  }
+  file {
+    id => "cluster1_site1_taskmanager1"
+    add_field => { "id" => "cluster1_site1_taskmanager1" }
+    path => "/tmp/flink_metrics/taskmanager1/*.csv"
+    start_position =>"beginning"
+    sincedb_path => "/dev/null"
+    stat_interval => "1 second"
+  }
+  file {
+    id => "cluster1_site2_master1"
+    add_field => { "id" => "cluster1_site2_master1" }
+    path => "/tmp/spark_metrics/master1/*.csv"
+    start_position =>"beginning"
+    sincedb_path => "/dev/null"
+    stat_interval => "1 second"
+  }
+  file {
+    id => "cluster1_site2_worker1"
+    add_field => { "id" => "cluster1_site2_worker1" }
+    path => "/tmp/spark_metrics/worker1/*.csv"
+    start_position =>"beginning"
+    sincedb_path => "/dev/null"
+    stat_interval => "1 second"
+  }
+}
+
+filter {
+  # Initialize metric related fields
+  mutate{
+    add_field => {
+      "metric_type" => "unknown"
+      "metric_key" => "unknown"
+      "metric_value_number" => "unknown"
+      "port" => "unknown"
+      "block" => "unknown"
+      "processing_time" => "unknown"
+      "event_time" => "unknown"
+      "error" => ""
+    }
+  }
+
+  # Initialize fields based on input source
+  if [id] == "cluster1_site1_jobmanager" {
+    mutate {
+      update => {
+        "cluster" => "cluster1"
+        "site" => "site1"
+        "platform" => "flink"
+        "role" => "jobmanager"
+        "ip" => "192.168.1.200"
+        "port" => "${CLUSTER_1_JM_WEB_PORT}"
+      }
+    }
+  } else if [id] == "cluster1_site1_taskmanager1" {
+    mutate {
+      update => {
+        "cluster" => "cluster1"
+        "site" => "site1"
+        "platform" => "flink"
+        "role" => "taskmanager1"
+        "ip" => "192.168.1.200"
+        "port" => "${CLUSTER_1_TM_DATA_PORT}"
+      }
+    }
+  } else if [id] == "cluster1_site2_master1" {
+    mutate {
+      update => {
+        "cluster" => "cluster1"
+        "site" => "site2"
+        "platform" => "spark"
+        "role" => "master1"
+        "ip" => "192.168.1.200"
+        "port" => "${CLUSTER_1_SPARK_MASTER_UI_PORT}"
+      }
+    }
+  } else if [id] == "cluster1_site2_worker1" {
+    mutate {
+      update => {
+        "cluster" => "cluster1"
+        "site" => "site2"
+        "platform" => "spark"
+        "role" => "worker1"
+        "ip" => "192.168.1.200"
+        "port" => "${CLUSTER_1_SPARK_WORKER_UI_PORT}"
+      }
+    }
+  } else {
+    mutate {
+      merge => { "error" => "Default block in filter1."}
+    }
+  }
+}
+
+# Consider one filter per source..
+filter {
+  if [id] == "ABC" {
+    drop {}
+  }
+}
+
+# Extract metric related metadata
+filter {
+  if [id] == "cluster1_site1_jobmanager" { # Flink JM1
+    if "org.apache.flink.taskmanager.Status" in [metric_path] {
+      mutate { update => { "block" => "1" }}
+
+      # Break the long metric name into smaller pieces
+      dissect {
+        mapping => { "metric_path" => "%{cluster}.%{platform}.%{role}.org.apache.flink.taskmanager.Status.%{metric_key}:host=%{ip_external},%{metric_payload}"}
+      }
+
+      # Decide if this metrics is of Count, Rate or Value type
+      if "Count" in [metric_payload]{
+        mutate {update => { "metric_type" => "Count" }}
+      }
+      else if "Rate" in [metric_payload]{
+        mutate {update => { "metric_type" => "Rate" }}
+      }
+      else if "Value" in [metric_payload]{
+        mutate { update => { "metric_type" => "Value" }}
+      }
+      mutate{
+        add_field => { "metric_role" => "status" }
+        add_field => { "hostname" => "%{ip_host}:%{port}" }
+        remove_field => [ "metric_payload", "host", "garbage" ]
+      }
+    }
+    else if "org.apache.flink.taskmanager.job.task.operator" in [metric_path] {
+      mutate { update => { "block" => "2" }}
+      dissect {
+        mapping => { "metric_path" => "%{cluster}.%{platform}.%{role}.org.apache.flink.taskmanager.job.task.operator.%{metric_key}:%{metric_payload}"}
+      }
+      kv {
+        source => "metric_payload"
+        field_split => ","
+        value_split => "="
+      }
+      if "Count" in [metric_payload]{
+        grok { match => { "host" => "%{IP:ip_host_temp}.%{WORD:metric_type}"} }
+        mutate { update => { "metric_type" => "Count" }}
+      }
+      else if "Rate" in [metric_payload]{
+        grok { match => { "host" => "%{IP:ip_host_temp}.%{WORD:metric_type}"} }
+        mutate { update => { "metric_type" => "Rate" }}
+      }
+      else if "Value" in [metric_payload] {
+        grok { match => { "host" => "%{IP:ip_host_temp}.%{WORD:metric_type}"} }
+        mutate { update => { "metric_type" => "Value" }}
+      }
+      mutate{
+        add_field => { "flink_role" => "taskmanager" }
+        add_field => { "metric_role" => "job" }
+        remove_field => ["metric_payload","ip_host_temp","host"]
+      }
+      mutate { add_field => { "hostname" => "%{ip_host}:%{port}" } }
+    }
+    else if "org.apache.flink.taskmanager.job.task" in [metric_path] {
+      mutate { update => { "block" => "3" }}
+      dissect {
+        mapping => { "metric_path" => "%{cluster}.%{platform}.%{role}.org.apache.flink.taskmanager.job.task.%{metric_key}:%{metric_payload}"}
+      }
+      kv {
+        source => "metric_payload"
+        field_split => ","
+        value_split => "="
+      }
+      if "Count" in [metric_payload]{
+        mutate {update => { "metric_type" => "Count" }}
+      }
+      else if "Rate" in [metric_payload]{
+        mutate {update => { "metric_type" => "Rate" }}
+      }
+      else if "Value" in [metric_payload]{
+        mutate { update => { "metric_type" => "Value" }}
+      }
+      mutate{
+        add_field => { "flink_role" => "taskmanager" }
+        add_field => { "metric_role" => "job" }
+        add_field => { "hostname" => "%{ip_host}:%{port}" }
+        remove_field => ["metric_payload"]
+      }
+    }
+    else if "org.apache.flink.jobmanager" in [metric_path] {
+      mutate { update => { "block" => "4" }}
+      mutate{
+        add_field => { "flink_role" => "jobmanager" }
+        add_field => { "metric_role" => "status" }
+      }
+      dissect {
+        mapping => { "metric_path" => "%{cluster}.%{platform}.%{role}.org.apache.flink.jobmanager.%{metric_key}:%{metric_payload}"}
+      }
+      kv {
+        source => "metric_payload"
+        field_split => ","
+        value_split => "="
+      }
+      mutate{
+        add_field => { "hostname" => "%{host}:%{port}" }
+        update => {"metric_type" => "Value"}
+        remove_field => ["metric_payload"]
+      }
+    }
+    else {
+      mutate { update => { "block" => "5" }}
+      dissect {
+        mapping => { "metric_path" => "%{cluster}.%{platform}.%{role}.%{metric_key}"}
+      }
+      mutate{
+        add_field => { "flink_role" => "other" }
+        add_field => { "metric_role" => "status" }
+        add_field => { "hostname" => "%{ip_host}:%{port}" }
+        remove_field => ["metric_payload"]
+      }
+    }
+  } else if [id] == "cluster1_site1_taskmanager1" { # Flink TM1
+    # TODO
+  } else if [id] == "cluster1_site2_master1" {  # Spark Master 1
+
+    # Extract event time, processing time and metric name (key)
+    dissect {
+      mapping => {
+        "message" => "%{event_time_epoch},%{metric_value_number}"
+        "path" => "/tmp/spark_metrics/master1/%{metric_key}.csv"
+      }
+    }
+
+    # Convert event time from timestamp to date time
+    date {
+      match => [ "event_time_epoch","UNIX" ]
+      timezone => "Europe/Athens"
+      target => "event_time"
+    }
+
+    # Keep track of both event and processing time but set the event time as event @timestamp
+    mutate {
+      convert => { "metric_value_number" => "float" }
+      rename => { "@timestamp" => "ingestion_time" }
+      add_field => { "platform" => "spark" }
+      copy => { "event_time" => "@timestamp"}
+      remove_field => [ "message", "event_time_epoch" ]
+    }
+
+
+  } else if [id] == "cluster1_site2_worker1" {  # Spark Worker 1
+
+    # Extract event time, processing time and metric name (key)
+    dissect {
+      mapping => {
+        "message" => "%{event_time_epoch},%{metric_value_number}"
+        "path" => "/tmp/spark_metrics/worker1/%{metric_key}.csv"
+      }
+    }
+
+    # Convert event time from timestamp to date time
+    date {
+      match => [ "event_time_epoch","UNIX" ]
+      timezone => "Europe/Athens"
+      target => "event_time"
+    }
+
+    # Keep track of both event and processing time but set the event time as event @timestamp
+    mutate {
+      convert => { "metric_value_number" => "float" }
+      rename => { "@timestamp" => "ingestion_time" }
+      add_field => { "platform" => "spark" }
+      copy => { "event_time" => "@timestamp"}
+      remove_field => [ "message", "event_time_epoch" ]
+    }
+  }
+
+  # Tag INFORE operators regardless of site/platform/cluster
+  if [task_name] {
+    if "streaming-kafka_source" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:kafka_source" }
+      }
+    }
+    else if "streaming-kafka_sink" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:kafka_sink" }
+      }
+    }
+    else if "streaming-aggregate" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:aggregate" }
+      }
+    }
+    else if "streaming-connect" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:connect" }
+      }
+    }
+    else if "streaming-duplicate" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:duplicate" }
+      }
+    }
+    else if "streaming-filter" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:filter" }
+      }
+    }
+    else if "streaming-join" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:join" }
+      }
+    }
+    else if "streaming-map" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "streaming:map" }
+      }
+    }
+    else if "multiply" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "multiply" }
+      }
+    }
+    else if "retrieve" in [task_name]{
+      mutate{
+        add_field => { "operator_type" => "retrieve" }
+      }
+    }
+    else{
+      mutate{
+        add_field => { "operator_type" => "unsupported_operator" }
+      }
+    }
+
+    if [operator_type] != "unsupported_operator" {
+      dissect { mapping => { "task_name" => "%{operator_class_temp}[%{operator_workflow_name}]" } }
+      mutate {remove_field => ["operator_class_temp"]}
+    }
+  }
+
+  # Clean-up
+  mutate{
+    remove_field => ["ip_external","ip_host"]
+  }
+}
+
+
+output {
+#  elasticsearch {
+#    hosts => ["${CLUSTER_1_ES_URL}"]
+#    index => "platform-stats"
+#    user => "${ES_USERNAME}"
+#    password => "${ES_PASSWORD}"
+#  }
+  stdout {}
+}

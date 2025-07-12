@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-1",
+    "blobWrite" : "cloud-0-0",
+    "decisionTreeTrain" : "cloud-0",
+    "mqttPublish" : "cloud-1",
+    "multiVarLinearRegTrain" : "cloud-1-1",
+    "sink" : "cloud-0-1",
+    "source" : "cloud-0-0",
+    "tableRead" : "cloud-0-1-0"
+  },
+  "appLoopLatency" : 9.16502920454559,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 5.134195068181672,
+    "sink_TUPLE" : 2.9159449271734466,
+    "annotation_TUPLE" : 12.19110326621714,
+    "decisionTreeTrain_TUPLE" : 3.1875484765629762,
+    "mqttPublish_TUPLE" : 16.239374657881044,
+    "tableRead_TUPLE" : 0.2684019199810731,
+    "blobWrite_TUPLE" : 4.881629640565933,
+    "TUPLE" : 0.10176822916666886
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2048,
+    "decisionTreeTrain" : 2048,
+    "sink" : 3982,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4096,
+    "mqttPublish" : 4053
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0362206075638583,
+    "multiVarLinearRegTrain" : 1.0359062317116097,
+    "decisionTreeTrain" : 1.028404065265885,
+    "sink" : 2.026542895695287,
+    "source" : 1.0381678770176601,
+    "tableRead" : 1.0373210596427267,
+    "blobWrite" : 2.052447025541837,
+    "mqttPublish" : 2.049071330167331
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.0286668913716464,
+    "multiVarLinearRegTrain" : 1.0333711697843218,
+    "decisionTreeTrain" : 1.026275048510113,
+    "sink" : 2.005911286427635,
+    "source" : 1.0381097717446848,
+    "tableRead" : 1.0372187744414612,
+    "blobWrite" : 2.0495842147062935,
+    "mqttPublish" : 2.027560296298218
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 0,
+    "mqttPublish" : 0
+  },
+  "executionTime" : 1251.0,
+  "networkUsage" : 113640.21,
+  "tuplesSentBySensors" : 2048
+}

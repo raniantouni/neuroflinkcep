@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: OptimizerApplication
+  profiles:
+    active: dev
+  main:
+    banner-mode: console
+    allow-circular-references: true
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+debug: true
+logging:
+  register-shutdown-hook: true
+  level:
+    web:
+      HttpLogging: INFO
+      client:
+        RestTemplate: INFO
+server:
+  address: 0.0.0.0
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+#Spring micrometer metrics are shipped to ELK
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics, elasticsearch
+  metrics:
+    web:
+      server:
+        request:
+          autotime:
+            percentiles: 0.01,0.1,0.9,0.99
+    export:
+      elastic:
+        enabled: true
+        auto-create-index: false
+        host: http://${ATHENA_ES_URL}
+        user-name: ${ES_USERNAME}
+        password: ${ES_PASSWORD}
+        index: optimizer-app-metrics
+        step: 5s
+        connect-timeout: 15s
+        batch-size: 10000
+        read-timeout: 10s
+        timestamp-field-name: "@timestamp"
+        index-date-format: "yyyy"
+        index-date-separator: "-"
+        pipeline: ""
+  health:
+    elasticsearch:
+      enabled: true

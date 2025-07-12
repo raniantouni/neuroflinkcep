@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-0-1-1",
+    "blobWrite" : "cloud-1-0-1",
+    "decisionTreeTrain" : "cloud",
+    "mqttPublish" : "cloud-0-0-1",
+    "multiVarLinearRegTrain" : "cloud-1-0",
+    "sink" : "cloud-0-0",
+    "source" : "cloud-1-0-0",
+    "tableRead" : "cloud-0-1"
+  },
+  "appLoopLatency" : 16.392612606300112,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 16.007661848956722,
+    "sink_TUPLE" : 0.9367162668674429,
+    "annotation_TUPLE" : 0.9375118726318555,
+    "decisionTreeTrain_TUPLE" : 0.3535549218754349,
+    "mqttPublish_TUPLE" : 0.8607400504302086,
+    "tableRead_TUPLE" : 1.5700781770834498,
+    "blobWrite_TUPLE" : 9.417126363187025,
+    "TUPLE" : 0.11722721354165061
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2048,
+    "decisionTreeTrain" : 2048,
+    "sink" : 4002,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4061,
+    "mqttPublish" : 4002
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0355462038257417,
+    "multiVarLinearRegTrain" : 1.0352322369889777,
+    "decisionTreeTrain" : 1.0339605577519677,
+    "sink" : 2.0095165491373423,
+    "source" : 1.0380100212569046,
+    "tableRead" : 1.0370337793026432,
+    "blobWrite" : 2.0492276786407553,
+    "mqttPublish" : 2.03057821448852
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.0348001988571074,
+    "multiVarLinearRegTrain" : 1.024871107987539,
+    "decisionTreeTrain" : 1.0337028800404646,
+    "sink" : 2.009058383707915,
+    "source" : 1.0379272757857365,
+    "tableRead" : 1.0360250058327412,
+    "blobWrite" : 2.032410452275737,
+    "mqttPublish" : 2.0100220512824665
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 0,
+    "mqttPublish" : 0
+  },
+  "executionTime" : 1428.0,
+  "networkUsage" : 106517.89,
+  "tuplesSentBySensors" : 2048
+}

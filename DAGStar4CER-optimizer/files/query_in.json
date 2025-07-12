@@ -1,0 +1,26 @@
+{
+  "aggs": {
+    "job_agg": {
+      "terms": {
+        "field": "JobID.keyword"
+      },
+      "aggs": {
+        "avg_op_latency": {
+          "avg": {
+            "field": "op_latency"
+          }
+        },
+        "min_op_latency": {
+          "min": {
+            "field": "op_latency"
+          }
+        },
+        "max_op_latency": {
+          "max": {
+            "field": "op_latency"
+          }
+        }
+      }
+    }
+  }
+}

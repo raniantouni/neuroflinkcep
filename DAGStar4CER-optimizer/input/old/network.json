@@ -1,0 +1,47 @@
+{
+  "network": "network1",
+  "sites": [
+    {
+      "siteName": "Freya 1",
+      "availablePlatforms": [
+        {
+          "platformName": "flink",
+          "driverMemoryMB": 4096,
+          "executors": 1,
+          "executorCores": 4,
+          "executorMemoryMB": 4096,
+          "topicKey": "Freya Flink_flink1"
+        },
+        {
+          "platformName": "spark",
+          "driverMemoryMB": 4096,
+          "executors": 1,
+          "executorCores": 4,
+          "executorMemoryMB": 4096,
+          "topicKey": "Freya Spark_spark1"
+        }
+      ]
+    },
+    {
+      "siteName": "Freya 2",
+      "availablePlatforms": [
+        {
+          "platformName": "spark",
+          "driverMemoryMB": 4096,
+          "executors": 1,
+          "executorCores": 4,
+          "executorMemoryMB": 4096,
+          "topicKey": "Freya Spark_spark1"
+        },
+        {
+          "platformName": "flink",
+          "driverMemoryMB": 4096,
+          "executors": 1,
+          "executorCores": 4,
+          "executorMemoryMB": 4096,
+          "topicKey": "Freya Flink_flink1"
+        }
+      ]
+    }
+  ]
+}

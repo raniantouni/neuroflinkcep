@@ -1,0 +1,45 @@
+{
+  "restart": "false",
+  "jobs": [
+    {
+      "job name": "simple1",
+      "checkpoint location": "hdfs://45.10.26.123:9000/apps/Checkpoint/simple1/",
+      "merge": "false"
+    },
+    {
+      "job name": "simple2",
+      "checkpoint location": "hdfs://45.10.26.123:9000/apps/Checkpoint/simple2/",
+      "merge": "false"
+    },
+    {
+      "job name": "complex",
+      "checkpoint location": "hdfs://45.10.26.123:9000/apps/Checkpoint/DemoTest/",
+      "merge": "false",
+      "merge_jobs": [
+        "hdfs://45.10.26.123:9000/apps/Checkpoint/CopyTEST/SKcountSIMPLE"
+      ],
+      "remote": "false",
+      "remote_connection": "clu01.softnet.tuc.gr:8999",
+      "remote_location": ""
+    },
+    {
+      "job name": "newOperators",
+      "checkpoint location": "hdfs://45.10.26.123:9000/apps/Checkpoint/newOperatorsTESTER/",
+      "merge": "false",
+      "merge_jobs": [
+        "hdfs://45.10.26.123:9000/apps/Checkpoint/complex/SKcount/state/0/0/1.delta"
+      ],
+      "remote": "true",
+      "remote_connection": "clu01.softnet.tuc.gr:8999"
+    },
+    {
+      "job name": "JobBase",
+      "checkpoint location": "hdfs://45.10.26.123:9000/apps/Checkpoint/JobBaseTESTer/",
+      "merge": "false",
+      "merge_jobs": [
+        "hdfs://45.10.26.123:9000/apps/Checkpoint/simple1/SKcount",
+        "hdfs://45.10.26.123:9000/apps/Checkpoint/simple2/SKsum"
+      ]
+    }
+  ]
+}

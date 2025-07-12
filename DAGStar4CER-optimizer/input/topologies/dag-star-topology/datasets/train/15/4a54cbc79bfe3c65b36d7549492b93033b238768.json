@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud",
+    "blobWrite" : "cloud-0",
+    "decisionTreeTrain" : "cloud-0-1",
+    "mqttPublish" : "cloud-1-1-1",
+    "multiVarLinearRegTrain" : "cloud-0",
+    "sink" : "cloud-0-1-0",
+    "source" : "cloud-0-1-0",
+    "tableRead" : "cloud-1-1-0"
+  },
+  "appLoopLatency" : 17.017297727272517,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 8.672532331912862,
+    "sink_TUPLE" : 1.066946495234481,
+    "annotation_TUPLE" : 0.12252314157182063,
+    "mqttPublish_TUPLE" : 1.1699933316904765,
+    "decisionTreeTrain_TUPLE" : 16.26034290349949,
+    "tableRead_TUPLE" : 0.1532728622159074,
+    "blobWrite_TUPLE" : 4.801664211408658,
+    "TUPLE" : 0.10603551136358808
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2048,
+    "decisionTreeTrain" : 2007,
+    "sink" : 3986,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4055,
+    "mqttPublish" : 4055
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0346738098555863,
+    "multiVarLinearRegTrain" : 1.0345692849825905,
+    "decisionTreeTrain" : 1.0341904730168316,
+    "sink" : 1.9994637617801836,
+    "source" : 1.037431627278373,
+    "tableRead" : 1.0356429598109576,
+    "blobWrite" : 2.0367738379035,
+    "mqttPublish" : 2.030640948997453
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.0346084728017373,
+    "multiVarLinearRegTrain" : 1.029835170671477,
+    "decisionTreeTrain" : 1.0083943170835257,
+    "sink" : 1.999211530384243,
+    "source" : 1.0373741019840939,
+    "tableRead" : 1.0355633185025694,
+    "blobWrite" : 2.0322696344850386,
+    "mqttPublish" : 2.0290786782788937
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 0,
+    "mqttPublish" : 345000
+  },
+  "executionTime" : 1383.0,
+  "networkUsage" : 133350.23,
+  "tuplesSentBySensors" : 2048
+}

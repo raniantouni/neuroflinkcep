@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: AdaptationApplication
+  profiles:
+    active: dev
+  main:
+    banner-mode: console
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+logging:
+  register-shutdown-hook: true
+  file:
+    path: ${ADAPTATION_LOG_DIR}
+    name: adaptation.log
+  level:
+    org:
+      springframework:
+        web:
+          HttpLogging: INFO
+          client:
+            RestTemplate: INFO
+server:
+  address: 0.0.0.0
+  port: ${ATHENA_ADAPTATION_PORT}
+  error:
+    whitelabel:
+      enabled: false

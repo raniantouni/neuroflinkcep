@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="logRoot">logs</Property>
+        <Property name="root_pattern">
+            [%highlight{%-5level}] %d{DEFAULT} %c{1}.%M() - %msg%n%throwable{short.lineNumber}
+        </Property>
+        <Property name="console_pattern">%d{HH:mm:ss.SSS} %-5level %logger{36} -> %msg%n</Property>
+        <Property name="pattern1">%d %p %c{1.} [%t] %m%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${console_pattern}"/>
+        </Console>
+        <File name="root" fileName="${logRoot}/root.log" immediateFlush="false" append="false">
+            <PatternLayout pattern="${root_pattern}"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="ALL">
+            <AppenderRef ref="root"/>
+        </Root>
+    </Loggers>
+</Configuration>
+
+        <!-- LOG LEVELS
+            OFF	    0
+            FATAL	100
+            ERROR	200
+            WARN	300
+            INFO	400
+            DEBUG	500
+            TRACE	600
+            ALL	    Integer.MAX_VALUE
+        -->

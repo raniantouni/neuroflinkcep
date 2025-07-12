@@ -1,0 +1,74 @@
+version: "3.6"
+
+services:
+  namenode:
+    build:
+      context: ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/namenode
+    container_name: namenode
+    ports:
+      - "9870:9870"
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/hadoop.env
+    networks:
+      - hadoop
+
+  datanode:
+    build:
+      context: ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/datanode
+    container_name: datanode
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/hadoop.env
+    networks:
+      - hadoop
+
+  resourcemanager:
+    build:
+      context: ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/resourcemanager
+    container_name: resourcemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864"
+    env_file:
+      - ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/hadoop.env
+    networks:
+      - hadoop
+
+  nodemanager1:
+    build:
+      context: ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/nodemanager
+    container_name: nodemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864 resourcemanager:8088"
+    env_file:
+      - ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/hadoop.env
+    networks:
+      - hadoop
+
+  historyserver:
+    build:
+      context: ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/historyserver
+    container_name: historyserver
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870 datanode:9864 resourcemanager:8088"
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+    env_file:
+      - ./deployment/docker-hadoop-2.0.0-hadoop3.1.3-java8/hadoop.env
+    networks:
+      - hadoop
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+  hadoop_historyserver:
+
+networks:
+  hadoop:
+    name: hadoop-net

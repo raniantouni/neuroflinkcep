@@ -1,0 +1,72 @@
+{
+  "placement" : {
+    "average" : "cloud-0-0-0-0-1-1-1-1-1-0",
+    "blobRead" : "cloud-0-0-1-0-1-1-1-1-1-1",
+    "decisionTree" : "cloud-1-1-0-1-0-1-1-0-1-0",
+    "errorEstimate" : "cloud-1-1-1-0-0-1-0-1-1",
+    "mqttPublish" : "cloud-1-1-1-1-1-1-1-1-0",
+    "multiVarLinearReg" : "cloud-1-1-1-0-1-0-0-1-0",
+    "senMLParse" : "cloud-0-0-1-0-0-1-0-0-1-0",
+    "sink" : "cloud-1-1-0-1-1-1-1-1-0-0",
+    "source" : "cloud-1-1-0-0-0-0-1-1"
+  },
+  "appLoopLatency" : 37.35937313333318,
+  "latencyPerTupleType" : {
+    "blobRead_TUPLE" : 0.11451965555541614,
+    "average_TUPLE" : 5.333109447306811,
+    "sink_TUPLE" : 0.79666180533074,
+    "errorEstimate_TUPLE" : 1.5920348466701264,
+    "mqttPublish_TUPLE" : 3.6807842569021236,
+    "decisionTree_TUPLE" : 5.628712004905557,
+    "multiVarLinearReg_TUPLE" : 20.16788450141112,
+    "senMLParse_TUPLE" : 0.1145196555554143,
+    "TUPLE" : 0.09732055555555084
+  },
+  "tuplesProcessedPerModule" : {
+    "errorEstimate" : 13981,
+    "average" : 4697,
+    "multiVarLinearReg" : 9333,
+    "decisionTree" : 9377,
+    "sink" : 23250,
+    "blobRead" : 4800,
+    "source" : 4800,
+    "senMLParse" : 4800,
+    "mqttPublish" : 23254
+  },
+  "recsInPerModule" : {
+    "errorEstimate" : 6.992594110617574,
+    "average" : 2.3998074564154055,
+    "multiVarLinearReg" : 4.7991750195140614,
+    "decisionTree" : 4.76223561875059,
+    "sink" : 11.69616155023147,
+    "blobRead" : 2.409752009341591,
+    "source" : 2.4208178228677513,
+    "senMLParse" : 2.408784574383795,
+    "mqttPublish" : 11.631955858769388
+  },
+  "recsOutPerModule" : {
+    "errorEstimate" : 6.992171540370907,
+    "average" : 2.349290467329736,
+    "multiVarLinearReg" : 4.669299212192615,
+    "decisionTree" : 4.6892010191401585,
+    "sink" : 11.688437933234923,
+    "blobRead" : 2.4096058374468456,
+    "source" : 2.4208114639880445,
+    "senMLParse" : 2.4086385198282017,
+    "mqttPublish" : 11.631404372781173
+  },
+  "remainingDataPerDevice" : {
+    "errorEstimate" : 60000,
+    "average" : 90000,
+    "multiVarLinearReg" : 8000,
+    "decisionTree" : 148000,
+    "sink" : 0,
+    "blobRead" : 22000,
+    "source" : 0,
+    "senMLParse" : 140000,
+    "mqttPublish" : 8000
+  },
+  "executionTime" : 6633.0,
+  "networkUsage" : 652485.64,
+  "tuplesSentBySensors" : 4800
+}

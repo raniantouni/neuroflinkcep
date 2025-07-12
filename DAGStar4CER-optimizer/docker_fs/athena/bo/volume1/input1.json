@@ -1,0 +1,786 @@
+{
+  "dictionaryName": "dict_5_1",
+  "operators": [
+    {
+      "classKey": "streaming:aggregate",
+      "costCoefficients": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:aggregate",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:connect",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:connect",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:duplicate",
+      "costCoefficients": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:duplicate",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:filter",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:filter",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:join",
+      "costCoefficients": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:join",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:kafka_sink",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:kafka_sink",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:kafka_source",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:kafka_source",
+          "staticCost": 15,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:map",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:map",
+          "staticCost": 20,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "streaming:sde",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_streaming:sde",
+          "staticCost": 25,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "multiply",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_multiply",
+          "staticCost": 5,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    },
+    {
+      "classKey": "retrieve",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "platforms": {
+        "platform_0": {
+          "operatorName": "platform_0_retrieve",
+          "staticCost": 10,
+          "migrationCosts": {
+            "platform_0": 0
+          }
+        }
+      },
+      "sites": {
+        "site_0": {
+          "staticCost": 90,
+          "migrationCosts": {
+            "site_0": 0,
+            "site_1": 200,
+            "site_2": 1000,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_1": {
+          "staticCost": 100,
+          "migrationCosts": {
+            "site_0": 200,
+            "site_1": 0,
+            "site_2": 200,
+            "site_3": 1000,
+            "site_4": 1000
+          }
+        },
+        "site_2": {
+          "staticCost": 110,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 200,
+            "site_2": 0,
+            "site_3": 200,
+            "site_4": 1000
+          }
+        },
+        "site_3": {
+          "staticCost": 120,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 200,
+            "site_3": 0,
+            "site_4": 200
+          }
+        },
+        "site_4": {
+          "staticCost": 80,
+          "migrationCosts": {
+            "site_0": 1000,
+            "site_1": 1000,
+            "site_2": 1000,
+            "site_3": 200,
+            "site_4": 0
+          }
+        }
+      }
+    }
+  ]
+}

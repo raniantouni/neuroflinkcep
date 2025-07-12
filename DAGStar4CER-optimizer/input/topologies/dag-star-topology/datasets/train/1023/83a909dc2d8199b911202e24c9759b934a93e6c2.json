@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-0-1-0-1-1-0-0-0",
+    "blobWrite" : "cloud-1-0-1-1",
+    "decisionTreeTrain" : "cloud-1-1-1-1-1-0-0-0-1",
+    "mqttPublish" : "cloud-1-1-1-1-0-1-0-1-1",
+    "multiVarLinearRegTrain" : "cloud-1-0-1-1-1-1-1-1",
+    "sink" : "cloud-0-0-0-1-1-1",
+    "source" : "cloud-0-1-1-1-0-1-0-1-1",
+    "tableRead" : "cloud-0-1-0-1-1-0-0-1"
+  },
+  "appLoopLatency" : 35.005849787878525,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 29.323537083655708,
+    "sink_TUPLE" : 0.7663245474762227,
+    "annotation_TUPLE" : 1.6313943828283366,
+    "decisionTreeTrain_TUPLE" : 1.3859596262458804,
+    "mqttPublish_TUPLE" : 1.4333037506443227,
+    "tableRead_TUPLE" : 0.2101804877777911,
+    "blobWrite_TUPLE" : 4.238696499358359,
+    "TUPLE" : 0.09365388888888825
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 4800,
+    "multiVarLinearRegTrain" : 4658,
+    "decisionTreeTrain" : 4747,
+    "sink" : 9300,
+    "source" : 4800,
+    "tableRead" : 4800,
+    "blobWrite" : 9355,
+    "mqttPublish" : 9310
+  },
+  "recsInPerModule" : {
+    "annotation" : 2.4158919926052875,
+    "multiVarLinearRegTrain" : 2.408134958229164,
+    "decisionTreeTrain" : 2.4030491935675102,
+    "sink" : 4.671642875485376,
+    "source" : 2.4243636424245456,
+    "tableRead" : 2.418011718309944,
+    "blobWrite" : 4.6905702987497095,
+    "mqttPublish" : 4.656103192645924
+  },
+  "recsOutPerModule" : {
+    "annotation" : 2.413332012765065,
+    "multiVarLinearRegTrain" : 2.3396441872485343,
+    "decisionTreeTrain" : 2.378306690014733,
+    "sink" : 4.6684525750558725,
+    "source" : 2.424362366917606,
+    "tableRead" : 2.417839169388837,
+    "blobWrite" : 4.678900744740733,
+    "mqttPublish" : 4.655773330545883
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 120000,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 225000,
+    "mqttPublish" : 50000
+  },
+  "executionTime" : 1519.0,
+  "networkUsage" : 1309461.16,
+  "tuplesSentBySensors" : 4800
+}

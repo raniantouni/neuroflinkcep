@@ -1,0 +1,258 @@
+version: "3.4"
+
+services:
+  logstash:
+    build:
+      context: ./deployment/elk/logstash
+      args:
+        ELK_VERSION: ${ELK_VERSION}
+    volumes:
+      - type: bind
+        source: ./docker_fs/cluster1/logstash/monitoring
+        target: /usr/share/logstash/monitoring
+      - type: bind
+        source: ./docker_fs/cluster1/logstash/pipelines
+        target: /tmp/config/pipelines
+      - type: bind
+        source: ./docker_fs/cluster1/logstash/pipelines.yml
+        target: /usr/share/logstash/config/pipelines.yml
+      - type: bind
+        source: ./docker_fs/cluster1/logstash/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+      # Log ingestion
+      - type: bind
+        source: ./docker_fs/cluster1/spark_master/metrics
+        target: /tmp/spark_metrics/master1
+        read_only: true
+      - type: bind
+        source: ./docker_fs/cluster1/spark_worker1/metrics
+        target: /tmp/spark_metrics/worker1
+        read_only: true
+      - type: bind
+        source: ./docker_fs/cluster1/flink_jm/metrics
+        target: /tmp/flink_metrics/jobmanager
+        read_only: true
+      - type: bind
+        source: ./docker_fs/cluster1/flink_tm1/metrics
+        target: /tmp/flink_metrics/taskmanager1
+        read_only: true
+
+    ports:
+      - "${CLUSTER_1_LOGSTASH_WEB_API_PORT}:9600"
+      - "${CLUSTER_1_LOGSTASH_TCP_INPUT_PORT}:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx4g -Xms256m"
+      CLUSTER_NAME: "spring"
+    networks:
+      - cluster1_net
+      - hadoop-net
+    env_file:
+      - .env
+
+  jobmanager:
+    image: flink:1.12.0-scala_2.12
+    ports:
+      - "${CLUSTER_1_JM_REST_PORT}:8081"
+      - "${CLUSTER_1_JM_WEB_PORT}:8082"
+      - "${CLUSTER_1_JM_RPC_PORT}:6123"
+    command: jobmanager
+    volumes:
+      - type: bind
+        source: ./docker_fs/cluster1/flink_apps
+        target: /opt/flink/usrlib
+        read_only: true
+      - type: bind
+        source: ./docker_fs/cluster1/flink_jm/logs
+        target: /tmp/logs
+      - type: bind
+        source: ./docker_fs/cluster1/flink_jm/metrics
+        target: /tmp/metrics
+      - type: bind # Consider mounting the entire conf folder
+        source: ./docker_fs/cluster1/flink_jm/conf/log4j-console.properties
+        target: /opt/flink/conf/log4j-console.properties
+        read_only: true
+    networks:
+      - cluster1_net
+      - hadoop-net
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        rest.port: 8081
+        flink.web.port: 8082
+        taskmanager.data.port: 46121
+        taskmanager.rpc.port: 46122
+        jobmanager.rpc.port: 46123
+        parallelism.default: 1
+        web.submit.enable: true
+        metrics.reporters: slf4j_reporter
+        metrics.reporter.slf4j_reporter.factory.class: org.apache.flink.metrics.slf4j.Slf4jReporterFactory
+        metrics.reporter.slf4j_reporter.interval: 5 SECONDS
+        metrics.delimiter: .
+    env_file:
+      - .env
+
+  taskmanager:
+    image: flink:1.12.0-scala_2.12
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    ports:
+      - "${CLUSTER_1_TM_DATA_PORT}:6121"
+      - "${CLUSTER_1_TM_RPC_PORT}:6122"
+    networks:
+      - cluster1_net
+      - hadoop-net
+    volumes:
+      - type: bind
+        source: ./docker_fs/cluster1/flink_apps
+        target: /opt/flink/usrlib
+        read_only: true
+      - type: bind
+        source: ./docker_fs/cluster1/flink_tm1/logs
+        target: /tmp/logs
+      - type: bind
+        source: ./docker_fs/cluster1/flink_tm1/metrics
+        target: /tmp/metrics
+      - type: bind
+        source: ./docker_fs/cluster1/flink_tm1/conf/log4j-console.properties
+        target: /opt/flink/conf/log4j-console.properties
+        read_only: true
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        taskmanager.data.port: 6121
+        taskmanager.rpc.port: 6122
+        jobmanager.rpc.port: 46123
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 8
+        parallelism.default: 8
+        web.submit.enable: true
+        taskmanager.memory.framework.heap.size: 128m
+        taskmanager.memory.framework.off-heap.size: 128m
+        taskmanager.memory.jvm-metaspace.size: 256m
+        metrics.reporters: slf4j_reporter
+        metrics.reporter.slf4j_reporter.factory.class: org.apache.flink.metrics.slf4j.Slf4jReporterFactory
+        metrics.reporter.slf4j_reporter.interval: 5 SECONDS
+        metrics.delimiter: .
+    env_file:
+      - .env
+
+  zookeeper:
+    image: zookeeper:3.4.9
+    hostname: zookeeper
+    ports:
+      - "${CLUSTER_1_ZK_CLIENT_PORT}:${CLUSTER_1_ZK_CLIENT_PORT}"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: ${CLUSTER_1_ZK_CLIENT_PORT}
+      ZOO_SERVERS: server.1=zookeeper:2888:3888
+    volumes:
+      - type: bind
+        source: ./docker_fs/cluster1/zookeeper/data
+        target: /data
+      - type: bind
+        source: ./docker_fs/cluster1/zookeeper/datalog
+        target: /datalog
+    networks:
+      - cluster1_net
+    env_file:
+      - .env
+
+  kafka1:
+    image: confluentinc/cp-kafka:5.3.1
+    hostname: kafka1
+    ports:
+      - "${CLUSTER_1_KAFKA1_SERVER_PORT}:${CLUSTER_1_KAFKA1_SERVER_PORT}"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:19096,LISTENER_DOCKER_EXTERNAL://${host.docker.internal}:${CLUSTER_1_KAFKA1_SERVER_PORT}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:${CLUSTER_1_ZK_CLIENT_PORT}"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+    volumes:
+      - type: bind
+        source: ./docker_fs/cluster1/kafka_broker1/data
+        target: /var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    networks:
+      - cluster1_net
+    env_file:
+      - .env
+
+  livy-server:
+    image: cloudiator/livy-server:latest
+    ports:
+      - "${CLUSTER_1_LIVY_SERVER_PORT}:8998"
+    environment:
+      SPARK_MASTER_ENDPOINT: spark-master
+      SPARK_MASTER_PORT: 7070
+      DEPLOY_MODE: cluster
+    networks:
+      - cluster1_net
+    env_file:
+      - .env
+
+  spark-master:
+    image: bde2020/spark-master:2.4.5-hadoop2.7
+    container_name: spark-master
+    ports:
+      - "${CLUSTER_1_SPARK_MASTER_UI_PORT}:8080"
+      - "${CLUSTER_1_SPARK_MASTER_PORT}:7070"
+      - "${CLUSTER_1_SPARK_REST_PORT}:6066"
+    environment:
+      INIT_DAEMON_STEP: setup_spark
+      SPARK_MASTER_HOST: host.docker.internal
+      SPARK_MASTER_PORT: 7070
+      SPARK_CONF_DIR: /spark/conf
+    volumes:
+      - type: bind
+        source: ./docker_fs/cluster1/spark_master/conf
+        target: /spark/conf
+        read_only: true
+      - type: bind
+        source: ./docker_fs/cluster1/spark_master/logs
+        target: /tmp/logs
+      - type: bind
+        source: ./docker_fs/cluster1/spark_master/metrics
+        target: /tmp/spark_metrics/master1
+    networks:
+      - cluster1_net
+      - hadoop-net
+    env_file:
+      - .env
+
+  spark_worker1:
+    image: bde2020/spark-worker:2.4.5-hadoop2.7
+    container_name: spark_worker1
+    depends_on:
+      - spark-master
+    ports:
+      - "${CLUSTER_1_SPARK_WORKER_UI_PORT}:8081"
+    environment:
+      SPARK_MASTER: spark://spark-master:7070
+      SPARK_CONF_DIR: /spark/conf
+    volumes:
+      - type: bind
+        source: ./docker_fs/cluster1/spark_worker1/conf
+        target: /spark/conf
+        read_only: true
+      - type: bind
+        source: ./docker_fs/cluster1/spark_worker1/logs
+        target: /tmp/logs
+      - type: bind
+        source: ./docker_fs/cluster1/spark_worker1/metrics
+        target: /tmp/spark_metrics/woerker1
+    networks:
+      - cluster1_net
+      - hadoop-net
+    env_file:
+      - .env
+
+networks:
+  cluster1_net:
+    driver: bridge
+  hadoop-net: # External HDFS network
+    external: true

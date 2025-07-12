@@ -1,0 +1,8 @@
+# This is for Spark and Flink JMX input stats
+- pipeline.id: platform-stats
+  queue.type: memory
+  path.config: "/tmp/config/pipelines/platform-stats.yaml"
+  pipeline.workers: 1
+  pipeline.batch.size: 10
+  queue.max_events: 0
+  pipeline.java_execution: false

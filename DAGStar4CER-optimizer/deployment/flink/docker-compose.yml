@@ -1,0 +1,48 @@
+version: "3.4"
+
+services:
+  jobmanager:
+    image: flink:1.8.2-scala_2.11
+    ports:
+      - 6123:6123
+      - 28081:28081
+      - 9250:9250
+    command: jobmanager
+    networks:
+      - net_flink
+    environment:
+      JOB_MANAGER_RPC_ADDRESS: jobmanager
+      FLINK_CONF_DIR: /docker_conf
+    volumes:
+      - type: bind
+        source: ./conf/jobmanager
+        target: /docker_conf
+        read_only: true
+
+  taskmanager:
+    image: flink:1.8.2-scala_2.11
+    ports:
+      - 6121:6121
+      - 6122:6122
+      - 9251:9251
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    networks:
+      - net_flink
+    environment:
+      JOB_MANAGER_RPC_ADDRESS: jobmanager
+      FLINK_CONF_DIR: /docker_conf
+    volumes:
+      - type: bind
+        source: ./conf/taskmanager
+        target: /docker_conf
+        read_only: true
+
+networks:
+  net_flink:
+    driver: bridge
+
+volumes:
+  flink:
+    driver: local

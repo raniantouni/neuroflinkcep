@@ -1,0 +1,227 @@
+{
+  "version": "7.10.2",
+  "objects": [
+    {
+      "id": "ff62a070-8353-11eb-870f-f3cd5fd31c97",
+      "type": "dashboard",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T17:58:40.979Z",
+      "version": "WzE5OTYsMV0=",
+      "attributes": {
+        "title": "Workflow Operator and Process Stats",
+        "hits": 0,
+        "description": "",
+        "panelsJSON": "[{\"version\":\"7.10.2\",\"gridData\":{\"h\":18,\"i\":\"ea2388fa-0546-4944-b9a2-d14bdea3b559\",\"w\":19,\"x\":0,\"y\":0},\"panelIndex\":\"ea2388fa-0546-4944-b9a2-d14bdea3b559\",\"embeddableConfig\":{},\"panelRefName\":\"panel_0\"},{\"version\":\"7.10.2\",\"gridData\":{\"h\":18,\"i\":\"0087f9e8-00f5-4b60-aac6-b749a4213038\",\"w\":19,\"x\":19,\"y\":0},\"panelIndex\":\"0087f9e8-00f5-4b60-aac6-b749a4213038\",\"embeddableConfig\":{\"title\":\"numBytesOutPerSecond per Operator\",\"hidePanelTitles\":false},\"title\":\"numBytesOutPerSecond per Operator\",\"panelRefName\":\"panel_1\"},{\"version\":\"7.10.2\",\"gridData\":{\"h\":18,\"i\":\"7bcc50cb-25d0-4d55-8d49-86936c666ece\",\"w\":19,\"x\":19,\"y\":18},\"panelIndex\":\"7bcc50cb-25d0-4d55-8d49-86936c666ece\",\"embeddableConfig\":{\"title\":\"log numRecordsOutPerSecond  per Operator\",\"hidePanelTitles\":false},\"title\":\"log numRecordsOutPerSecond  per Operator\",\"panelRefName\":\"panel_2\"},{\"version\":\"7.10.2\",\"gridData\":{\"h\":18,\"i\":\"22018f29-e284-48a7-9466-22531b4da68e\",\"w\":19,\"x\":0,\"y\":18},\"panelIndex\":\"22018f29-e284-48a7-9466-22531b4da68e\",\"embeddableConfig\":{\"title\":\"log numRecordsOutPerSecond  per Operator\",\"hidePanelTitles\":false},\"title\":\"log numRecordsOutPerSecond  per Operator\",\"panelRefName\":\"panel_3\"},{\"version\":\"7.10.2\",\"gridData\":{\"h\":18,\"i\":\"44104116-ff21-4080-a6c6-d24bea3e2587\",\"w\":19,\"x\":0,\"y\":36},\"panelIndex\":\"44104116-ff21-4080-a6c6-d24bea3e2587\",\"embeddableConfig\":{\"title\":\"JVM.Memory.Direct.MemoryUsed per Host\",\"hidePanelTitles\":false},\"title\":\"JVM.Memory.Direct.MemoryUsed per Host\",\"panelRefName\":\"panel_4\"},{\"version\":\"7.10.2\",\"gridData\":{\"h\":18,\"i\":\"802abe28-4bbf-48a9-bd6e-9867996acc19\",\"w\":19,\"x\":19,\"y\":36},\"panelIndex\":\"802abe28-4bbf-48a9-bd6e-9867996acc19\",\"embeddableConfig\":{\"title\":\"JVM.Memory.Direct.MemoryUsed per Host\",\"hidePanelTitles\":false},\"title\":\"JVM.Memory.Direct.MemoryUsed per Host\",\"panelRefName\":\"panel_5\"},{\"version\":\"7.10.2\",\"gridData\":{\"h\":18,\"i\":\"0dc03321-87cd-4ca5-8730-c602c8eeb496\",\"w\":19,\"x\":0,\"y\":54},\"panelIndex\":\"0dc03321-87cd-4ca5-8730-c602c8eeb496\",\"embeddableConfig\":{\"title\":\"JVM.Memory.Heap.Max per Host\",\"hidePanelTitles\":false},\"title\":\"JVM.Memory.Heap.Max per Host\",\"panelRefName\":\"panel_6\"}]",
+        "optionsJSON": "{\"hidePanelTitles\":false,\"useMargins\":true}",
+        "version": 1,
+        "timeRestore": false,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"language\":\"kuery\",\"query\":\"\"},\"filter\":[]}"
+        }
+      },
+      "references": [
+        {
+          "name": "panel_0",
+          "type": "visualization",
+          "id": "6162a0f0-8353-11eb-870f-f3cd5fd31c97"
+        },
+        {
+          "name": "panel_1",
+          "type": "visualization",
+          "id": "7753ffd0-8353-11eb-870f-f3cd5fd31c97"
+        },
+        {
+          "name": "panel_2",
+          "type": "visualization",
+          "id": "14d88dc0-8354-11eb-870f-f3cd5fd31c97"
+        },
+        {
+          "name": "panel_3",
+          "type": "visualization",
+          "id": "8ffa01f0-8354-11eb-870f-f3cd5fd31c97"
+        },
+        {
+          "name": "panel_4",
+          "type": "visualization",
+          "id": "0c7f0b80-835a-11eb-870f-f3cd5fd31c97"
+        },
+        {
+          "name": "panel_5",
+          "type": "visualization",
+          "id": "3d950110-835b-11eb-870f-f3cd5fd31c97"
+        },
+        {
+          "name": "panel_6",
+          "type": "visualization",
+          "id": "46f17030-835c-11eb-870f-f3cd5fd31c97"
+        }
+      ],
+      "migrationVersion": {
+        "dashboard": "7.9.3"
+      }
+    },
+    {
+      "id": "6162a0f0-8353-11eb-870f-f3cd5fd31c97",
+      "type": "visualization",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T16:52:50.431Z",
+      "version": "Wzg2MCwxXQ==",
+      "attributes": {
+        "title": "numBytesInLocalPerSecond per Operator",
+        "visState": "{\"title\":\"numBytesInLocalPerSecond per Operator\",\"type\":\"metrics\",\"aggs\":[],\"params\":{\"id\":\"61ca57f0-469d-11e7-af02-69e470af7417\",\"type\":\"timeseries\",\"series\":[{\"id\":\"14cc8730-8351-11eb-82cc-276e52b494ba\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"14cc8731-8351-11eb-82cc-276e52b494ba\",\"type\":\"avg\",\"field\":\"metric_value_number\"}],\"separate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"bytes\",\"chart_type\":\"line\",\"line_width\":\"1\",\"point_size\":\"3\",\"fill\":\"0.3\",\"stacked\":\"none\",\"terms_field\":\"operator_workflow_name.keyword\",\"label\":\"numBytesInLocalPerSecond - Rate  per Operator\",\"type\":\"timeseries\",\"terms_include\":\"\",\"filter\":{\"query\":\"metric_key : numBytesInLocalPerSecond and metric_type: Rate\",\"language\":\"kuery\"},\"override_index_pattern\":0,\"value_template\":\"{{value}}/s\",\"steps\":1,\"split_color_mode\":\"kibana\",\"terms_order_by\":\"_key\",\"terms_size\":\"20\"}],\"time_field\":\"@timestamp\",\"index_pattern\":\"platform-stats\",\"interval\":\"\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"axis_scale\":\"normal\",\"show_legend\":1,\"show_grid\":1,\"tooltip_mode\":\"show_all\",\"default_index_pattern\":\"infore_dictionary\",\"default_timefield\":\"@timestamp\",\"isModelInvalid\":false,\"background_color_rules\":[{\"id\":\"3e635920-8351-11eb-82cc-276e52b494ba\"}],\"bar_color_rules\":[{\"id\":\"415f5b10-8351-11eb-82cc-276e52b494ba\"}],\"background_color\":\"rgba(255,255,255,1)\"}}",
+        "uiStateJSON": "{}",
+        "description": "",
+        "version": 1,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [],
+      "migrationVersion": {
+        "visualization": "7.10.0"
+      }
+    },
+    {
+      "id": "7753ffd0-8353-11eb-870f-f3cd5fd31c97",
+      "type": "visualization",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T16:55:00.494Z",
+      "version": "WzkxMSwxXQ==",
+      "attributes": {
+        "title": "numBytesInLocalPerSecond per Operator (copy)",
+        "visState": "{\"title\":\"numBytesInLocalPerSecond per Operator (copy)\",\"type\":\"metrics\",\"aggs\":[],\"params\":{\"id\":\"61ca57f0-469d-11e7-af02-69e470af7417\",\"type\":\"timeseries\",\"series\":[{\"id\":\"14cc8730-8351-11eb-82cc-276e52b494ba\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"14cc8731-8351-11eb-82cc-276e52b494ba\",\"type\":\"avg\",\"field\":\"metric_value_number\"}],\"separate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"bytes\",\"chart_type\":\"line\",\"line_width\":\"1\",\"point_size\":\"3\",\"fill\":\"0.3\",\"stacked\":\"none\",\"terms_field\":\"operator_workflow_name.keyword\",\"label\":\"numBytesOutPerSecond - Rate  per Operator\",\"type\":\"timeseries\",\"terms_include\":\"\",\"filter\":{\"query\":\"metric_key : numBytesOutPerSecond and metric_type: Rate\",\"language\":\"kuery\"},\"override_index_pattern\":0,\"value_template\":\"{{value}}/s\",\"steps\":1,\"split_color_mode\":\"kibana\",\"terms_order_by\":\"_key\",\"terms_size\":\"20\"}],\"time_field\":\"@timestamp\",\"index_pattern\":\"platform-stats\",\"interval\":\"\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"axis_scale\":\"normal\",\"show_legend\":1,\"show_grid\":1,\"tooltip_mode\":\"show_all\",\"default_index_pattern\":\"infore_dictionary\",\"default_timefield\":\"@timestamp\",\"isModelInvalid\":false,\"background_color_rules\":[{\"id\":\"3e635920-8351-11eb-82cc-276e52b494ba\"}],\"bar_color_rules\":[{\"id\":\"415f5b10-8351-11eb-82cc-276e52b494ba\"}],\"background_color\":\"rgba(255,255,255,1)\"}}",
+        "uiStateJSON": "{}",
+        "description": "",
+        "version": 1,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [],
+      "migrationVersion": {
+        "visualization": "7.10.0"
+      }
+    },
+    {
+      "id": "14d88dc0-8354-11eb-870f-f3cd5fd31c97",
+      "type": "visualization",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T17:02:16.442Z",
+      "version": "WzEwNTUsMV0=",
+      "attributes": {
+        "title": "numBytesInLocalPerSecond per Operator (copy 1)",
+        "visState": "{\"title\":\"numBytesInLocalPerSecond per Operator (copy 1)\",\"type\":\"metrics\",\"aggs\":[],\"params\":{\"id\":\"61ca57f0-469d-11e7-af02-69e470af7417\",\"type\":\"timeseries\",\"series\":[{\"id\":\"14cc8730-8351-11eb-82cc-276e52b494ba\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"14cc8731-8351-11eb-82cc-276e52b494ba\",\"type\":\"avg\",\"field\":\"metric_value_number\"}],\"separate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"number\",\"chart_type\":\"line\",\"line_width\":\"1\",\"point_size\":\"3\",\"fill\":\"0.3\",\"stacked\":\"none\",\"terms_field\":\"operator_workflow_name.keyword\",\"label\":\"numRecordsOutPerSecond - Rate  per Operator\",\"type\":\"timeseries\",\"terms_include\":\"\",\"filter\":{\"query\":\"metric_key : numRecordsOutPerSecond and metric_type: Rate\",\"language\":\"kuery\"},\"override_index_pattern\":0,\"value_template\":\"{{value}} Rec/s\",\"steps\":1,\"split_color_mode\":\"kibana\",\"terms_order_by\":\"_key\",\"terms_size\":\"20\"}],\"time_field\":\"@timestamp\",\"index_pattern\":\"platform-stats\",\"interval\":\"\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"axis_scale\":\"log\",\"show_legend\":1,\"show_grid\":1,\"tooltip_mode\":\"show_all\",\"default_index_pattern\":\"infore_dictionary\",\"default_timefield\":\"@timestamp\",\"isModelInvalid\":false,\"background_color_rules\":[{\"id\":\"3e635920-8351-11eb-82cc-276e52b494ba\"}],\"bar_color_rules\":[{\"id\":\"415f5b10-8351-11eb-82cc-276e52b494ba\"}],\"background_color\":\"rgba(255,255,255,1)\",\"axis_max\":\"10000000\",\"gauge_color_rules\":[{\"id\":\"76368c70-8354-11eb-82cc-276e52b494ba\"}],\"gauge_width\":10,\"gauge_inner_width\":10,\"gauge_style\":\"half\"}}",
+        "uiStateJSON": "{}",
+        "description": "",
+        "version": 1,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [],
+      "migrationVersion": {
+        "visualization": "7.10.0"
+      }
+    },
+    {
+      "id": "8ffa01f0-8354-11eb-870f-f3cd5fd31c97",
+      "type": "visualization",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T17:02:04.494Z",
+      "version": "WzEwNDYsMV0=",
+      "attributes": {
+        "title": "numBytesInLocalPerSecond per Operator (copy 2)",
+        "visState": "{\"title\":\"numBytesInLocalPerSecond per Operator (copy 2)\",\"type\":\"metrics\",\"aggs\":[],\"params\":{\"id\":\"61ca57f0-469d-11e7-af02-69e470af7417\",\"type\":\"timeseries\",\"series\":[{\"id\":\"14cc8730-8351-11eb-82cc-276e52b494ba\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"14cc8731-8351-11eb-82cc-276e52b494ba\",\"type\":\"avg\",\"field\":\"metric_value_number\"}],\"separate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"number\",\"chart_type\":\"line\",\"line_width\":\"1\",\"point_size\":\"3\",\"fill\":\"0.3\",\"stacked\":\"none\",\"terms_field\":\"operator_workflow_name.keyword\",\"label\":\"numRecordsInPerSecond - Rate  per Operator\",\"type\":\"timeseries\",\"terms_include\":\"\",\"filter\":{\"query\":\"metric_key : numRecordsInPerSecond and metric_type: Rate\",\"language\":\"kuery\"},\"override_index_pattern\":0,\"value_template\":\"{{value}} Rec/s\",\"steps\":1,\"split_color_mode\":\"kibana\",\"terms_order_by\":\"_key\",\"terms_size\":\"20\"}],\"time_field\":\"@timestamp\",\"index_pattern\":\"platform-stats\",\"interval\":\"\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"axis_scale\":\"log\",\"show_legend\":1,\"show_grid\":1,\"tooltip_mode\":\"show_all\",\"default_index_pattern\":\"infore_dictionary\",\"default_timefield\":\"@timestamp\",\"isModelInvalid\":false,\"background_color_rules\":[{\"id\":\"3e635920-8351-11eb-82cc-276e52b494ba\"}],\"bar_color_rules\":[{\"id\":\"415f5b10-8351-11eb-82cc-276e52b494ba\"}],\"background_color\":\"rgba(255,255,255,1)\",\"axis_max\":\"10000000\",\"gauge_color_rules\":[{\"id\":\"76368c70-8354-11eb-82cc-276e52b494ba\"}],\"gauge_width\":10,\"gauge_inner_width\":10,\"gauge_style\":\"half\"}}",
+        "uiStateJSON": "{}",
+        "description": "",
+        "version": 1,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [],
+      "migrationVersion": {
+        "visualization": "7.10.0"
+      }
+    },
+    {
+      "id": "0c7f0b80-835a-11eb-870f-f3cd5fd31c97",
+      "type": "visualization",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T17:48:56.258Z",
+      "version": "WzE3NTIsMV0=",
+      "attributes": {
+        "title": "numBytesInLocalPerSecond per Operator (copy 3)",
+        "visState": "{\"title\":\"numBytesInLocalPerSecond per Operator (copy 3)\",\"type\":\"metrics\",\"aggs\":[],\"params\":{\"id\":\"61ca57f0-469d-11e7-af02-69e470af7417\",\"type\":\"timeseries\",\"series\":[{\"id\":\"14cc8730-8351-11eb-82cc-276e52b494ba\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"14cc8731-8351-11eb-82cc-276e52b494ba\",\"type\":\"avg\",\"field\":\"metric_value_number\"}],\"separate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"bytes\",\"chart_type\":\"line\",\"line_width\":\"1\",\"point_size\":\"3\",\"fill\":\"0.3\",\"stacked\":\"none\",\"terms_field\":\"hostname.keyword\",\"label\":\"JVM.Memory.Direct.MemoryUsed per Operator\",\"type\":\"timeseries\",\"terms_include\":\"\",\"filter\":{\"query\":\"\",\"language\":\"kuery\"},\"override_index_pattern\":0,\"value_template\":\"{{value}}\",\"steps\":1,\"split_color_mode\":\"kibana\",\"terms_order_by\":\"_key\",\"terms_size\":\"20\"}],\"time_field\":\"@timestamp\",\"index_pattern\":\"platform-stats\",\"interval\":\"\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"axis_scale\":\"normal\",\"show_legend\":1,\"show_grid\":1,\"tooltip_mode\":\"show_all\",\"default_index_pattern\":\"infore_dictionary\",\"default_timefield\":\"@timestamp\",\"isModelInvalid\":false,\"background_color_rules\":[{\"id\":\"3e635920-8351-11eb-82cc-276e52b494ba\"}],\"bar_color_rules\":[{\"id\":\"415f5b10-8351-11eb-82cc-276e52b494ba\"}],\"background_color\":\"rgba(255,255,255,1)\",\"axis_max\":\"\",\"gauge_color_rules\":[{\"id\":\"76368c70-8354-11eb-82cc-276e52b494ba\"}],\"gauge_width\":10,\"gauge_inner_width\":10,\"gauge_style\":\"half\",\"filter\":{\"query\":\"JVM.Memory.Direct.MemoryUsed\\t\",\"language\":\"kuery\"}}}",
+        "uiStateJSON": "{}",
+        "description": "",
+        "version": 1,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [],
+      "migrationVersion": {
+        "visualization": "7.10.0"
+      }
+    },
+    {
+      "id": "3d950110-835b-11eb-870f-f3cd5fd31c97",
+      "type": "visualization",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T17:50:15.000Z",
+      "version": "WzE3ODAsMV0=",
+      "attributes": {
+        "title": "numBytesInLocalPerSecond per Operator (copy 4)",
+        "visState": "{\"title\":\"numBytesInLocalPerSecond per Operator (copy 4)\",\"type\":\"metrics\",\"aggs\":[],\"params\":{\"id\":\"61ca57f0-469d-11e7-af02-69e470af7417\",\"type\":\"timeseries\",\"series\":[{\"id\":\"14cc8730-8351-11eb-82cc-276e52b494ba\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"14cc8731-8351-11eb-82cc-276e52b494ba\",\"type\":\"avg\",\"field\":\"metric_value_number\"}],\"separate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"percent\",\"chart_type\":\"line\",\"line_width\":\"1\",\"point_size\":\"3\",\"fill\":\"0.3\",\"stacked\":\"none\",\"terms_field\":\"hostname.keyword\",\"label\":\"JVM.Memory.Direct.MemoryUsed per Operator\",\"type\":\"timeseries\",\"terms_include\":\"\",\"filter\":{\"query\":\"\",\"language\":\"kuery\"},\"override_index_pattern\":0,\"value_template\":\"{{value}}\",\"steps\":1,\"split_color_mode\":\"kibana\",\"terms_order_by\":\"_key\",\"terms_size\":\"20\"}],\"time_field\":\"@timestamp\",\"index_pattern\":\"platform-stats\",\"interval\":\"\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"axis_scale\":\"normal\",\"show_legend\":1,\"show_grid\":1,\"tooltip_mode\":\"show_all\",\"default_index_pattern\":\"infore_dictionary\",\"default_timefield\":\"@timestamp\",\"isModelInvalid\":false,\"background_color_rules\":[{\"id\":\"3e635920-8351-11eb-82cc-276e52b494ba\"}],\"bar_color_rules\":[{\"id\":\"415f5b10-8351-11eb-82cc-276e52b494ba\"}],\"background_color\":\"rgba(255,255,255,1)\",\"axis_max\":\"\",\"gauge_color_rules\":[{\"id\":\"76368c70-8354-11eb-82cc-276e52b494ba\"}],\"gauge_width\":10,\"gauge_inner_width\":10,\"gauge_style\":\"half\",\"filter\":{\"query\":\"JVM.CPU.Load\",\"language\":\"kuery\"},\"axis_min\":\"0\"}}",
+        "uiStateJSON": "{}",
+        "description": "",
+        "version": 1,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [],
+      "migrationVersion": {
+        "visualization": "7.10.0"
+      }
+    },
+    {
+      "id": "46f17030-835c-11eb-870f-f3cd5fd31c97",
+      "type": "visualization",
+      "namespaces": [
+        "default"
+      ],
+      "updated_at": "2021-03-12T17:58:02.472Z",
+      "version": "WzE5ODQsMV0=",
+      "attributes": {
+        "title": "numBytesInLocalPerSecond per Operator (copy 5)",
+        "visState": "{\"title\":\"numBytesInLocalPerSecond per Operator (copy 5)\",\"type\":\"metrics\",\"aggs\":[],\"params\":{\"id\":\"61ca57f0-469d-11e7-af02-69e470af7417\",\"type\":\"timeseries\",\"series\":[{\"id\":\"14cc8730-8351-11eb-82cc-276e52b494ba\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"14cc8731-8351-11eb-82cc-276e52b494ba\",\"type\":\"avg\",\"field\":\"metric_value_number\"}],\"separate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"bytes\",\"chart_type\":\"line\",\"line_width\":\"1\",\"point_size\":\"3\",\"fill\":\"0.3\",\"stacked\":\"none\",\"terms_field\":\"hostname.keyword\",\"label\":\"JVM.Memory.Direct.MemoryUsed per Operator\",\"type\":\"timeseries\",\"terms_include\":\"\",\"filter\":{\"query\":\"\",\"language\":\"kuery\"},\"override_index_pattern\":0,\"value_template\":\"{{value}}\",\"steps\":1,\"split_color_mode\":\"kibana\",\"terms_order_by\":\"_key\",\"terms_size\":\"20\"}],\"time_field\":\"@timestamp\",\"index_pattern\":\"platform-stats\",\"interval\":\"\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"axis_scale\":\"normal\",\"show_legend\":1,\"show_grid\":1,\"tooltip_mode\":\"show_all\",\"default_index_pattern\":\"infore_dictionary\",\"default_timefield\":\"@timestamp\",\"isModelInvalid\":false,\"background_color_rules\":[{\"id\":\"3e635920-8351-11eb-82cc-276e52b494ba\"}],\"bar_color_rules\":[{\"id\":\"415f5b10-8351-11eb-82cc-276e52b494ba\"}],\"background_color\":\"rgba(255,255,255,1)\",\"axis_max\":\"\",\"gauge_color_rules\":[{\"id\":\"76368c70-8354-11eb-82cc-276e52b494ba\"}],\"gauge_width\":10,\"gauge_inner_width\":10,\"gauge_style\":\"half\",\"filter\":{\"query\":\"JVM.Memory.Heap.Max\",\"language\":\"kuery\"},\"axis_min\":\"0\"}}",
+        "uiStateJSON": "{}",
+        "description": "",
+        "version": 1,
+        "kibanaSavedObjectMeta": {
+          "searchSourceJSON": "{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"
+        }
+      },
+      "references": [],
+      "migrationVersion": {
+        "visualization": "7.10.0"
+      }
+    }
+  ]
+}

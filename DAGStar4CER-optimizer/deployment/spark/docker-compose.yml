@@ -1,0 +1,61 @@
+version: "3.4"
+services:
+  spark-master:
+    image: spark-master:latest
+    ports:
+      - 8080:8080
+      - 7077:7077
+      - 6066:6066
+      - 9251:9251
+      - 9252:9252
+      - 9253:9253
+    volumes:
+      - type: bind
+        source: ./apps
+        target: /opt/spark-apps
+      - type: bind
+        source: ./home
+        target: /docker_home
+      - type: volume
+        source: spark
+        target: /opt/spark-data
+    environment:
+      - SPARK_MASTER_PORT=7077
+      - SPARK_MASTER_LOG=/spark/logs
+      - SPARK_MASTER_UI_PORT=8080
+      - SPARK_CONF_DIR=/docker_home/conf/master
+    networks:
+      - net1
+
+  spark-worker:
+    image: spark-worker:latest
+    depends_on:
+      - spark-master
+    ports:
+      - 8081:8081
+      - 9253:9253
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_WEBUI_PORT=8081
+      - SPARK_CONF_DIR=/docker_home/conf/master
+      - SPARK_WORKER_LOG=/spark/logs
+    volumes:
+      - type: bind
+        source: ./apps
+        target: /opt/spark-apps
+      - type: bind
+        source: ./home
+        target: /docker_home
+      - type: volume
+        source: spark
+        target: /opt/spark-data
+    networks:
+      - net1
+
+volumes:
+  spark:
+    driver: local
+
+networks:
+  net1:
+    driver: bridge

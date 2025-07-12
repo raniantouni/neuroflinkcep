@@ -1,0 +1,160 @@
+{
+  "dictionaryName": "dictionary1",
+  "operators": [
+    {
+      "classKey": "retrieve",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "sites": [
+        {
+          "site0": {
+            "staticCost": 70,
+            "migrationCosts": {
+              "site0": 0
+            },
+            "platforms": [
+              {
+                "flink": {
+                  "operatorName": "flink_retrieve",
+                  "staticCost": 15,
+                  "migrationCosts": {
+                    "flink": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classKey": "multiply",
+      "costCoefficients": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "inputRate": 100,
+      "sites": [
+        {
+          "site0": {
+            "staticCost": 90,
+            "migrationCosts": {
+              "site0": 0
+            },
+            "platforms": [
+              {
+                "flink": {
+                  "operatorName": "flink_multiply",
+                  "staticCost": 10,
+                  "migrationCosts": {
+                    "flink": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classKey": "streaming:kafka_source",
+      "costCoefficients": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "inputRate": 100,
+      "sites": [
+        {
+          "site0": {
+            "staticCost": 70,
+            "migrationCosts": {
+              "site0": 0
+            },
+            "platforms": [
+              {
+                "flink": {
+                  "operatorName": "flink_streaming:kafka_source",
+                  "staticCost": 20,
+                  "migrationCosts": {
+                    "flink": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classKey": "streaming:filter",
+      "costCoefficients": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "inputRate": 100,
+      "sites": [
+        {
+          "site0": {
+            "staticCost": 50,
+            "migrationCosts": {
+              "site0": 0
+            },
+            "platforms": [
+              {
+                "flink": {
+                  "operatorName": "flink_streaming:filter",
+                  "staticCost": 20,
+                  "migrationCosts": {
+                    "flink": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classKey": "streaming:kafka_sink",
+      "costCoefficients": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "inputRate": 100,
+      "sites": [
+        {
+          "site0": {
+            "staticCost": 60,
+            "migrationCosts": {
+              "site0": 0
+            },
+            "platforms": [
+              {
+                "flink": {
+                  "operatorName": "flink_streaming:kafka_sink",
+                  "staticCost": 15,
+                  "migrationCosts": {
+                    "flink": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+input {
+  file {
+    path => "/optimizer_logs/*.log"
+    codec => "json"
+    type => "logback"
+  }
+}
+filter {
+  ruby {
+    code => "event.set('systemtime', Time.now());"
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["${ES_URL}"]
+    index => "${optimizer-logs}"
+    user => "${ES_USERNAME}"
+    password => "${ES_PASSWORD}"
+  }
+}

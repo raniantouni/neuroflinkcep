@@ -1,0 +1,210 @@
+{
+  "optimizationParameters" : {
+    "continuous" : true,
+    "networkName" : "dummyNetworkName",
+    "dictionaryName" : "dummyDictionaryName",
+    "algorithm" : "auto",
+    "description" : "MyDescription",
+    "timeout_ms" : 60000,
+    "numOfPlans" : 1
+  },
+  "workflowName" : "Streaming",
+  "enclosingOperatorName" : "Streaming Optimization",
+  "innerSourcesPortsAndSchemas" : [ ],
+  "innerSinksPortsAndSchemas" : [ ],
+  "operatorConnections" : [ {
+    "fromOperator" : "source",
+    "toOperator" : "blobRead",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "source",
+    "toOperator" : "senMLParse",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "blobRead",
+    "toOperator" : "decisionTree",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "blobRead",
+    "toOperator" : "multiVarLinearReg",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "senMLParse",
+    "toOperator" : "decisionTree",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "senMLParse",
+    "toOperator" : "multiVarLinearReg",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "senMLParse",
+    "toOperator" : "average",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "decisionTree",
+    "toOperator" : "mqttPublish",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "multiVarLinearReg",
+    "toOperator" : "errorEstimate",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "average",
+    "toOperator" : "errorEstimate",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "errorEstimate",
+    "toOperator" : "mqttPublish",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  }, {
+    "fromOperator" : "mqttPublish",
+    "toOperator" : "sink",
+    "fromPort" : "output",
+    "toPort" : "input",
+    "fromPortType" : "OUTPUT_PORT",
+    "toPortType" : "INPUT_PORT"
+  } ],
+  "operators" : [ {
+    "name" : "source",
+    "classKey" : "retrieve",
+    "cloudOnly" : false,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "senMLParse",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : true,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "blobRead",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : false,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "decisionTree",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : true,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "multiVarLinearReg",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : true,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "average",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : false,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "errorEstimate",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : false,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "mqttPublish",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : false,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  }, {
+    "name" : "sink",
+    "classKey" : "streaming:kafka_sink",
+    "cloudOnly" : false,
+    "operatorClass" : "com.rapidminer.extension.streaming.operator.StreamKafkaSink",
+    "inputPortsAndSchemas" : [ ],
+    "outputPortsAndSchemas" : [ ],
+    "parameters" : [ ],
+    "hasSubprocesses" : false,
+    "numberOfSubprocesses" : null,
+    "innerWorkflows" : null,
+    "platformName" : null
+  } ],
+  "placementSites" : [ ]
+}

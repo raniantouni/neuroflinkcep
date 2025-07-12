@@ -1,0 +1,57 @@
+{
+  "source": {
+    "index": [
+      "site-latency"
+    ]
+  },
+  "pivot": {
+    "group_by": {
+      "source_site.keyword": {
+        "terms": {
+          "field": "source_site.keyword"
+        }
+      },
+      "dst_site.keyword": {
+        "terms": {
+          "field": "dst_site.keyword"
+        }
+      },
+      "source_ip.keyword": {
+        "terms": {
+          "field": "source_ip.keyword"
+        }
+      },
+      "dst_ip.keyword": {
+        "terms": {
+          "field": "dst_ip.keyword"
+        }
+      }
+    },
+    "aggregations": {
+      "@timestamp.max": {
+        "max": {
+          "field": "@timestamp"
+        }
+      },
+      "latency_ms.max": {
+        "max": {
+          "field": "latency_ms"
+        }
+      }
+    }
+  },
+  "description": "Site latencies grouped by source and destination as pairs.",
+  "frequency": "5s",
+  "dest": {
+    "index": "site-latency-transform-1"
+  },
+  "sync": {
+    "time": {
+      "field": "@timestamp",
+      "delay": "5s"
+    }
+  },
+  "settings": {
+    "max_page_search_size": 500
+  }
+}

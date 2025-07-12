@@ -1,0 +1,41 @@
+input {
+  file {
+    id => "optimizer_logs_input_file_id_1"
+    path => "/optimizer_logs/*.log"
+    sincedb_path => "/dev/null"
+    start_position => "beginning"
+    codec => multiline {
+      pattern => "^202"
+      negate => true
+      what => "previous"
+      max_lines => 10000
+      max_bytes => "10 MiB"
+    }
+  }
+}
+
+filter {
+  dissect {
+    mapping => {"message" => "%{log_timestamp} [%{thread}] %{level} %{logger} - %{msg}"}
+  }
+  mutate {
+    convert => [ "log_timestamp", "string" ]
+  }
+  date {
+    timezone => "Europe/Athens"
+    match => ["log_timestamp","yyyy-MM-dd HH:mm:ss.SSS"]
+    target => "@timestamp"
+  }
+  mutate {
+    remove_field => ["@version", "log_timestamp", "message"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["${ATHENA_ES_URL}"]
+    index => "optimizer-logs"
+    user => "${ES_USERNAME}"
+    password => "${ES_PASSWORD}"
+  }
+}

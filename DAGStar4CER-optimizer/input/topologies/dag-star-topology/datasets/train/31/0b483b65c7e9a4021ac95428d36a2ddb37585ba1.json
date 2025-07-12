@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-0-0-1",
+    "blobWrite" : "cloud-1-0-0",
+    "decisionTreeTrain" : "cloud-0-1-0",
+    "mqttPublish" : "cloud-1-1-0-0",
+    "multiVarLinearRegTrain" : "cloud-0-1-1-1",
+    "sink" : "cloud-1-1",
+    "source" : "cloud-0-0-1-1",
+    "tableRead" : "cloud-0-1-1"
+  },
+  "appLoopLatency" : 18.828590000000034,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 0.5232184166666672,
+    "sink_TUPLE" : 0.5971823763586259,
+    "annotation_TUPLE" : 0.21114469270830838,
+    "decisionTreeTrain_TUPLE" : 3.1499017552082567,
+    "mqttPublish_TUPLE" : 1.0952991186309453,
+    "tableRead_TUPLE" : 0.1260039062499783,
+    "blobWrite_TUPLE" : 15.359372684747784,
+    "TUPLE" : 0.10327604166667165
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2048,
+    "decisionTreeTrain" : 2048,
+    "sink" : 3990,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4056,
+    "mqttPublish" : 3990
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0347854852956122,
+    "multiVarLinearRegTrain" : 1.0350992962617653,
+    "decisionTreeTrain" : 1.0337495100954406,
+    "sink" : 2.001265720484139,
+    "source" : 1.0369599251444555,
+    "tableRead" : 1.0356969881321025,
+    "blobWrite" : 2.0601675790874117,
+    "mqttPublish" : 2.0033256387179916
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.034689639754995,
+    "multiVarLinearRegTrain" : 1.034720144592925,
+    "decisionTreeTrain" : 1.03174449220046,
+    "sink" : 2.001039896468155,
+    "source" : 1.0369030487211108,
+    "tableRead" : 1.0356227935766886,
+    "blobWrite" : 2.0298392603586533,
+    "mqttPublish" : 2.0029736555181867
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 0,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 330000,
+    "mqttPublish" : 0
+  },
+  "executionTime" : 1179.0,
+  "networkUsage" : 172064.8,
+  "tuplesSentBySensors" : 2048
+}

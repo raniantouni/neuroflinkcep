@@ -1,0 +1,18 @@
+{
+  "action": "CreateSubmissionRequest",
+  "appResource": "file:///operators/spark/Set_Role.jar",
+  "clientSparkVersion": "2.4.3",
+  "environmentVariables": {
+    "SPARK_ENV_LOADED": "1"
+  },
+  "mainClass": "WordCount",
+  "sparkProperties": {
+    "spark.jars": "file:///operators/spark/Set_Role.jar",
+    "spark.driver.supervise": "false",
+    "spark.executor.memory": "1g",
+    "spark.driver.memory": "1g",
+    "spark.submit.deployMode": "cluster",
+    "spark.app.name": "MyApp1",
+    "spark.master": "spark://127.0.0.1:6066"
+  }
+}

@@ -1,0 +1,7 @@
+# CSV metrics collection pipeline
+- pipeline.id: metrics_collector
+  queue.type: memory
+  path.config: "/tmp/config/pipelines/metrics_collector.yaml"
+  pipeline.workers: 1
+  pipeline.batch.size: 10
+  queue.max_events: 0

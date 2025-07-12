@@ -1,0 +1,209 @@
+#version: "3.4"
+#
+#services:
+# Comment from here
+
+#  logstash:
+#    build:
+#      context: ./deployment/elk/logstash
+#      args:
+#        ELK_VERSION: ${ELK_VERSION}
+#    volumes:
+#      - type: bind
+#        source: ./docker_fs/athena/logstash/pipelines.yml
+#        target: /usr/share/logstash/config/pipelines.yml
+#        read_only: true
+#      - type: bind
+#        source: ./docker_fs/athena/logstash/logstash.yml
+#        target: /usr/share/logstash/config/logstash.yml
+#        read_only: true
+#      - type: bind
+#        source: ./docker_fs/athena/logstash/pipelines
+#        target: /tmp/config/pipelines
+#        read_only: true
+#      - type: bind
+#        source: ./docker_fs/athena/web/logs
+#        target: /optimizer_logs
+#        read_only: true
+#    ports:
+#      - "${ATHENA_LOGSTASH_WEB_API_PORT}:9600"
+#      - "${ATHENA_LOGSTASH_TCP_INPUT_PORT}:5000"
+#      - "${ATHENA_LOGSTASH_HTTP_INPUT_PORT}:60001"
+#    environment:
+#      LS_JAVA_OPTS: "-Xmx4g -Xms256m"
+#    networks:
+#      - athena_component_net
+#    env_file:
+#      - .env
+#
+#  bayesian_optimization:
+#    build:
+#      context: bayesian_optimization
+#    volumes:
+#      - type: bind
+#        source: ./docker_fs/athena/bo/volume1
+#        target: /usr/share/volume1
+#      - type: bind
+#        source: ./docker_fs/athena/bo/logs
+#        target: /tmp/logs
+#      - type: bind
+#        source: ./docker_fs/athena/bo/models
+#        target: /tmp/models
+#    ports:
+#      - "${ATHENA_BO_PORT}:20004"
+#    networks:
+#      - athena_component_net
+#    environment:
+#      BO_LOG_DIR: /tmp/logs
+#      ES_URL: ${ATHENA_ES_URL}
+#      KIBANA_URL: ${ATHENA_KIBANA_URL}
+#      ATHENA_OPTIMIZER_URL: ${ATHENA_BO_OPTIMIZER_URL:-optimizer:8080}
+#      ATHENA_BENCHMARKING_URL: ${ATHENA_BO_BENCHMARKING_URL:-benchmarking:20002}
+#      ATHENA_FS_URL: ${ATHENA_BO_FS_URL:-file_server:20003}
+#      ATHENA_ADAPTATION_URL: ${ATHENA_BO_ADAPTATION_URL:-adaptation:20005}
+#    env_file:
+#      - .env
+#
+#  benchmarking:
+#    #image: infore/benchmarking:latest
+#    image: xeniatuc/benchmarkingx:latest
+#    volumes:
+#      - type: bind
+#        source: ./docker_fs/athena/benchmarking/logs
+#        target: /tmp/logs
+#    ports:
+#      - "${ATHENA_BENCHMARKING_PORT}:20002"
+#    environment:
+#      BENCHMARKING_LOG_DIR: /tmp/logs
+#      ES_URL: ${ATHENA_ES_URL}
+#      KIBANA_URL: ${ATHENA_KIBANA_URL}
+#      ATHENA_OPTIMIZER_URL: ${ATHENA_BENCHMARKING_OPTIMIZER_URL:-optimizer:8080}
+#      ATHENA_FS_URL: ${ATHENA_BENCHMARKING_FS_URL:-file_server:20003}
+#      ATHENA_BO_URL: ${ATHENA_BENCHMARKING_BO_URL:-bayesian_optimization:20004}
+#      ATHENA_ADAPTATION_URL: ${ATHENA_BENCHMARKING_ADAPTATION_URL:-adaptation:20005}
+#    env_file:
+#      - .env
+#    networks:
+#      - athena_component_net
+#
+#  adaptation:
+#    #image: infore/adaptation:latest
+#    image: xeniatuc/adaptationx:latest
+#    volumes:
+#      - type: bind
+#        source: ./docker_fs/athena/adaptation/volume1
+#        target: /usr/share/volume1
+#      - type: bind
+#        source: ./docker_fs/athena/adaptation/logs
+#        target: /tmp/logs
+#    ports:
+#      - "${ATHENA_ADAPTATION_PORT}:20005"
+#    environment:
+#      ADAPTATION_LOG_DIR: /tmp/logs
+#      ATHENA_OPTIMIZER_URL: ${ATHENA_ADAPTATION_OPTIMIZER_URL:-optimizer:8080}
+#      ATHENA_BENCHMARKING_URL: ${ATHENA_ADAPTATION_BENCHMARKING_URL:-benchmarking:20002}
+#      ATHENA_FS_URL: ${ATHENA_ADAPTATION_FS_URL:-file_server:20003}
+#      ATHENA_BO_URL: ${ATHENA_ADAPTATION_BO_URL:-bayesian_optimization:20004}
+#    env_file:
+#      - .env
+#    networks:
+#      - athena_component_net
+#
+#  file_server:
+#    build:
+#      context: file_server
+#    volumes:
+#      - type: bind
+#        source: ./docker_fs/athena/fs/volume1
+#        target: /usr/share/volume1
+#      - type: bind
+#        source: ./docker_fs/athena/fs/logs
+#        target: /tmp/logs
+#    ports:
+#      - "${ATHENA_FS_PORT}:20003"
+#    environment:
+#      FS_LOG_DIR: /tmp/logs
+#      FS_ROOT: /usr/share/volume1
+#      ES_URL: ${ATHENA_ES_URL}
+#      KIBANA_URL: ${ATHENA_KIBANA_URL}
+#      ATHENA_OPTIMIZER_URL: ${ATHENA_FS_OPTIMIZER_URL:-optimizer:8080}
+#      ATHENA_BENCHMARKING_URL: ${ATHENA_FS_BENCHMARKING_URL:-benchmarking:20002}
+#      ATHENA_BO_URL: ${ATHENA_FS_BO_URL:-bayesian_optimization:20004}
+#      ATHENA_ADAPTATION_URL: ${ATHENA_FS_ADAPTATION_URL:-adaptation:20005}
+#    env_file:
+#      - .env
+#    networks:
+#      - athena_component_net
+
+  # Commented code end
+
+  version: "3.4"
+
+  services:
+    elasticsearch:
+      build:
+        context: ./deployment/elk/elasticsearch
+        args:
+          ELK_VERSION: ${ELK_VERSION}
+      volumes:
+        - type: bind
+          source: ./docker_fs/services/elasticsearch/config/elasticsearch.yml
+          target: /usr/share/elasticsearch/config/elasticsearch.yml
+          read_only: true
+        - type: bind
+          source: ./docker_fs/services/elasticsearch/volume1/data
+          target: /usr/share/elasticsearch/data
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+      environment:
+        ES_JAVA_OPTS: "-Xmx4g -Xms256m"
+        ELASTIC_PASSWORD: ${ES_PASSWORD}
+      networks:
+        - athena_net
+      env_file:
+        - .env
+
+    kibana:
+      build:
+        context: ./deployment/elk/kibana
+        args:
+          ELK_VERSION: ${ELK_VERSION}
+      volumes:
+        - type: bind
+          source: ./docker_fs/services/kibana/config/kibana.yml
+          target: /usr/share/kibana/config/kibana.yml
+          read_only: true
+      ports:
+        - "5601:5601"
+      depends_on:
+        - elasticsearch
+      networks:
+        - athena_net
+      env_file:
+        - .env
+
+    optimizer:
+      image: raniantouni/optimizerx:latest
+      volumes:
+        - type: bind
+          source: ./docker_fs/athena/web/logs
+          target: /tmp/logs
+      ports:
+        - "${ATHENA_OPTIMIZER_WEB_PORT}:8080"
+      environment:
+        OPTIMIZER_WEB_LOG_DIR: /tmp/logs
+        ATHENA_OPTIMIZER_BIND_ADR: host.docker.internal
+        ATHENA_BENCHMARKING_URL: ${ATHENA_OPTIMIZER_BENCHMARKING_URL:-benchmarking:20002}
+        ATHENA_FS_URL: ${ATHENA_OPTIMIZER_FS_URL:-file_server:20003}
+        ATHENA_BO_URL: ${ATHENA_OPTIMIZER_BO_URL:-bayesian_optimization:20004}
+        ATHENA_ADAPTATION_URL: ${ATHENA_OPTIMIZER_ADAPTATION_URL:-adaptation:20005}
+      env_file:
+        - .env
+      networks:
+        - athena_net
+
+  networks:
+    athena_net:
+      driver: bridge
+

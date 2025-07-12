@@ -1,0 +1,126 @@
+{
+  "source": {
+    "index": [
+      "platform-stats"
+    ],
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "should": [
+                {
+                  "exists": {
+                    "field": "operator_type"
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "bool": {
+              "must_not": {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "operator_type": "unsupported_operator"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "pivot": {
+    "group_by": {
+      "hostname.keyword": {
+        "terms": {
+          "field": "hostname.keyword"
+        }
+      },
+      "metric_key.keyword": {
+        "terms": {
+          "field": "metric_key.keyword"
+        }
+      },
+      "operator_workflow_name.keyword": {
+        "terms": {
+          "field": "operator_workflow_name.keyword"
+        }
+      },
+      "platform.keyword": {
+        "terms": {
+          "field": "platform.keyword"
+        }
+      },
+      "platform_id.keyword": {
+        "terms": {
+          "field": "platform_id.keyword"
+        }
+      },
+      "site.keyword": {
+        "terms": {
+          "field": "site.keyword"
+        }
+      },
+      "job_name.keyword": {
+        "terms": {
+          "field": "job_name.keyword"
+        }
+      },
+      "job_id.keyword": {
+        "terms": {
+          "field": "job_id.keyword"
+        }
+      },
+      "operator_id.keyword": {
+        "terms": {
+          "field": "operator_id.keyword"
+        }
+      },
+      "operator_type.keyword": {
+        "terms": {
+          "field": "operator_type.keyword"
+        }
+      },
+      "metric_type.keyword": {
+        "terms": {
+          "field": "metric_type.keyword"
+        }
+      }
+    },
+    "aggregations": {
+      "@timestamp.max": {
+        "max": {
+          "field": "@timestamp"
+        }
+      },
+      "metric_value_number.avg": {
+        "avg": {
+          "field": "metric_value_number"
+        }
+      }
+    }
+  },
+  "description": "Operator stats preprocessing ",
+  "frequency": "5s",
+  "dest": {
+    "index": "operator-stats-transform-1"
+  },
+  "sync": {
+    "time": {
+      "field": "@timestamp",
+      "delay": "5s"
+    }
+  },
+  "settings": {
+    "max_page_search_size": 500
+  }
+}

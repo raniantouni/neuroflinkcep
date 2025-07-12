@@ -1,0 +1,13 @@
+- pipeline.id: optimizer-logs
+  queue.type: memory
+  path.config: "/tmp/config/pipelines/optimizer-logs.yaml"
+  pipeline.workers: 1
+  pipeline.batch.size: 1
+  queue.max_events: 0
+
+- pipeline.id: raw-stats
+  queue.type: memory
+  path.config: "/tmp/config/pipelines/raw-stats.yaml"
+  pipeline.workers: 1
+  pipeline.batch.size: 1
+  queue.max_events: 0

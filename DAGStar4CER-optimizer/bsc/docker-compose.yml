@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+
+  logstash:
+    build:
+      context: .
+      args:
+        ELK_VERSION: 7.10.2
+    volumes:
+      - type: bind
+        source: ./pipelines.yml
+        target: /usr/share/logstash/config/pipelines.yml
+      - type: bind
+        source: ./logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+      - type: bind
+        source: ./pipelines
+        target: /tmp/config/pipelines
+      - type: bind
+        source: ./metrics
+        target: /tmp/metrics
+    ports:
+      - "9600:9600"
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx4g -Xms256m"
+      ES_URL: 2.86.212.70:9200
+      ES_USERNAME: elastic
+      ES_PASSWORD: elastic123
+      ES_INDEX_METRICS: bsc-ingestion2

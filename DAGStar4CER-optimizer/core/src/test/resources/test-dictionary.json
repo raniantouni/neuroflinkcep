@@ -1,0 +1,133 @@
+{
+  "dictionaryName": "dict_3_2",
+  "operators": [
+    {
+      "classKey": "streaming:aggregate",
+      "costCoefficients": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "inputRate": 100,
+      "sites": [
+        {
+          "site_0": {
+            "staticCost": 10,
+            "migrationCosts": {
+              "site_0": 0,
+              "site_1": 1000
+            },
+            "platforms": [
+              {
+                "platform_0": {
+                  "operatorName": "platform_0_streaming:aggregate",
+                  "staticCost": 10,
+                  "migrationCosts": {
+                    "platform_0": 0,
+                    "platform_1": 500
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "site_1": {
+            "staticCost": 20,
+            "migrationCosts": {
+              "site_0": 1000,
+              "site_1": 0
+            },
+            "platforms": [
+              {
+                "platform_0": {
+                  "operatorName": "platform_0_streaming:aggregate",
+                  "staticCost": 20,
+                  "migrationCosts": {
+                    "platform_0": 500,
+                    "platform_1": 0
+                  }
+                }
+              },
+              {
+                "platform_1": {
+                  "operatorName": "platform_1_streaming:aggregate",
+                  "staticCost": 20,
+                  "migrationCosts": {
+                    "platform_0": 500,
+                    "platform_1": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classKey": "streaming:map",
+      "costCoefficients": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "inputRate": 100,
+      "sites": [
+        {
+          "site_0": {
+            "staticCost": 10,
+            "migrationCosts": {
+              "site_0": 0,
+              "site_1": 1000
+            },
+            "platforms": [
+              {
+                "platform_0": {
+                  "operatorName": "platform_0_streaming:map",
+                  "staticCost": 10,
+                  "migrationCosts": {
+                    "platform_0": 0,
+                    "platform_1": 500
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "site_1": {
+            "staticCost": 20,
+            "migrationCosts": {
+              "site_0": 1000,
+              "site_1": 0
+            },
+            "platforms": [
+              {
+                "platform_0": {
+                  "operatorName": "platform_0_streaming:map",
+                  "staticCost": 20,
+                  "migrationCosts": {
+                    "platform_0": 500,
+                    "platform_1": 0
+                  }
+                }
+              },
+              {
+                "platform_1": {
+                  "operatorName": "platform_1_streaming:map",
+                  "staticCost": 20,
+                  "migrationCosts": {
+                    "platform_0": 500,
+                    "platform_1": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

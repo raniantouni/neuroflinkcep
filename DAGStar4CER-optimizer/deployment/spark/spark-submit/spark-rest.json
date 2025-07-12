@@ -1,0 +1,23 @@
+{
+  "appResource": "/mnt/c/spark-2.4.8-bin-hadoop2.7/examples/jars/spark-examples_2.11-2.4.8.jar",
+  "sparkProperties": {
+    "spark.executor.memory": "1g",
+    "spark.master": "spark://45.10.26.123:57077",
+    "spark.driver.memory": "1g",
+    "spark.driver.cores": "1",
+    "spark.eventLog.enabled": "false",
+    "spark.app.name": "Spark REST API - PI",
+    "spark.submit.deployMode": "cluster",
+    "spark.jars": "/mnt/c/spark-2.4.8-bin-hadoop2.7/examples/jars/spark-examples_2.11-2.4.8.jar",
+    "spark.driver.supervise": "true"
+  },
+  "clientSparkVersion": "2.4.5",
+  "mainClass": "org.apache.spark.examples.SparkPi",
+  "environmentVariables": {
+    "SPARK_ENV_LOADED": "1"
+  },
+  "action": "CreateSubmissionRequest",
+  "appArgs": [
+    "80"
+  ]
+}

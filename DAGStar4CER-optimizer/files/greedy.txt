@@ -1,0 +1,14 @@
+Visit nodes in topological sort
+For each visited node do
+    For each available placement (cluster & BigData platforms) of the operator do
+        compute cost of shipping its input data to this placement (to exeis apo ta statistika)
+        and maintain minimum such cost within this inner for loop
+    end for
+    place this node at the placement that had the minimum cost in the above inner for loop
+end for
+
+
+8ymizw....
+shipping apo BigData platforms sthn idia platforma sto idio cluster exei 0 shipping cost
+shipping apo BigData platforms se allh platforma sto idio cluster exei mikro >0 shipping cost
+shipping apo BigData platforms se allo cluster exei megalo kostos

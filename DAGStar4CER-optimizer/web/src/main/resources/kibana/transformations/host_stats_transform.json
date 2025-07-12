@@ -1,0 +1,67 @@
+{
+  "source": {
+    "index": [
+      "platform-stats"
+    ]
+  },
+  "pivot": {
+    "group_by": {
+      "hostname.keyword": {
+        "terms": {
+          "field": "hostname.keyword"
+        }
+      },
+      "metric_key.keyword": {
+        "terms": {
+          "field": "metric_key.keyword"
+        }
+      },
+      "metric_type.keyword": {
+        "terms": {
+          "field": "metric_type.keyword"
+        }
+      },
+      "platform.keyword": {
+        "terms": {
+          "field": "platform.keyword"
+        }
+      },
+      "platform_id.keyword": {
+        "terms": {
+          "field": "platform_id.keyword"
+        }
+      },
+      "site.keyword": {
+        "terms": {
+          "field": "site.keyword"
+        }
+      }
+    },
+    "aggregations": {
+      "@timestamp.max": {
+        "max": {
+          "field": "@timestamp"
+        }
+      },
+      "metric_value_number.avg": {
+        "avg": {
+          "field": "metric_value_number"
+        }
+      }
+    }
+  },
+  "description": "General process-related stats",
+  "frequency": "5s",
+  "dest": {
+    "index": "host-stats-transform-1"
+  },
+  "sync": {
+    "time": {
+      "field": "@timestamp",
+      "delay": "5s"
+    }
+  },
+  "settings": {
+    "max_page_search_size": 500
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "placement" : {
+    "annotation" : "cloud-1-0-0-0",
+    "blobWrite" : "cloud-1-0-0-0-1",
+    "decisionTreeTrain" : "cloud-0-1",
+    "mqttPublish" : "cloud-1-1-1-0-1-0",
+    "multiVarLinearRegTrain" : "cloud-0-1-0-0-1",
+    "sink" : "cloud-1-0-1-0-1",
+    "source" : "cloud-1-1-1",
+    "tableRead" : "cloud-0-1-0"
+  },
+  "appLoopLatency" : 18.705987946969696,
+  "latencyPerTupleType" : {
+    "multiVarLinearRegTrain_TUPLE" : 0.6132933932293846,
+    "sink_TUPLE" : 0.6204804911619424,
+    "annotation_TUPLE" : 2.8522681796877047,
+    "decisionTreeTrain_TUPLE" : 13.912013464581767,
+    "mqttPublish_TUPLE" : 0.4628049617382106,
+    "tableRead_TUPLE" : 0.9061258723958425,
+    "blobWrite_TUPLE" : 1.2345496457740877,
+    "TUPLE" : 0.09300000000000042
+  },
+  "tuplesProcessedPerModule" : {
+    "annotation" : 2048,
+    "multiVarLinearRegTrain" : 2048,
+    "decisionTreeTrain" : 2014,
+    "sink" : 4051,
+    "source" : 2048,
+    "tableRead" : 2048,
+    "blobWrite" : 4051,
+    "mqttPublish" : 4051
+  },
+  "recsInPerModule" : {
+    "annotation" : 1.0329290861064437,
+    "multiVarLinearRegTrain" : 1.0343377223265482,
+    "decisionTreeTrain" : 1.0298393067860772,
+    "sink" : 2.0261893652501652,
+    "source" : 1.036174008424985,
+    "tableRead" : 1.034601474575889,
+    "blobWrite" : 2.0341928117495116,
+    "mqttPublish" : 2.0300732321559134
+  },
+  "recsOutPerModule" : {
+    "annotation" : 1.0310353724519457,
+    "multiVarLinearRegTrain" : 1.0337851550300237,
+    "decisionTreeTrain" : 1.0076752578015433,
+    "sink" : 2.0259613670251193,
+    "source" : 1.0361194023054836,
+    "tableRead" : 1.0344947765753132,
+    "blobWrite" : 2.0337425397940194,
+    "mqttPublish" : 2.029844359073408
+  },
+  "remainingDataPerDevice" : {
+    "annotation" : 0,
+    "multiVarLinearRegTrain" : 0,
+    "decisionTreeTrain" : 55000,
+    "sink" : 0,
+    "source" : 0,
+    "tableRead" : 0,
+    "blobWrite" : 0,
+    "mqttPublish" : 0
+  },
+  "executionTime" : 1168.0,
+  "networkUsage" : 214413.72,
+  "tuplesSentBySensors" : 2048
+}

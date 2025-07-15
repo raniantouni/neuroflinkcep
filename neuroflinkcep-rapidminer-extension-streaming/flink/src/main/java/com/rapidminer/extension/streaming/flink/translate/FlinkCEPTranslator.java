@@ -59,7 +59,6 @@ public class FlinkCEPTranslator {
         Map<String, Map<String, String>> predicates = cep.getParsedPredicates();
         CEP.SelectionStrategy selectionStrategy = cep.getSelectionStrategy();
         CEP.ConsumptionPolicy consumptionPolicy = cep.getConsumptionPolicy();
-
         RobotGoalPredictionModel rModel = new RobotGoalPredictionModel("/model");
 
         DataStream<JSONObject> preCepStream;
@@ -127,20 +126,24 @@ public class FlinkCEPTranslator {
             );
         }
 //        PatternStream<JSONObject> patternStream = org.apache.flink.cep.CEP.pattern(timestampedStream.keyBy(obj -> obj.get("robotID")), pattern);
-
         return patternStream.select((PatternSelectFunction<JSONObject, JSONObject>) match -> {
             JSONArray eventsArray = new JSONArray();
             for (List<JSONObject> events : match.values()) {
                 for (JSONObject event : events) {
+                    if (event.has("matches")) {
+                        JSONArray matches = event.getJSONArray("matches");
+                        matches.forEach(eventsArray::put);
+                        continue;
+                    }
                     eventsArray.put(event);
-
                 }
             }
 
-            JSONObject result1 = new JSONObject();
-            result1.put(patternName, eventsArray);
+            JSONObject res = new JSONObject();
+            res.put("event", patternName);
+            res.put("matches", eventsArray);
 
-            return result1;
+            return res;
         }).name(patternName);
 
     }
@@ -168,10 +171,8 @@ public class FlinkCEPTranslator {
         SimpleCondition<JSONObject> condition = new SimpleCondition<JSONObject>() {
             @Override
             public boolean filter(JSONObject obj) throws Exception {
-                System.out.println("Incoming event: " + obj.get(key).toString() + " the event type for search is  : " +eventType);
                 boolean mainCondition = obj.get(key).toString().startsWith(eventType);
                 boolean predicateCondition = checkPredicates(obj, predicates);
-                System.out.println("Main Condition " + mainCondition + "Predicate Condition " + predicateCondition);
                 return mainCondition && predicateCondition;
             }
         };
@@ -190,7 +191,6 @@ public class FlinkCEPTranslator {
                 List<JSONObject> previousMatches = Lists.newArrayList(context.getEventsForPattern(referencedLabel));
                 if (previousMatches != null) {
                     for (JSONObject event : previousMatches) {
-                        System.out.println("PREV MATCH " + event.getString(key));
                         if (jsonObject.get(key).equals(event.get(key))) {
                             return true;
                         }
@@ -207,8 +207,6 @@ public class FlinkCEPTranslator {
         List<String> possibleValues = node.getChildren().stream()
                 .map(child -> String.valueOf(child.getValue()))
                 .collect(Collectors.toList());
-        LOG.info("orNode: {}", node.getRangeChildren().toString());
-        LOG.info("orNode: {}", node.getChildren().toString());
 
         // 2) Extract the ranges (start-end) from RangeNode children
         //    and store them in a list of pairs or something similar.

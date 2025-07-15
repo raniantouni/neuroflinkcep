@@ -1,22 +1,13 @@
-package com.rapidminer.extension.streaming.flink.RegexToAST;
-
-import com.rapidminer.extension.streaming.flink.translate.FlinkCEPTranslator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+package com.rapidminer.extension.streaming.RegexToAST;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegexAST {
     private final String regex;
     private int pos = 0;
     private List<List<String>> splits;      // all possible splits
     private boolean collectSplits = false;
-
-    private static final Logger LOG = LoggerFactory.getLogger(RegexAST.class);
 
     public RegexAST(String regex) {
         this.regex = regex;
@@ -31,7 +22,7 @@ public class RegexAST {
         Node root = parseExpression(LookAroundType.NONE);
         if (collectSplits && root instanceof GroupNode) {
             List<Node> events = ((GroupNode) root).getChildren();
-            splits = PatternSplitter.generateSplitsFromNodes(events);
+            splits = PatternSplitter.generateAllSplits(events);
         }
 
         return root;
@@ -171,7 +162,6 @@ public class RegexAST {
 
                 pos++; // skip the '-'
                 char endRange = regex.charAt(pos++);
-                LOG.info("START END {}",ch);// read the end char
                 // For [C-L], endRange will be 'L'
                 orNode.setInRange(true);
                 orNode.addRangeChild(new RangeNode(ch, endRange));

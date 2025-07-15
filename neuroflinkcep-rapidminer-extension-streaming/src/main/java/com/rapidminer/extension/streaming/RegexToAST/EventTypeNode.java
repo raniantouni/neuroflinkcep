@@ -1,6 +1,7 @@
-package com.rapidminer.extension.streaming.flink.RegexToAST;
+package com.rapidminer.extension.streaming.RegexToAST;
 
-public class EventTypeNode extends Node{
+
+public class EventTypeNode extends Node {
     private String value;
 
     public EventTypeNode(String value) {
@@ -13,5 +14,10 @@ public class EventTypeNode extends Node{
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value.length() > 1 ? "\"" + value + "\"" : value;
     }
 }

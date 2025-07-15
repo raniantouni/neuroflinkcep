@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.rapidminer.extension.streaming.RegexToAST.Node;
+import com.rapidminer.extension.streaming.RegexToAST.RegexAST;
+import com.rapidminer.extension.streaming.operator.StreamingCEPOperator;
 import org.apache.commons.math3.util.Pair;
 
 import com.rapidminer.example.AttributeRole;
@@ -235,7 +238,14 @@ public class AgnosticWorkflowConversion {
 			String operatorName = operator.getName();
 			String classKey = operator.getOperatorDescription().getKey();
 			Class<? extends Operator> operatorClass = operator.getClass();
-
+			if (operatorClass.equals(StreamingCEPOperator.class))
+			{
+				String regex = operator.getParameterAsString("Regular_Expression");
+				RegexAST regexAST = new RegexAST(regex, true);
+				Node root = regexAST.parse();
+				List<List<String>> splits = regexAST.getSplits();
+				operator.setParameter("decompositions", splits.toString());
+			}
 			List<AWPort> inputPortsAndSchemas = getPortsAndSchemas(
 					operator.getInputPorts().getAllPorts(), PortType.INPUT_PORT);
 			List<AWPort> outputPortsAndSchemas = getPortsAndSchemas(

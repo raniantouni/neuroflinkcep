@@ -1,27 +1,24 @@
 package com.rapidminer.extension.streaming.operator;
 
 
-import EDU.oswego.cs.dl.util.concurrent.FJTask;
 import com.google.common.collect.ImmutableMap;
+import com.rapidminer.extension.streaming.RegexToAST.Node;
+import com.rapidminer.extension.streaming.RegexToAST.RegexAST;
 import com.rapidminer.extension.streaming.ioobject.StreamDataContainer;
 import com.rapidminer.extension.streaming.utility.graph.StreamGraph;
 import com.rapidminer.extension.streaming.utility.graph.transform.CEP;
-import com.rapidminer.extension.streaming.utility.graph.transform.FilterTransformer;
 import com.rapidminer.extension.streaming.utility.graph.transform.Transformer;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.UserError;
 import com.rapidminer.parameter.*;
 import com.rapidminer.parameter.conditions.AndParameterCondition;
 import com.rapidminer.parameter.conditions.BooleanParameterCondition;
-import com.rapidminer.parameter.conditions.EqualTypeCondition;
 import com.rapidminer.parameter.conditions.ParameterCondition;
 import com.rapidminer.tools.LogService;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.tika.config.Param;
+import org.ini4j.Reg;
 
 import java.util.*;
 import java.util.logging.Logger;
-
 
 public class StreamingCEPOperator extends AbstractStreamTransformOperator {
     private static final Logger LOGGER = LogService.getRoot();
@@ -42,6 +39,8 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
     private static final Map<String, CEP.ConsumptionPolicy> CONSUMPTION_POLICY_OPTIONS = buildConsumptionPolicyMap();
     private static final String PARAMETER_DIRECTORY_PATH = "Directory_Path";
     private static final String PARAMETER_PREDICATES = "Predicates_List";
+    private static final String PARAMETER_DECOMPOSITIONS = "decompositions";
+
 
     public StreamingCEPOperator(OperatorDescription description) {
         super(description);
@@ -49,7 +48,6 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
 
     @Override
     public List<ParameterType> getParameterTypes() {
-
         List<ParameterType> types = super.getParameterTypes();
         ParameterType name = new ParameterTypeString(
                 PARAMETER_PATTERN_NAME,
@@ -229,6 +227,16 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
         );
         modelInputSize.registerDependencyCondition(notKnownModelCondition);
         types.add(modelInputSize);
+        ParameterType r = new ParameterTypeList(
+          "splits",
+                "d",
+                new ParameterTypeString("d","D"));
+        r.setHidden(true);
+        types.add(r);
+
+        ParameterType splits = new ParameterTypeString(PARAMETER_DECOMPOSITIONS, "splits", true);
+        splits.setHidden(true);
+        types.add(splits);
         return types;
     }
 
@@ -270,6 +278,22 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
 
         String modelName = "";
         if (isParameterSet(PARAMETER_MODEL_NAME)) modelName = getParameterAsString(PARAMETER_MODEL_NAME);
+
+        String regex = getParameterAsString(PARAMETER_REGEX);
+        RegexAST regexAST = new RegexAST(regex, true);
+        Node root = regexAST.parse();
+
+        List<List<String>> splits = regexAST.getSplits();
+
+        List<String[]> temp = new ArrayList<>();
+
+        String[] splitsArray = {splits.toString()};
+        temp.add(splitsArray);
+        this.setParameter(PARAMETER_DECOMPOSITIONS, splits.toString());
+
+        LOGGER.info("SSSSS" + getParameterAsString(PARAMETER_DECOMPOSITIONS));
+
+        setParameter("splits", ParameterTypeList.transformList2String(temp));
 
         return new CEP.Builder(graph)
                 .withPatternName(getParameterAsString(PARAMETER_PATTERN_NAME))

@@ -2,8 +2,7 @@
 
 
 Repository Contents:
-- **neuroflinkcep-rapidminer-extension-streaming** : the RapidMiner Studio extension that includes the NeuroFlinkCEP operator
-
+- **neuroflinkcep-rapidminer-extension-streaming** : This is the Streaming Extension, developed by RapidMiner and made available at its MarketPlace, extended to support the NeuroFlinkCep operator and the DAGStar4CER-Optimizer.
 - **DAG*4CER-optimizer**: the implementation of the DAG*4CER optimization engine
 
 - **Robotic-Scenario**: the dataset and code used to train the neural model for the robotic scenario, as well as the trained model, ready to be loaded
@@ -13,7 +12,7 @@ Repository Contents:
 
 # NeuroFlinkCEP Rapid Miner Extension
 ## Version
-he following versions are used throughout the project:
+The following versions are used throughout the project:
 
 - **Flink** 1.9.2  
 - **RapidMiner** 9.10.0  

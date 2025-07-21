@@ -111,6 +111,40 @@ public class AStarSearchAlgorithm implements GraphTraversalAlgorithm {
         this.logger = logger;
     }
 
+    public void setup4CEP(OptimizationResourcesBundle bundle,
+                          ThreadSafeDAG<Operator> operatorGraph) throws OptimizerException {
+        OptimizationRequest optimizationRequest = bundle.getWorkflow();
+        INFORENetwork inforeNetwork = bundle.getNetwork();
+        INFOREDictionary dictionary = bundle.getNewDictionary();
+        Map<String, String> opNamesToClassKeysMap = FileUtils.getOpNameToClassKeyMapping(optimizationRequest);
+
+        this.operatorGraph = operatorGraph;
+        if (operatorGraph.isEmpty()) {
+            throw new OptimizerException("Empty graph provided.");
+        }
+
+        this.validPlans = bundle.getPlanQueue();
+        this.rootPlan = bundle.getRootPlan();
+
+        //Operators in topological order with their available implementations
+        this.operatorImplementations = FileUtils.getOperatorImplementationsAsTuples(operatorGraph, inforeNetwork, dictionary, opNamesToClassKeysMap);
+//        System.out.println();
+//        for (String operatorName : operatorImplementations.keySet()) {
+//            for (Tuple<String, String> impl : this.operatorImplementations.get(operatorName)) {
+//                System.out.println("Operator: " + operatorName + ", Implementation: " + impl._1 + ", Platform: " + impl._2);
+//            }
+//        }
+//        System.out.println();
+        this.operatorChildren = GraphUtils.getOperatorChildrenMap(operatorGraph);
+        this.operatorParents = GraphUtils.getOperatorParentMap(operatorGraph);
+        this.timeout = bundle.getTimeout();
+        this.costEstimator = bundle.getCostEstimator();
+        this.executorService = bundle.getExecutorService();
+        this.stats = bundle.getStatisticsBundle();
+        this.logger = bundle.getLogger();
+    }
+
+
     @Override
     public void setup(OptimizationResourcesBundle bundle) throws OptimizerException {
         OptimizationRequest optimizationRequest = bundle.getWorkflow();
@@ -128,6 +162,13 @@ public class AStarSearchAlgorithm implements GraphTraversalAlgorithm {
 
         //Operators in topological order with their available implementations
         this.operatorImplementations = FileUtils.getOperatorImplementationsAsTuples(operatorGraph, inforeNetwork, dictionary, opNamesToClassKeysMap);
+//        System.out.println();
+//        for (String operatorName : operatorImplementations.keySet()) {
+//            for (Tuple<String, String> impl : this.operatorImplementations.get(operatorName)) {
+//                System.out.println("Operator: " + operatorName + ", Implementation: " + impl._1 + ", Platform: " + impl._2);
+//            }
+//        }
+//        System.out.println();
         this.operatorChildren = GraphUtils.getOperatorChildrenMap(operatorGraph);
         this.operatorParents = GraphUtils.getOperatorParentMap(operatorGraph);
         this.timeout = bundle.getTimeout();
@@ -243,7 +284,7 @@ public class AStarSearchAlgorithm implements GraphTraversalAlgorithm {
         final Map<String, Integer> heuristics = calculateHeuristics(costEstimator, operatorChildren, operatorParents, VIRTUAL_END, VIRTUAL_START);
 
         // Print the heuristic per operator
-        heuristics.forEach((op, heuristic) -> System.out.printf("Operator: %s, Heuristic: %d%n", op, heuristic));
+//        heuristics.forEach((op, heuristic) -> System.out.printf("Operator: %s, Heuristic: %d%n", op, heuristic));
 
         //Enqueue the first plan, dummy operator implementation for both START_OR and END_OR will be used
         //Ending nodes is a set that contains operators INSIDE the partial solution but with at least one successor OUTSIDE the partial solution
@@ -289,6 +330,7 @@ public class AStarSearchAlgorithm implements GraphTraversalAlgorithm {
                 System.out.println("-------------------------- ALERT --------------------------");
                 System.out.println("Found a complete plan with cost: " + completePlan.totalCost());
                 System.out.println("Time taken: " + (endTime - startTime) + " ms");
+                System.out.println("Plans examined: " + this.planCount);
                 System.out.println("-----------------------------------------------------------");
                 System.out.println();
                 bestPlanHeap.offer(completePlan);

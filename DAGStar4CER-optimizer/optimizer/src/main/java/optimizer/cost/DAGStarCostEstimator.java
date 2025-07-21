@@ -12,6 +12,7 @@ public class DAGStarCostEstimator implements CostEstimator {
 
     private final INFOREDictionary dictionary;
     private final Map<String, String> classKeyMapping;
+    private final Random random = new Random(7); // Fixed seed for reproducibility
 
     public DAGStarCostEstimator(INFOREDictionary dictionary, Map<String, String> classKeyMapping) {
         this.dictionary = dictionary;
@@ -42,11 +43,20 @@ public class DAGStarCostEstimator implements CostEstimator {
         return 0;
     }
 
+    private int getRandomOffset() {
+        return this.random.nextInt(200); // Random offset for cost estimation
+    }
+
     @Override
     public int getOperatorAndImplementationCost(String newOp, Tuple<String, String> newImpl) {
-        String classKey = classKeyMapping.get(newOp);
+
+        String opName = newOp;
+        if (newOp.startsWith("Neuro"))
+            opName = newOp.split("_")[0]; // Handle neuroflinkcep operators by taking the first part of the name
+
+        String classKey = classKeyMapping.get(opName);
         if (classKey == null) {
-            throw new IllegalStateException("Class key not found for operator: " + newOp);
+            throw new IllegalStateException("Class key not found for operator: " + opName);
         }
 
         // Get the site static cost for the class key
@@ -57,7 +67,7 @@ public class DAGStarCostEstimator implements CostEstimator {
         String platform = newImpl._2;
         int platformCost = dictionary.getPlatformStaticCostForClassKey(classKey, platform);
 
-        return siteCost + platformCost;
+        return siteCost + platformCost + getRandomOffset();
     }
 
     /**
@@ -80,9 +90,13 @@ public class DAGStarCostEstimator implements CostEstimator {
         if (operator.equals(AStarSearchAlgorithm.VIRTUAL_END) || operator.equals(AStarSearchAlgorithm.VIRTUAL_START))
             return 0;
 
-        String classKey = classKeyMapping.get(operator);
+        String opName = operator;
+        if (operator.startsWith("Neuro"))
+            opName = operator.split("_")[0]; // Handle neuroflinkcep operators by taking the first part of the name
+
+        String classKey = classKeyMapping.get(opName);
         if (classKey == null)
-            throw new IllegalStateException("Class key not found for operator: " + operator);
+            throw new IllegalStateException("Class key not found for operator: " + opName);
 
         // Get the minimum site cost for the operator
         return dictionary.getMinSiteCostForOperator(classKey);

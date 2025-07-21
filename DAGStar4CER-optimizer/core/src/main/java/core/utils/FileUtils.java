@@ -36,7 +36,7 @@ public final class FileUtils {
             String operatorName = operatorVtx.getData().getName();
             //TODO: WHEN WORKING WITH RIOT WORKFLOWS, THERE IS NO CLASS KEY
             //TODO: WHEN WORKING WITH OTHER WORKFLOW OR THE OPTIMIZER SERVICE, WE NEED THE CLASS KEY
-            System.out.println("Getting implementations for operator: " + operatorName + " with class key: " + classKeyMapping.get(operatorName));
+//            System.out.println("Getting implementations for operator: " + operatorName + " with class key: " + classKeyMapping.get(operatorName));
             Map<String, List<String>> impls = dictionary.getImplementationsForClassKey(classKeyMapping.get(operatorName), network);
 //             Map<String, List<String>> impls = dictionary.getImplementationsForClassKey(operatorName, network); //TESTING ONLY
 
@@ -52,11 +52,13 @@ public final class FileUtils {
         LinkedHashMap<String, List<Tuple<String, String>>> opMap = new LinkedHashMap<>();
         for (Vertex<Operator> operatorVtx : new DAGIterable<>(operatorGraph)) {
             String operatorName = operatorVtx.getData().getName();
-            // TODO: WHEN WORKING WITH RIOT WORKFLOWS, THERE IS NO CLASS KEY
-            // TODO: WHEN WORKING WITH OTHER WORKFLOW OR THE OPTIMIZER SERVICE, WE NEED THE CLASS KEY
+            String nameToSearch = operatorName;
+             if (operatorName.startsWith("Neuro")) {
+                 nameToSearch = operatorName.split("_")[0];
+             }
+//            System.out.println("Getting implementations for operator: " + operatorName + " with class key: " + classKeyMapping.get(nameToSearch));
 
-            Map<String, List<String>> impls = dictionary.getImplementationsForClassKey(classKeyMapping.get(operatorName), network);
-//            Map<String, List<String>> impls = dictionary.getImplementationsForClassKey(operatorName, network);
+            Map<String, List<String>> impls = dictionary.getImplementationsForClassKey(classKeyMapping.get(nameToSearch), network);
 
             for (String site : impls.keySet()) {
                 for (String platform : impls.get(site)) {

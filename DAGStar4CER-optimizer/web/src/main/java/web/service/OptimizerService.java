@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import core.exception.OptimizerException;
 import core.graph.ThreadSafeDAG;
+import core.graph.Vertex;
 import core.parser.dictionary.INFOREDictionary;
 import core.parser.network.INFORENetwork;
 import core.parser.workflow.Operator;
 import core.parser.workflow.OptimizationParameters;
 import core.parser.workflow.OptimizationRequest;
+import core.parser.workflow.Parameter;
 import core.structs.BoundedPriorityQueue;
 import core.structs.Tuple;
 import core.utils.FileUtils;
@@ -321,6 +323,8 @@ public class OptimizerService {
                     .map(RepositoryDocument::getObject)
                     .orElseThrow(() -> new ResourceNotFoundException("Network not found"));
 
+            System.out.println("Network: " + network.getNetwork());
+
             final INFOREDictionary dictionary = dictionaryRepository.findById(optParams.getDictionaryName())
                     .map(RepositoryDocument::getObject)
                     .map(inforeDictionary -> {
@@ -357,7 +361,8 @@ public class OptimizerService {
                     validPlansQueue = new BoundedPriorityQueue<>(costFormula, numOfPlans, false);
                     break;
                 case "op-A*":
-                    gta = new AStarSearchAlgorithm(AStarSearchAlgorithm.AggregationStrategy.MAX, false);
+                    gta = new DAGStar4CEP();
+//                    gta = new AStarSearchAlgorithm(AStarSearchAlgorithm.AggregationStrategy.MAX, false);
                     validPlansQueue = new BoundedPriorityQueue<>(costFormula, numOfPlans, false);
                     break;
                 case "op-HS":
@@ -392,6 +397,19 @@ public class OptimizerService {
             //Cost estimator
             final Map<String, String> opNamesToClassKeysMap = FileUtils.getOpNameToClassKeyMapping(request);
             final ThreadSafeDAG<Operator> operatorGraph = FileUtils.getOperatorGraph(request);
+            System.out.println();
+            for (Vertex<Operator> vertex : operatorGraph.getVertices()) {
+                Operator operator = vertex.getData();
+                System.out.println("Operator: " + operator.getName() + " ClassKey: " + operator.getClassKey());
+                if (operator.getClassKey().equals("streaming:cep")) {
+                    List<Parameter> operatorParameters = operator.getParameters();
+                    String decompositions = operatorParameters.get(operatorParameters.size() - 1).getValue();
+                    System.out.println("Decompositions: " + decompositions);
+                }
+                System.out.println();
+            }
+
+
             final Map<String, Set<String>> operatorParents = GraphUtils.getOperatorParentMap(operatorGraph);
             CostEstimator costEstimator = new SimpleCostEstimator(operatorParents, dictionary, opNamesToClassKeysMap);
 

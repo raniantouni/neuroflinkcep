@@ -1,9 +1,6 @@
 package com.rapidminer.extension.streaming.operator;
 
-
 import com.google.common.collect.ImmutableMap;
-import com.rapidminer.extension.streaming.RegexToAST.Node;
-import com.rapidminer.extension.streaming.RegexToAST.RegexAST;
 import com.rapidminer.extension.streaming.ioobject.StreamDataContainer;
 import com.rapidminer.extension.streaming.utility.graph.StreamGraph;
 import com.rapidminer.extension.streaming.utility.graph.transform.CEP;
@@ -13,10 +10,9 @@ import com.rapidminer.operator.UserError;
 import com.rapidminer.parameter.*;
 import com.rapidminer.parameter.conditions.AndParameterCondition;
 import com.rapidminer.parameter.conditions.BooleanParameterCondition;
+import com.rapidminer.parameter.conditions.EqualTypeCondition;
 import com.rapidminer.parameter.conditions.ParameterCondition;
 import com.rapidminer.tools.LogService;
-import org.ini4j.Reg;
-
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -40,7 +36,7 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
     private static final String PARAMETER_DIRECTORY_PATH = "Directory_Path";
     private static final String PARAMETER_PREDICATES = "Predicates_List";
     private static final String PARAMETER_DECOMPOSITIONS = "decompositions";
-
+    private static final String PARAMETER_TELECOM_EVENTS = "Recognise_telecom_events";
 
     public StreamingCEPOperator(OperatorDescription description) {
         super(description);
@@ -58,7 +54,7 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
         ParameterType key = new ParameterTypeString(
                 PARAMETER_EVENT_KEY,
                 "Key of the event",
-                false);
+                true);
         types.add(key);
         ParameterType regex = new ParameterTypeString(
                 PARAMETER_REGEX,
@@ -83,7 +79,7 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
         ParameterType keyField = new ParameterTypeString(
                 PARAMETER_KEY_BY_ATTRIBUTE,
                 "Attribute name thay the key by will be applied.",
-                false
+                true
         );
         keyField.registerDependencyCondition(keyByCondition);
         types.add(keyField);
@@ -111,7 +107,6 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
                 0
         );
         types.add(consumptionPolicy);
-
         ParameterType predicates = new ParameterTypeEnumeration(
                 PARAMETER_PREDICATES,
                 "Defines a list of predicates to apply filtering logic on attributes of the incoming ExampleSet.",
@@ -166,7 +161,6 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
                 true
         );
         types.add(isModelIncluded);
-
         ParameterCondition modelCondition = new BooleanParameterCondition(
                 this,
                 "Include_Model",
@@ -210,6 +204,14 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
         );
         modelNames.registerDependencyCondition(knownModelCondition);
         types.add(modelNames);
+
+        ParameterCondition telecomScenario = new EqualTypeCondition(this, PARAMETER_MODEL_NAME, new String[]{"Telecom Scenario"}, true);
+
+        ParameterType generateEvents = new ParameterTypeBoolean(PARAMETER_TELECOM_EVENTS,
+                "Recognize simple events type { E, F, G }",
+                false);
+        generateEvents.registerDependencyCondition(telecomScenario);
+        types.add(generateEvents);
 
         ParameterTypeDirectory directoryParameter = new ParameterTypeDirectory(
                 PARAMETER_DIRECTORY_PATH,
@@ -268,7 +270,10 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
         if (isParameterSet("Input_length")) modelInputLength = getParameterAsInt("Input_length");
 
         boolean keyByFlag = false;
-        if (isParameterSet(PARAMETER_KEY_BY_FLAG)) keyByFlag = getParameterAsBoolean(PARAMETER_KEY_BY_FLAG);
+        if (isParameterSet(PARAMETER_KEY_BY_FLAG)) {
+            LOGGER.info("key is set to " + keyByFlag);
+            keyByFlag = getParameterAsBoolean(PARAMETER_KEY_BY_FLAG);
+        }
 
         String keyName = "";
         if (isParameterSet(PARAMETER_KEY_BY_ATTRIBUTE)) keyName = getParameterAsString(PARAMETER_KEY_BY_ATTRIBUTE);
@@ -278,22 +283,6 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
 
         String modelName = "";
         if (isParameterSet(PARAMETER_MODEL_NAME)) modelName = getParameterAsString(PARAMETER_MODEL_NAME);
-
-        String regex = getParameterAsString(PARAMETER_REGEX);
-        RegexAST regexAST = new RegexAST(regex, true);
-        Node root = regexAST.parse();
-
-        List<List<String>> splits = regexAST.getSplits();
-
-        List<String[]> temp = new ArrayList<>();
-
-        String[] splitsArray = {splits.toString()};
-        temp.add(splitsArray);
-        this.setParameter(PARAMETER_DECOMPOSITIONS, splits.toString());
-
-        LOGGER.info("SSSSS" + getParameterAsString(PARAMETER_DECOMPOSITIONS));
-
-        setParameter("splits", ParameterTypeList.transformList2String(temp));
 
         return new CEP.Builder(graph)
                 .withPatternName(getParameterAsString(PARAMETER_PATTERN_NAME))
@@ -321,6 +310,7 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
                 .put("Non-Deterministic", CEP.SelectionStrategy.NON_DETERMINISTIC)
                 .build();
     }
+
     private static Map<String, CEP.ConsumptionPolicy> buildConsumptionPolicyMap() {
         return new ImmutableMap.Builder<String, CEP.ConsumptionPolicy>()
                 .put("None", CEP.ConsumptionPolicy.NONE)

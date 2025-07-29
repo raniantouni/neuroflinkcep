@@ -1,5 +1,6 @@
 # RapidMiner Streaming Extension
-This is the Streaming Extension, developed by RapidMiner and made available at its MarketPlace, extended to support the NeuroFlinkCep operator and the DAGStar4CER-Optimizer.
+This extension provides operators that allow RapidMiner users to design and deploy arbitrary streaming jobs.
+
 ## Version
 Dependency versions throughout the project:
 

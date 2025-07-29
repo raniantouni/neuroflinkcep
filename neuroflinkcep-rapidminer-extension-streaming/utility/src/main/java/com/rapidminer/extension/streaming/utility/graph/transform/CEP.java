@@ -33,6 +33,7 @@ public class CEP extends Transformer{
     private String keyName;
     private Boolean useLoadedModel;
     private String modelName;
+    private Boolean recognizeAggEvents;
 
 
     CEP() {
@@ -57,7 +58,12 @@ public class CEP extends Transformer{
         this.keyName = builder.keyName;
         this.useLoadedModel = builder.useLoadedModel;
         this.modelName = builder.modelName;
+        this.recognizeAggEvents = builder.recognizeAggEvents;
 
+    }
+
+    public Boolean getRecognizeAggEvents() {
+        return recognizeAggEvents;
     }
 
     public Map<String, Map<String, String>> getParsedPredicates() {
@@ -160,6 +166,7 @@ public class CEP extends Transformer{
         private String keyName;
         private Boolean useLoadedModel;
         private String modelName;
+        private Boolean recognizeAggEvents;
 
         public Builder(StreamGraph graph) {
             this.graph = graph;
@@ -239,6 +246,11 @@ public class CEP extends Transformer{
         }
         public CEP.Builder withModelName(String modelName){
             this.modelName = modelName;
+            return this;
+        }
+
+        public CEP.Builder withRecognizeAggEvents(boolean recognizeAggEvents){
+            this.recognizeAggEvents = recognizeAggEvents;
             return this;
         }
 

@@ -49,6 +49,8 @@ public class Operator implements Serializable {
     @Expose
     private List<@Valid OptimizationRequest> innerWorkflows = null;
 
+    private transient boolean isAuxiliary = false;
+
     /**
      * No args constructor for use in serialization
      */
@@ -74,6 +76,10 @@ public class Operator implements Serializable {
         this.hasSubprocesses = hasSubprocesses;
         this.numberOfSubprocesses = numberOfSubprocesses;
         this.innerWorkflows = innerWorkflows;
+    }
+
+    public boolean isAuxiliary() {
+        return isAuxiliary;
     }
 
     //Getters, setters and builder methods
@@ -178,6 +184,11 @@ public class Operator implements Serializable {
 
     public Operator withHasSubprocesses(boolean hasSubprocesses) {
         this.hasSubprocesses = hasSubprocesses;
+        return this;
+    }
+
+    public Operator withAuxiliary(boolean isAuxiliary) {
+        this.isAuxiliary = isAuxiliary;
         return this;
     }
 

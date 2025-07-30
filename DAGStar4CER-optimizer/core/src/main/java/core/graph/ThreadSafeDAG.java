@@ -1,5 +1,8 @@
 package core.graph;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -126,6 +129,119 @@ public class ThreadSafeDAG<T> implements DirectedAcyclicGraph<T> {
     public Set<Vertex<T>> getVertices() {
         return this.vertexMap.keySet();
     }
+
+    /**
+     * Returns all vertices in a topologically-sorted order (parents appear before
+     * their children).  Runs in O(|V| + |E|) time.  If the graph is no longer a
+     * DAG (i.e., a cycle was introduced concurrently) an {@link IllegalStateException}
+     * is thrown.
+     *
+     * @return immutable list containing the vertices in topological order
+     */
+    public List<Vertex<T>> getTopSortedVertices() {
+
+        /* ---------- 1.  Snapshot current in-degrees ---------- */
+        Map<Vertex<T>, Integer> inDegree = new HashMap<>();
+        for (Vertex<T> v : vertexMap.keySet()) {
+            inDegree.put(v, 0);                     // initialise
+        }
+        for (Queue<Edge<T>> edges : vertexMap.values()) {
+            for (Edge<T> e : edges) {
+                inDegree.merge(e.getSecond(), 1, Integer::sum);
+            }
+        }
+
+        /* ---------- 2.  Collect sources (in-degree == 0) ----- */
+        Deque<Vertex<T>> queue = new ArrayDeque<>();
+        for (Map.Entry<Vertex<T>, Integer> entry : inDegree.entrySet()) {
+            if (entry.getValue() == 0) {
+                queue.add(entry.getKey());
+            }
+        }
+
+        /* ---------- 3.  Kahn’s algorithm --------------------- */
+        List<Vertex<T>> result = new ArrayList<>(inDegree.size());
+        while (!queue.isEmpty()) {
+            Vertex<T> v = queue.removeFirst();
+            result.add(v);
+
+            // Each outgoing edge "removes" one prerequisite from its child
+            for (Edge<T> edge : vertexMap.getOrDefault(v, new ConcurrentLinkedQueue<>())) {
+                Vertex<T> child = edge.getSecond();
+                int newDeg = inDegree.computeIfPresent(child, (k, d) -> d - 1);
+                if (newDeg == 0) {
+                    queue.add(child);
+                }
+            }
+        }
+
+        /* ---------- 4.  Cycle-check -------------------------- */
+        if (result.size() != inDegree.size()) {
+            throw new IllegalStateException("Graph contains a cycle; topological sort impossible.");
+        }
+
+        return Collections.unmodifiableList(result);
+    }
+
+    /**
+     * Computes a unique signature for the current state of this DAG.
+     * <p>
+     * The algorithm:
+     * <ol>
+     *   <li>Create a canonical textual representation consisting of
+     *       every vertex and every directed edge, both sorted
+     *       lexicographically so the order is deterministic.</li>
+     *   <li>Hash that string with SHA-256.</li>
+     * </ol>
+     * The resulting 64-hex-character string is effectively unique:
+     * any change to the vertex/edge set yields a different hash with
+     * overwhelming probability.
+     *
+     * @return 64-character lowercase hexadecimal SHA-256 hash
+     * @throws RuntimeException if the JVM lacks SHA-256 (highly unlikely)
+     */
+    public String computeSignature() {
+
+        /* ---------- 1.  Canonicalise vertices ---------- */
+        List<String> vertexStrings = this.vertexMap.keySet()
+                .stream()
+                .map(Object::toString)          // rely on Vertex<T>.toString()
+                .sorted()
+                .collect(Collectors.toList());
+
+        /* ---------- 2.  Canonicalise edges ------------- */
+        List<String> edgeStrings = new ArrayList<>();
+        for (Map.Entry<Vertex<T>, Queue<Edge<T>>> entry : vertexMap.entrySet()) {
+            Vertex<T> parent = entry.getKey();
+            for (Edge<T> edge : entry.getValue()) {
+                // "parent->child"
+                edgeStrings.add(parent.toString() + "->" + edge.getSecond().toString());
+            }
+        }
+        Collections.sort(edgeStrings);
+
+        /* ---------- 3.  Build canonical text ----------- */
+        String canonical =
+                String.join("|", vertexStrings) + "#" + String.join("|", edgeStrings);
+
+        /* ---------- 4.  Hash with SHA-256 -------------- */
+        try {
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            byte[] digest = sha256.digest(canonical.getBytes(StandardCharsets.UTF_8));
+
+            // Convert to lowercase hex
+            StringBuilder hex = new StringBuilder(digest.length * 2);
+            for (byte b : digest) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            // Extremely unlikely on any modern JVM
+            throw new RuntimeException("SHA-256 algorithm not available", e);
+        }
+    }
+
 
     public Iterator<Vertex<T>> getVerticesIterator() {
         return this.vertexMap.keySet().iterator();

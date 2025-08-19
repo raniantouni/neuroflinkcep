@@ -5,6 +5,7 @@
  */
 package com.rapidminer.extension.streaming.optimizer.agnostic_workflow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,7 +31,15 @@ public class AWPlacementSite {
 	 */
 	public AWPlacementSite() {
 	}
-	
+	public AWPlacementSite(AWPlacementSite other) {
+		this.siteName = other.siteName;
+		if (other.availablePlatforms != null) {
+			this.availablePlatforms = new ArrayList<>();
+			for (AWPlacementPlatform platform : other.availablePlatforms) {
+				this.availablePlatforms.add(new AWPlacementPlatform(platform));
+			}
+		}
+	}
 	/**
 	 * Returns the name of the {@link AWPlacementSite}.
 	 *
@@ -73,6 +82,15 @@ public class AWPlacementSite {
 	public AWPlacementSite setAvailablePlatforms(List<AWPlacementPlatform> availablePlatforms) {
 		this.availablePlatforms = availablePlatforms;
 		return this;
+	}
+	public AWPlacementPlatform getPlatformByName(String name) {
+		if (availablePlatforms == null) {
+			return null;
+		}
+		return availablePlatforms.stream()
+				.filter(p -> p.getPlatformName() != null && p.getPlatformName().equals(name))
+				.findFirst()
+				.orElse(null);
 	}
 	
 }

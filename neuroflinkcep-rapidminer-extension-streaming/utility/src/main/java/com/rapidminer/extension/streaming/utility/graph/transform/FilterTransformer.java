@@ -10,6 +10,8 @@ import com.rapidminer.extension.streaming.utility.graph.StreamGraph;
 import com.rapidminer.extension.streaming.utility.graph.StreamGraphNodeVisitor;
 import com.rapidminer.extension.streaming.utility.graph.StreamProducer;
 
+import java.util.Map;
+
 
 /**
  * Representation of the filter operation
@@ -31,6 +33,10 @@ public class FilterTransformer extends Transformer {
 
 	private String value;
 
+	private Boolean neuroFlinkMode;
+
+	private Map<String, Map<String, String>> parsedPredicates;
+
 	FilterTransformer() {
 		super(-1);
 	}
@@ -41,6 +47,9 @@ public class FilterTransformer extends Transformer {
 		this.key = builder.key;
 		this.operator = builder.operator;
 		this.value = builder.value;
+		this.neuroFlinkMode = builder.neuroFlinkMode;
+		this.parsedPredicates = builder.parsedPredicates;
+
 	}
 
 	public StreamProducer getParent() {
@@ -57,6 +66,14 @@ public class FilterTransformer extends Transformer {
 
 	public Operator getOperator() {
 		return operator;
+	}
+
+	public Boolean getNeuroFlinkMode() {
+		return neuroFlinkMode;
+	}
+
+	public Map<String, Map<String, String>> getParsedPredicates() {
+		return parsedPredicates;
 	}
 
 	public String getValue() {
@@ -83,6 +100,8 @@ public class FilterTransformer extends Transformer {
 		private String value;
 		private StreamProducer parent;
 		private Operator operator = Operator.EQUAL;
+		private Boolean neuroFlinkMode;
+		private Map<String, Map<String, String>> parsedPredicates;
 
 		public Builder(StreamGraph graph) {
 			this.graph = graph;
@@ -101,7 +120,13 @@ public class FilterTransformer extends Transformer {
 			this.key = key;
 			return this;
 		}
-
+		public Builder withPredicates(Map<String, Map<String, String>> parsedPredicates) {
+			this.parsedPredicates = parsedPredicates; return this;
+		}
+		public Builder withMode(Boolean neuroFlinkMode) {
+			this.neuroFlinkMode = neuroFlinkMode;
+			return this;
+		}
 		public Builder withValue(String value) {
 			this.value = value;
 			return this;

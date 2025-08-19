@@ -7,6 +7,7 @@ package com.rapidminer.extension.streaming.optimizer.agnostic_workflow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -38,7 +39,49 @@ public class AgnosticWorkflow {
 	 */
 	public AgnosticWorkflow() {
 	}
-	
+	/**
+	 * Copy‑constructor: deep‑copies all fields from another AgnosticWorkflow.
+	 *
+	 * @param other the AgnosticWorkflow to copy from
+	 */
+	public AgnosticWorkflow(AgnosticWorkflow other) {
+		this.workflowName = other.workflowName;
+		this.enclosingOperatorName = other.enclosingOperatorName;
+
+		// deep‑copy inner source ports
+		if (other.innerSourcesPortsAndSchemas != null) {
+			this.innerSourcesPortsAndSchemas = new ArrayList<>();
+			for (AWPort port : other.innerSourcesPortsAndSchemas) {
+				this.innerSourcesPortsAndSchemas.add(new AWPort(port));
+			}
+		}
+
+		// deep‑copy inner sink ports
+		if (other.innerSinksPortsAndSchemas != null) {
+			this.innerSinksPortsAndSchemas = new ArrayList<>();
+			for (AWPort port : other.innerSinksPortsAndSchemas) {
+				this.innerSinksPortsAndSchemas.add(new AWPort(port));
+			}
+		}
+
+		// deep‑copy operator connections
+		this.operatorConnections = new ArrayList<>();
+		for (AWOperatorConnection conn : other.operatorConnections) {
+			this.operatorConnections.add(new AWOperatorConnection(conn));
+		}
+
+		// deep‑copy operators
+		this.operators = new ArrayList<>();
+		for (AWOperator op : other.operators) {
+			this.operators.add(new AWOperator(op));
+		}
+
+		// deep‑copy placement sites
+		this.placementSites = new ArrayList<>();
+		for (AWPlacementSite site : other.placementSites) {
+			this.placementSites.add(new AWPlacementSite(site));
+		}
+	}
 	/**
 	 * Returns the list of {@link AWOperator}s in this {@link AgnosticWorkflow}.
 	 *
@@ -47,7 +90,26 @@ public class AgnosticWorkflow {
 	public List<AWOperator> getOperators() {
 		return operators;
 	}
-	
+
+	public List<AWOperatorConnection> retrieveFromOperators(String name) {
+		List<AWOperatorConnection> result = new ArrayList<>();
+		for (AWOperatorConnection operatorConnection : operatorConnections) {
+			if (operatorConnection.getFromOperator().equals(name)) {
+				result.add(operatorConnection);
+			}
+		}
+		return result;
+	}
+	public List<AWOperatorConnection> retrieveToOperators(String name) {
+		List<AWOperatorConnection> result = new ArrayList<>();
+		for (AWOperatorConnection operatorConnection : operatorConnections) {
+			if (operatorConnection.getToOperator().equals(name)) {
+				result.add(operatorConnection);
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * Sets the list of {@link AWOperator}s to the provided one. Returns itself, so that set methods
 	 * can be chained.
@@ -60,7 +122,7 @@ public class AgnosticWorkflow {
 		this.operators = operators;
 		return this;
 	}
-	
+
 	/**
 	 * Returns the list of {@link AWOperatorConnection}s in this {@link AgnosticWorkflow}.
 	 *
@@ -104,7 +166,16 @@ public class AgnosticWorkflow {
 		this.workflowName = workflowName;
 		return this;
 	}
-	
+
+	public AWPlacementSite getPlacementSiteByName(String name) {
+		if (placementSites == null) {
+			return null;
+		}
+		return placementSites.stream()
+				.filter(p -> p.getSiteName() != null && p.getSiteName().equals(name))
+				.findFirst()
+				.orElse(null);
+	}
 	/**
 	 * Returns the name of the enclosing operator of this {@link AgnosticWorkflow}.
 	 *

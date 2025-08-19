@@ -12,6 +12,8 @@ import org.json.JSONObject;
 
 import com.rapidminer.extension.streaming.utility.graph.transform.FilterTransformer;
 
+import java.util.Map;
+
 
 /**
  * Flink specific translator for Filter
@@ -35,6 +37,12 @@ public class FlinkFilterTransformerTranslator {
 	 */
 	public DataStream<JSONObject> translate(FilterTransformer filterTransformer) {
 		FilterFunction<JSONObject> function = null;
+		Boolean neuroFlinkMode = filterTransformer.getNeuroFlinkMode();
+		Map<String, Map<String, String>> parsedPredicates = filterTransformer.getParsedPredicates();
+
+		if (neuroFlinkMode) {
+			return stream.filter(buildPredicate(parsedPredicates));
+		}
 
 		String key = filterTransformer.getKey();
 		String value = filterTransformer.getValue();
@@ -65,5 +73,44 @@ public class FlinkFilterTransformerTranslator {
 
 		return stream.filter(function);
 	}
+	public FilterFunction<JSONObject> buildPredicate(Map<String, Map<String, String>> predicates) {
+		return obj -> {
+			for (Map.Entry<String, Map<String, String>> attributeEntry : predicates.entrySet()) {
+				String key = attributeEntry.getKey();
+				Map<String, String> conditions = attributeEntry.getValue();
+
+				for (Map.Entry<String, String> condEntry : conditions.entrySet()) {
+					String condition = condEntry.getKey().toLowerCase();  // case-insensitive
+					String value = condEntry.getValue();
+
+					if (!evaluateCondition(obj, key, condition, value)) {
+						return false; // If any condition fails, reject the object
+					}
+				}
+			}
+			return true; // All conditions passed
+		};
+	}
+	private static boolean evaluateCondition(JSONObject obj, String key, String condition, String value) {
+		if (!obj.has(key)) return false;
+
+		switch (condition) {
+			case "equal":
+				return StringUtils.equals(obj.get(key).toString(), value);
+			case "not equal":
+				return !StringUtils.equals(obj.get(key).toString(), value);
+			case "greater than":
+				return obj.getDouble(key) > Double.parseDouble(value);
+			case "greater than or equal":
+				return obj.getDouble(key) >= Double.parseDouble(value);
+			case "less than":
+				return obj.getDouble(key) < Double.parseDouble(value);
+			case "less than or equal":
+				return obj.getDouble(key) <= Double.parseDouble(value);
+			default:
+				throw new IllegalArgumentException("Unsupported condition: " + condition);
+		}
+	}
+
 
 }

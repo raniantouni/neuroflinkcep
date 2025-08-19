@@ -33,7 +33,16 @@ public class AWParameter {
 	 * Creates a new {@link AWParameter} instance with the fields set to default values.
 	 */
 	public AWParameter() {}
-	
+
+	public AWParameter(AWParameter aWParameter) {
+		this.key = aWParameter.getKey();
+		this.value = aWParameter.getValue();
+		this.defaultValue = aWParameter.getDefaultValue();
+		this.range = aWParameter.getRange();
+		this.typeClass = aWParameter.getTypeClass();
+	}
+
+
 	/**
 	 * Returns the key of the {@link AWParameter}.
 	 *

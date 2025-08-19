@@ -5,6 +5,7 @@
  */
 package com.rapidminer.extension.streaming.optimizer.agnostic_workflow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,7 +30,20 @@ public class AWPlacementPlatform {
 	 */
 	public AWPlacementPlatform() {
 	}
-	
+	/**
+	 * Copy‑constructor: deep‑copies all fields from another platform.
+	 *
+	 * @param other the AWPlacementPlatform to copy
+	 */
+	public AWPlacementPlatform(AWPlacementPlatform other) {
+		this.platformName = other.platformName;
+		if (other.operators != null) {
+			this.operators = new ArrayList<>();
+			for (AWPlacementOperator op : other.operators) {
+				this.operators.add(new AWPlacementOperator(op));
+			}
+		}
+	}
 	/**
 	 * Returns the name of the {@link AWPlacementPlatform}.
 	 *

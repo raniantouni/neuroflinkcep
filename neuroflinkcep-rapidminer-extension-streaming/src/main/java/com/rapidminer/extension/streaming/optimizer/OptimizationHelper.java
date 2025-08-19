@@ -332,6 +332,7 @@ public class OptimizationHelper {
 			getPluginLoader())) {
 			// Convert the optimizer response back to an AgnosticWorkflow object.
 			AgnosticWorkflow optimizerResponseAW = optimizerResponse.getWorkflow();
+
 			// We use the timestamp of now() as the identifier in the Streaming Nest names and job
 			String identifier = ZonedDateTime.now(ZoneId.of("UTC")).toString();
 			// Perform an update of the AgnosticWorkflow, which actually creates the Streaming Nest

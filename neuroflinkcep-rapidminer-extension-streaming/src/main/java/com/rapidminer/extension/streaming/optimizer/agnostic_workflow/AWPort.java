@@ -19,7 +19,9 @@ import com.rapidminer.operator.ResultObjectAdapter;
  * @since 0.1.0
  */
 public class AWPort {
-	
+
+
+
 	public enum PortType {
 		INPUT_PORT, OUTPUT_PORT, INNER_OUTPUT_PORT, INNER_INPUT_PORT;
 		
@@ -44,7 +46,14 @@ public class AWPort {
 	 * Creates a new {@link AWPort} instance with the fields set to default values.
 	 */
 	public AWPort() {}
-	
+
+	public AWPort(AWPort aWPort) {
+		this.name = aWPort.getName();
+		this.objectClass = aWPort.getObjectClass();
+		this.portType = aWPort.getPortType();
+		this.isConnected = aWPort.getIsConnected();
+		this.schema = aWPort.getSchema();
+	}
 	/**
 	 * Returns the name of the {@link AWPort}.
 	 *

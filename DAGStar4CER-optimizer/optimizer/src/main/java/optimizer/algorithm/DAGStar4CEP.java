@@ -79,7 +79,8 @@ public class DAGStar4CEP implements GraphTraversalAlgorithm {
 
         // Base-case: no CEP left ➜ return this graph as a terminal variant
         if (cepOpt.isEmpty()) {
-            return List.of(new ThreadSafeDAG<>(g));
+            System.out.println("No Cep operator found");
+            return new ArrayList<>(List.of(new ThreadSafeDAG<>(g)));
         }
 
         Vertex<Operator> cepV = cepOpt.get();
@@ -96,7 +97,12 @@ public class DAGStar4CEP implements GraphTraversalAlgorithm {
         }
         String json = params.get(params.size() - 1).getValue();
         List<List<String>> decomps = MAPPER.readValue(json, new TypeReference<>() {});
-
+        System.out.println("------------ Decompositions: -------------- " + decomps + "Size " + decomps.size() );
+        if (decomps.isEmpty()) {
+            System.out.println("DECOMPOSITIONS ARE EMPTY!");
+            cepOpt.get().getData().withAuxiliary(true);
+            return generateDecompositions(g);
+        }
         // ---------- compute parents & children of this CEP ----------
         Set<Vertex<Operator>> parents = g.getVertices().stream()
                 .filter(v -> g.getChildren(v).contains(cepV))
@@ -108,7 +114,7 @@ public class DAGStar4CEP implements GraphTraversalAlgorithm {
         List<ThreadSafeDAG<Operator>> oneStep = new ArrayList<>();
 
         for (List<String> alt : decomps) {
-
+            System.out.println("Inside for loop alt " + alt);
             /* 1) vertices -------------------------------------------------- */
             LinkedHashSet<Vertex<Operator>> vertices = new LinkedHashSet<>();
 
@@ -119,12 +125,15 @@ public class DAGStar4CEP implements GraphTraversalAlgorithm {
 
             // create fresh vertices for this decomposition alternative
             List<Vertex<Operator>> newVertices = new ArrayList<>();
+            int index = 0;
             for (String pattern : alt) {
-                String newCepOpName = originalName + "_" + pattern;
+                System.out.println("Pattern: " + pattern);
+                String newCepOpName = originalName + "_" + pattern + "_" + index;
                 Operator op = createCepOperator(newCepOpName, true);
                 Vertex<Operator> v = new Vertex<>(op);
                 newVertices.add(v);
                 vertices.add(v);
+                index++;
             }
             // Also need to add a cep operator that will aggregate the decomposed patterns
             Operator aggrCepOp = createCepOperator(originalName + "_" + originalPattern, true);
@@ -189,19 +198,17 @@ public class DAGStar4CEP implements GraphTraversalAlgorithm {
 
     @Override
     public void doWork() {
-
         // ---------- 1. Generate and print the decomposed workflows ----------
         try {
-
+            System.out.println("Do work starts...");
             List<ThreadSafeDAG<Operator>> decomposedGraphs;
             decomposedGraphs = generateDecompositions(originalOperatorGraph);
-
+            System.out.println("ORIGINAL GRAPH " + originalOperatorGraph + " DECOMPOSED GRAPH " + decomposedGraphs.size());
             decomposedGraphs.sort(Comparator.comparingInt(ThreadSafeDAG::totalVertices));
 
             int i = 1;
             List<SimpleOptimizationPlan> dagStarResults = new ArrayList<>();
             for (ThreadSafeDAG<Operator> dag : decomposedGraphs) {
-
                 AStarSearchAlgorithm sStar = new AStarSearchAlgorithm(AStarSearchAlgorithm.AggregationStrategy.MAX, false);
                 sStar.setup4CEP(this.bundle, dag);
                 sStar.doWork();
@@ -224,6 +231,7 @@ public class DAGStar4CEP implements GraphTraversalAlgorithm {
                 System.out.println("After clearing, queue size: " + this.bundle.getPlanQueue().size());
                 sStar.teardown();
             }
+            System.out.println("Done doWork dag* results: " + dagStarResults);
             dagStarResults.sort(Comparator.comparingInt(SimpleOptimizationPlan::totalCost));
             this.bundle.getPlanQueue().offer(dagStarResults.get(0));
         } catch (Exception e) {

@@ -26,7 +26,16 @@ public class AWAttribute {
 	 */
 	public AWAttribute() {
 	}
-	
+	/**
+	 * Copy‑constructor: deep‑copies all fields from another AWAttribute.
+	 *
+	 * @param other the AWAttribute to copy from
+	 */
+	public AWAttribute(AWAttribute other) {
+		this.name = other.name;
+		this.type = other.type;
+		this.specialRole = other.specialRole;
+	}
 	/**
 	 * Returns the name of the attribute.
 	 *

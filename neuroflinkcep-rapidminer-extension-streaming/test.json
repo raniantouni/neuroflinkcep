@@ -1,16 +1,16 @@
 {
   "_index": "infore_result_v2",
   "_type": "_doc",
-  "_id": "1Lc8ZZgB2PwdmJMcOnUd",
+  "_id": "DKu8WpgBF-LW0l9905IW",
   "_version": 1,
   "_score": null,
   "_source": {
     "_class": "web.document.OptimizerResponseDocument",
-    "optimizationRequestId": "07c8ZZgB2PwdmJMcOHXB",
-    "@timestamp": "2025-08-01T10:45:02.610Z",
+    "optimizationRequestId": "C6u8WpgBF-LW0l990pIL",
+    "@timestamp": "2025-07-30T09:49:41.009Z",
     "networkName": "network1",
     "dictionaryName": "dictionary1",
-    "algorithmUsed": "op-a*",
+    "algorithmUsed": "op-es",
     "workflow": {
       "workflowName": "Streaming",
       "enclosingOperatorName": "Streaming Optimization",
@@ -360,7 +360,7 @@
             },
             {
               "key": "Selection_Strategy",
-              "value": "Strict",
+              "value": "Relaxed",
               "defaultValue": "Relaxed",
               "range": "Strict, Relaxed, Non-Deterministic; default: Relaxed",
               "typeClass": "com.rapidminer.parameter.ParameterTypeCategory"
@@ -429,7 +429,7 @@
             },
             {
               "key": "decompositions",
-              "value": "[]",
+              "value": "[[\"A\",\"BCD+\"],[\"AB\",\"CD+\"],[\"ABC\",\"D+\"]]",
               "defaultValue": "",
               "range": "string",
               "typeClass": "com.rapidminer.parameter.ParameterTypeString"
@@ -437,7 +437,7 @@
           ],
           "hasSubprocesses": false,
           "numberOfSubprocesses": 0,
-          "isAuxiliary": true
+          "isAuxiliary": false
         },
         {
           "name": "Kafka Sink (3)",
@@ -528,7 +528,7 @@
             },
             {
               "key": "Regular_Expression",
-              "value": "ab",
+              "value": "ABC+",
               "defaultValue": "",
               "range": "string",
               "typeClass": "com.rapidminer.parameter.ParameterTypeString"
@@ -625,7 +625,7 @@
             },
             {
               "key": "decompositions",
-              "value": "[[\"a\",\"b\"]]",
+              "value": "[[\"A\",\"BC+\"],[\"AB\",\"C+\"]]",
               "defaultValue": "",
               "range": "string",
               "typeClass": "com.rapidminer.parameter.ParameterTypeString"
@@ -705,62 +705,6 @@
                   "isAuxiliary": false
                 },
                 {
-                  "name": "Neuro FlinkCEP (2)",
-                  "classKey": "",
-                  "operatorClass": "",
-                  "isEnabled": false,
-                  "hasSubprocesses": false,
-                  "numberOfSubprocesses": 0,
-                  "isAuxiliary": false
-                },
-                {
-                  "name": "Neuro FlinkCEP_a_0",
-                  "classKey": "",
-                  "operatorClass": "",
-                  "isEnabled": false,
-                  "hasSubprocesses": false,
-                  "numberOfSubprocesses": 0,
-                  "isAuxiliary": false
-                },
-                {
-                  "name": "Neuro FlinkCEP_ab",
-                  "classKey": "",
-                  "operatorClass": "",
-                  "isEnabled": false,
-                  "hasSubprocesses": false,
-                  "numberOfSubprocesses": 0,
-                  "isAuxiliary": false
-                },
-                {
-                  "name": "Kafka Sink",
-                  "classKey": "",
-                  "operatorClass": "",
-                  "isEnabled": false,
-                  "hasSubprocesses": false,
-                  "numberOfSubprocesses": 0,
-                  "isAuxiliary": false
-                },
-                {
-                  "name": "Kafka Sink (3)",
-                  "classKey": "",
-                  "operatorClass": "",
-                  "isEnabled": false,
-                  "hasSubprocesses": false,
-                  "numberOfSubprocesses": 0,
-                  "isAuxiliary": false
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "siteName": "site0",
-          "availablePlatforms": [
-            {
-              "platformName": "flink",
-              "address": "",
-              "operators": [
-                {
                   "name": "Multiply",
                   "classKey": "",
                   "operatorClass": "",
@@ -797,7 +741,34 @@
                   "isAuxiliary": false
                 },
                 {
-                  "name": "Neuro FlinkCEP_b_1",
+                  "name": "Neuro FlinkCEP (2)",
+                  "classKey": "",
+                  "operatorClass": "",
+                  "isEnabled": false,
+                  "hasSubprocesses": false,
+                  "numberOfSubprocesses": 0,
+                  "isAuxiliary": false
+                },
+                {
+                  "name": "Kafka Sink (3)",
+                  "classKey": "",
+                  "operatorClass": "",
+                  "isEnabled": false,
+                  "hasSubprocesses": false,
+                  "numberOfSubprocesses": 0,
+                  "isAuxiliary": false
+                },
+                {
+                  "name": "Neuro FlinkCEP",
+                  "classKey": "",
+                  "operatorClass": "",
+                  "isEnabled": false,
+                  "hasSubprocesses": false,
+                  "numberOfSubprocesses": 0,
+                  "isAuxiliary": false
+                },
+                {
+                  "name": "Kafka Sink",
                   "classKey": "",
                   "operatorClass": "",
                   "isEnabled": false,
@@ -808,31 +779,41 @@
               ]
             }
           ]
+        },
+        {
+          "siteName": "site0",
+          "availablePlatforms": [
+            {
+              "platformName": "flink",
+              "address": "",
+              "operators": []
+            }
+          ]
         }
       ],
       "optimizationParameters": {
         "continuous": false,
         "networkName": "network1",
         "dictionaryName": "dictionary1",
-        "algorithm": "op-A*",
+        "algorithm": "op-ES",
         "parallelism": 1,
         "description": "Test",
         "timeout_ms": 50000,
         "numOfPlans": 1
       }
     },
-    "operatorsPretty": "{Retrieve kafka connection  (2)=(site1,flink), Multiply=(site0,flink), Kafka Source=(site0,flink), Map Stream=(site0,flink), Duplicate Stream=(site0,flink), Neuro FlinkCEP_b_1=(site0,flink), Neuro FlinkCEP (2)=(site1,flink), Neuro FlinkCEP_a_0=(site1,flink), Neuro FlinkCEP_ab=(site1,flink), Kafka Sink=(site1,flink), Kafka Sink (3)=(site1,flink)}",
-    "performance": "OptimizationRequestStatisticsBundle{stats={E2E elapsed time (ms)=40, Created Plans=1392, Pruned plans=0, Path exploration time (ms)=21, Explored Plans=699, Teardown time (ms)=0, Set collisions=0, Explored Dimensions=1, Graph collisions=0, Setup time (ms)=18}, totalThreads=1, setupDuration=-1, execDuration=-1, cost=-1, algorithmName='', workflow='', dictionary='', network=''}",
+    "operatorsPretty": "{Retrieve kafka connection  (2)=(site1,flink), Multiply=(site1,flink), Kafka Source=(site1,flink), Map Stream=(site1,flink), Duplicate Stream=(site1,flink), Neuro FlinkCEP (2)=(site1,flink), Kafka Sink (3)=(site1,flink), Neuro FlinkCEP=(site1,flink), Kafka Sink=(site1,flink)}",
+    "performance": "OptimizationRequestStatisticsBundle{stats={E2E elapsed time (ms)=22, Created Plans=512, Pruned plans=0, Path exploration time (ms)=4, Explored Plans=512, Teardown time (ms)=0, Set collisions=0, Explored Dimensions=1022, Graph collisions=0, Setup time (ms)=18}, totalThreads=1, setupDuration=-1, execDuration=-1, cost=-1, algorithmName='', workflow='', dictionary='', network=''}",
     "alternativeWorkflows": [],
-    "placementSiteDiffFromRoot": "{\"Duplicate Stream\":\"(site0,flink) -\\u003e (site0,flink)\",\"Multiply\":\"(site1,flink) -\\u003e (site0,flink)\",\"Kafka Sink\":\"(site1,flink) -\\u003e (site1,flink)\",\"Kafka Source\":\"(site1,flink) -\\u003e (site0,flink)\",\"Kafka Sink (3)\":\"(site0,flink) -\\u003e (site1,flink)\",\"Retrieve kafka connection  (2)\":\"(site1,flink) -\\u003e (site1,flink)\",\"Neuro FlinkCEP (2)\":\"(site1,flink) -\\u003e (site1,flink)\",\"Map Stream\":\"(site1,flink) -\\u003e (site0,flink)\"}",
+    "placementSiteDiffFromRoot": "{\"Neuro FlinkCEP\":\"(site0,flink) -\\u003e (site1,flink)\",\"Duplicate Stream\":\"(site0,flink) -\\u003e (site1,flink)\",\"Multiply\":\"(site0,flink) -\\u003e (site1,flink)\",\"Kafka Sink\":\"(site1,flink) -\\u003e (site1,flink)\",\"Kafka Source\":\"(site0,flink) -\\u003e (site1,flink)\",\"Kafka Sink (3)\":\"(site1,flink) -\\u003e (site1,flink)\",\"Retrieve kafka connection  (2)\":\"(site1,flink) -\\u003e (site1,flink)\",\"Map Stream\":\"(site1,flink) -\\u003e (site1,flink)\",\"Neuro FlinkCEP (2)\":\"(site1,flink) -\\u003e (site1,flink)\"}",
     "user": "infore_user"
   },
   "fields": {
     "@timestamp": [
-      "2025-08-01T10:45:02.610Z"
+      "2025-07-30T09:49:41.009Z"
     ]
   },
   "sort": [
-    1754045102610
+    1753868981009
   ]
 }

@@ -195,7 +195,7 @@ public class OperatorDictionary {
         result.add(OperatorService.createOperator(StreamParseField.class));
         result.add(OperatorService.createOperator(StreamSelect.class));
         result.add(OperatorService.createOperator(StreamStringifyField.class));
-
+        result.add(OperatorService.createOperator(StreamUnion.class));
         result.add(OperatorService.createOperator(StreamingCEPOperator.class));
 
         result.add(OperatorService.createOperator(StreamAthenaOMLOperator.class));

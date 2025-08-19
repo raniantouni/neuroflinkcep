@@ -66,6 +66,11 @@ public class FlinkCEPTranslator {
         CEP.SelectionStrategy selectionStrategy = cep.getSelectionStrategy();
         CEP.ConsumptionPolicy consumptionPolicy = cep.getConsumptionPolicy();
 
+        // Early filtering flags
+        Boolean earlyFiltering = cep.getEarlyFiltering() != null && cep.getEarlyFiltering();
+        boolean isStrict = selectionStrategy == CEP.SelectionStrategy.STRICT;
+
+
         DataStream<JSONObject> preCepStream;
         if (isModelIncluded && useLoadedModel) {
             if (modelName.equals("Telecom Scenario")) {
@@ -84,6 +89,11 @@ public class FlinkCEPTranslator {
             }
         } else preCepStream = stream;
 
+        if (earlyFiltering && !isStrict) {
+            preCepStream = preCepStream
+                    .filter(record -> parser.simpleEvents.contains(record.getString(key)))
+                    .name("early-filter");
+        }
         AfterMatchSkipStrategy consumptionStrategy = getConsumptionStrategy(consumptionPolicy);
         DataStream<JSONObject> timestampedStream = preCepStream.assignTimestampsAndWatermarks(new AssignerWithPunctuatedWatermarks<JSONObject>() {
             @Override
@@ -112,9 +122,7 @@ public class FlinkCEPTranslator {
             }
 
         });
-        LOG.info("AST " + RegexAST.toStringTree(ast));
         Pattern<JSONObject, JSONObject> pattern = convertToFlinkCEP(ast, key, selectionStrategy, consumptionStrategy, true, predicates);
-
         pattern = pattern.within(Time.seconds(timeWindow));
         PatternStream<JSONObject> patternStream;
         if (enableKeyBy) {
@@ -131,6 +139,7 @@ public class FlinkCEPTranslator {
 //        PatternStream<JSONObject> patternStream = org.apache.flink.cep.CEP.pattern(timestampedStream.keyBy(obj -> obj.get("robotID")), pattern);
         return patternStream.select((PatternSelectFunction<JSONObject, JSONObject>) match -> {
             JSONArray eventsArray = new JSONArray();
+            String keyValue = "";
 
             for (List<JSONObject> events : match.values()) {
                 for (JSONObject event : events) {
@@ -139,18 +148,24 @@ public class FlinkCEPTranslator {
                         matches.forEach(eventsArray::put);
                         continue;
                     }
+                    if (event.has(keyName)) {
+                        keyValue = event.getString(keyName);
+                    }
                     eventsArray.put(event);
                 }
             }
 
             JSONObject res = new JSONObject();
+            res.put(keyName, keyValue);
             if (match.size() == 1 && match.values().iterator().next().size() == 1) {
                 res = new JSONObject(match.values().iterator().next().get(0).toString()); // clone the original event
+                res.put("event", patternName);
             } else {
                 res = new JSONObject();
                 res.put("event", patternName);
             }
             res.put("matches", eventsArray);
+            System.out.println("Res for regex "  + regex + "this is the result  " + res);
             return res;
         }).name(patternName);
 
@@ -182,7 +197,6 @@ public class FlinkCEPTranslator {
         SimpleCondition<JSONObject> condition = new SimpleCondition<JSONObject>() {
             @Override
             public boolean filter(JSONObject obj) throws Exception {
-                System.out.println("key: " + key + " eventType: " + eventType + " jsonObject " + obj);
                 boolean mainCondition = obj.get(key).toString().startsWith(eventType);
                 boolean predicateCondition = checkPredicates(obj, predicates);
                 return mainCondition && predicateCondition;

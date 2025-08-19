@@ -15,7 +15,7 @@ public class RegexAST {
     private int pos = 0;
     private List<List<String>> splits;      // all possible splits
     private boolean collectSplits = false;
-
+    public List<String> simpleEvents = new ArrayList<>();
     private static final Logger LOG = LoggerFactory.getLogger(RegexAST.class);
 
     public RegexAST(String regex) {
@@ -52,6 +52,7 @@ public class RegexAST {
                     }
                     pos++;  // skip closing quote
                     group.addChild(new EventTypeNode(lit.toString()));
+                    simpleEvents.add(lit.toString());
                     break;
 
                 case '(':
@@ -99,6 +100,7 @@ public class RegexAST {
                         } else {
                             // If not a digit, treat it as a literal character.
                             group.addChild(new EventTypeNode(String.valueOf(next)));
+                            simpleEvents.add(String.valueOf(next));
                         }
                     }
                     break;
@@ -140,6 +142,7 @@ public class RegexAST {
                     break;
                 default:
                     group.addChild(new EventTypeNode(String.valueOf(ch)));
+                    simpleEvents.add(String.valueOf(ch));
                     break;
             }
         }
@@ -177,6 +180,7 @@ public class RegexAST {
                 orNode.addRangeChild(new RangeNode(ch, endRange));
             } else {
                 orNode.addChild(new EventTypeNode(String.valueOf(ch)));
+                simpleEvents.add(String.valueOf(ch));
             }
         }
         return orNode;

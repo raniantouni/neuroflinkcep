@@ -225,10 +225,35 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
                 "Input_length",
                 "Input length of the trained model.",
                 1,
-                Integer.MAX_VALUE
+                Integer.MAX_VALUE,
+                true
         );
         modelInputSize.registerDependencyCondition(notKnownModelCondition);
         types.add(modelInputSize);
+
+        // -------------------------  hidden decision parameters, after optimizer are not hidden -----------------------
+        ParameterType earlyFiltering = new ParameterTypeBoolean("Early Filtering",
+                "Early filtering flag. In Strict contiguity is always set to false even if the user selected true.",
+                false
+        );
+
+        earlyFiltering.setHidden(true);
+        types.add(earlyFiltering);
+
+        ParameterType reordering = new ParameterTypeBoolean("Reordering",
+                "Reordering flag. In Strict contiguity is always set to false even if the user selected true.",
+                false
+        );
+        reordering.setHidden(true);
+        types.add(reordering);
+
+        ParameterType pushingPredicates = new ParameterTypeBoolean("Pushing Predicates upstream",
+                "Pushing predicates upstream flag. In Strict contiguity and robotic scenario cases, is always set to false even if the user selected true.",
+                false
+        );
+        pushingPredicates.setHidden(true);
+        types.add(pushingPredicates);
+
         ParameterType r = new ParameterTypeList(
           "splits",
                 "d",
@@ -236,9 +261,13 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
         r.setHidden(true);
         types.add(r);
 
+
         ParameterType splits = new ParameterTypeString(PARAMETER_DECOMPOSITIONS, "splits", true);
         splits.setHidden(true);
         types.add(splits);
+
+
+
         return types;
     }
 
@@ -300,6 +329,9 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
                 .withKeyName(keyName)
                 .withUseLoadedModel(useLoadedModel)
                 .withModelName(modelName)
+                .withEarlyFiltering(getParameterAsBoolean("Early Filtering"))
+                .withPushingPredicates(getParameterAsBoolean("Pushing Predicates Upstream"))
+                .withReordering(getParameterAsBoolean("Reordering"))
                 .build();
     }
 

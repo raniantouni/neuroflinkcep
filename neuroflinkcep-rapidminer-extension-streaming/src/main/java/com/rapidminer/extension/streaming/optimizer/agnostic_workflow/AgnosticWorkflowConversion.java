@@ -6,12 +6,19 @@
 package com.rapidminer.extension.streaming.optimizer.agnostic_workflow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
+import com.google.gson.Gson;
 import com.rapidminer.extension.streaming.RegexToAST.Node;
 import com.rapidminer.extension.streaming.RegexToAST.RegexAST;
+import com.rapidminer.extension.streaming.operator.StreamFilter;
 import com.rapidminer.extension.streaming.operator.StreamingCEPOperator;
+import com.rapidminer.operator.*;
+import com.rapidminer.parameter.*;
+import com.rapidminer.tools.LogService;
 import org.apache.commons.math3.util.Pair;
 
 import com.rapidminer.example.AttributeRole;
@@ -19,11 +26,6 @@ import com.rapidminer.example.ExampleSet;
 import com.rapidminer.extension.streaming.ioobject.StreamDataContainer;
 import com.rapidminer.extension.streaming.operator.StreamingNest;
 import com.rapidminer.extension.streaming.optimizer.agnostic_workflow.AWPort.PortType;
-import com.rapidminer.operator.ExecutionUnit;
-import com.rapidminer.operator.IOObject;
-import com.rapidminer.operator.Operator;
-import com.rapidminer.operator.OperatorChain;
-import com.rapidminer.operator.OperatorCreationException;
 import com.rapidminer.operator.ports.InputPort;
 import com.rapidminer.operator.ports.OutputPort;
 import com.rapidminer.operator.ports.OutputPorts;
@@ -32,11 +34,10 @@ import com.rapidminer.operator.ports.metadata.AttributeMetaData;
 import com.rapidminer.operator.ports.metadata.ExampleSetMetaData;
 import com.rapidminer.operator.ports.metadata.MDInteger;
 import com.rapidminer.operator.ports.metadata.MetaData;
-import com.rapidminer.parameter.ParameterType;
-import com.rapidminer.parameter.ParameterTypeString;
-import com.rapidminer.parameter.UndefinedParameterError;
 import com.rapidminer.tools.Ontology;
 import com.rapidminer.tools.OperatorService;
+
+import static com.rapidminer.tools.OperatorService.createOperator;
 
 
 /**
@@ -47,6 +48,7 @@ import com.rapidminer.tools.OperatorService;
  * @since 0.1.0
  */
 public class AgnosticWorkflowConversion {
+	private static final Logger LOGGER = LogService.getRoot();
 
 	/**
 	 * Class key for the {@link StreamingNest} operator in {@link ExecutionUnit}s.
@@ -92,6 +94,55 @@ public class AgnosticWorkflowConversion {
 			UndefinedParameterError {
 		String workflowName = process.getName();
 		String enclosingOperatorName = process.getEnclosingOperator().getName();
+		ExecutionUnit processCopy = process;
+		for (Operator operator : processCopy.getOperators()) {
+			if (operator.getClass().equals(StreamingCEPOperator.class)) {
+				String contiguity = operator.getParameterAsString("Selection_Strategy");
+				String modelName = operator.getParameterAsString("Model_name");
+				// not strict and not robotic scenario
+				if (!contiguity.equals("Strict") && !modelName.equals("Robotic Scenario")) {
+					try {
+						String predicates = operator.getParameterAsString("Predicates_List");
+						StreamFilter newFilter = createOperator(StreamFilter.class);
+						LOGGER.info(newFilter.getName());
+						newFilter.setParameter("NeuroFlinkCEP_filtering_mode","true");
+						newFilter.setParameter("predicates", predicates);
+
+						if (predicates.isEmpty()) {
+							operator.setParameter("Early Filtering", "false");
+							operator.setParameter("Reordering", "false");
+						}
+						else {
+							operator.setParameter("Early Filtering", "true");
+							operator.setParameter("Reordering", "true");
+						}
+						operator.getParameterType("Early Filtering").setHidden(false);
+
+						operator.setParameter("Reordering", "true");
+						operator.getParameterType("Reordering").setHidden(false);
+
+						operator.setParameter("Pushing Predicates upstream", "true");
+						operator.getParameterType("Pushing Predicates upstream").setHidden(false);
+						process.addOperator(newFilter);
+						String fromOperatorName = operator.getInputPorts().getPortByName("input stream").getOpposite().getPorts().getOwner().getName();
+						String fromPortName = operator.getInputPorts().getPortByName("input stream").getOpposite().getName();
+						process.getOperatorByName(fromOperatorName)
+								.getOutputPorts().getPortByName(fromPortName).disconnect();
+						process.getOperatorByName(fromOperatorName)
+								.getOutputPorts().getPortByName(fromPortName)
+								.connectTo(newFilter.getInputPorts().getPortByName("input stream"));
+
+						newFilter.getOutputPorts()
+								.getPortByName("output stream")
+								.connectTo(operator.getInputPorts().getPortByName("input stream"));
+
+
+					} catch (OperatorCreationException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		}
 
 		List<AWPort> innerSourcesPortsAndSchemas = new ArrayList<>(
 				getPortsAndSchemas(process.getInnerSources().getAllPorts(),
@@ -160,7 +211,7 @@ public class AgnosticWorkflowConversion {
 		process.setName(workflow.getWorkflowName());
 
 		for (AWOperator awOperator : operators) {
-			Operator operator = OperatorService.createOperator(awOperator.getOperatorClass());
+			Operator operator = createOperator(awOperator.getOperatorClass());
 			operator.rename(awOperator.getName());
 			operator.setEnabled(awOperator.getIsEnabled());
 
@@ -186,7 +237,8 @@ public class AgnosticWorkflowConversion {
 			String toOperatorName = awConnection.getToOperator();
 			String toPortName = awConnection.getToPort();
 			PortType toPortType = awConnection.getToPortType();
-
+			LOGGER.info("CONNECTION ");
+			LOGGER.info("FROM NAME: " + fromOperatorName + " TO NAME: " + toOperatorName + " TO PORT NAME " + toPortName + "FROM PORT " + fromPortName);
 			OutputPort outputPort = null;
 			if (fromPortType == null || fromPortType == PortType.OUTPUT_PORT) {
 				outputPort = process.getOperatorByName(fromOperatorName)
@@ -240,11 +292,20 @@ public class AgnosticWorkflowConversion {
 			Class<? extends Operator> operatorClass = operator.getClass();
 			if (operatorClass.equals(StreamingCEPOperator.class))
 			{
-				String regex = operator.getParameterAsString("Regular_Expression");
-				RegexAST regexAST = new RegexAST(regex, true);
-				Node root = regexAST.parse();
-				List<List<String>> splits = regexAST.getSplits();
-				operator.setParameter("decompositions", splits.toString());
+				String contiguity = operator.getParameterAsString("Selection_Strategy");
+				List<List<String>> splits = new ArrayList<>();
+
+				if (!contiguity.equals("Strict")) {
+					String regex = operator.getParameterAsString("Regular_Expression");
+					RegexAST    regexAST = new RegexAST(regex, true);
+					regexAST.parse();
+					splits  = regexAST.getSplits();
+				}
+				Gson  gson      = new Gson();
+				String json      = gson.toJson(splits);
+				LOGGER.info("SPLITS: " + json);
+				// json is: [["ABC+","R[]{3}"],["A","BC+","R[]{3}"],...]
+				operator.setParameter("decompositions", json);
 			}
 			List<AWPort> inputPortsAndSchemas = getPortsAndSchemas(
 					operator.getInputPorts().getAllPorts(), PortType.INPUT_PORT);
@@ -439,6 +500,7 @@ public class AgnosticWorkflowConversion {
 				if (!platform.getOperators().isEmpty()) {
 					platform.getOperators().replaceAll(operator -> operator.setName(
 							operator.getName() + OPERATOR_NAME_APPENDIX));
+
 				}
 			}
 		}
@@ -583,10 +645,13 @@ public class AgnosticWorkflowConversion {
 	private static Pair<AWOperator, Pair<List<AWOperatorConnection>, List<SplittedConnection>>> findOperatorAndConnections(
 			String toBePlacedOp, AgnosticWorkflow workflow, List<String> placedOperators,
 			String streamingNestName, String identifier) {
+
+
 		// Loop over the operator in the current AgnosticWorkflow. Check if the toBePlacedOp is in
 		// this workflow. Also collect the list of OperatorChains (operators with subprocesses) in
 		// this workflow which can be searched for the toBePlacedOp.
 		AWOperator toBePlacedAWOp = null;
+
 		List<AWOperator> operatorChains = new ArrayList<>();
 		for (AWOperator op : workflow.getOperators()) {
 			if (op.getName().equals(toBePlacedOp)) {
@@ -622,6 +687,7 @@ public class AgnosticWorkflowConversion {
 		List<SplittedConnection> splittedConnection = new ArrayList<>();
 		for (AWOperatorConnection conn : workflow.getOperatorConnections()) {
 			if (conn.getFromOperator().equals(toBePlacedOp)) {
+				LOGGER.info("CONNECTION TO " + conn.getToOperator() + " FROM " + conn.getFromOperator());
 				if (placedOperators.contains(conn.getToOperator())) {
 					// if the toOperator is also in this Streaming Nest operator (in the
 					// placedOperator list) it is a inner Connection in this Streaming Nest

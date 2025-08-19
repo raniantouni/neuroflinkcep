@@ -42,13 +42,78 @@ public class AWOperator {
 	private List<AgnosticWorkflow> innerWorkflows = null;
 	
 	private String platformName = null;
-	
+
 	/**
 	 * Creates a new {@link AWOperator} instance with the string fields set to default values.
 	 */
 	public AWOperator() {
 	}
-	
+	/**
+	 * Deep‑copy constructor: duplicates all fields from another operator.
+	 *
+	 * @param other the operator to copy
+	 */
+	public AWOperator(AWOperator other) {
+		this.name = other.name;
+		this.classKey = other.classKey;
+		this.operatorClass = other.operatorClass;
+		this.isEnabled = other.isEnabled;
+		this.hasSubprocesses = other.hasSubprocesses;
+		this.numberOfSubprocesses = other.numberOfSubprocesses;
+		this.platformName = other.platformName;
+
+		// deep‑copy input ports
+		this.inputPortsAndSchemas = new ArrayList<>();
+		for (AWPort port : other.inputPortsAndSchemas) {
+			this.inputPortsAndSchemas.add(new AWPort(port));
+		}
+
+		// deep‑copy output ports
+		this.outputPortsAndSchemas = new ArrayList<>();
+		for (AWPort port : other.outputPortsAndSchemas) {
+			this.outputPortsAndSchemas.add(new AWPort(port));
+		}
+
+		// deep‑copy parameters
+		this.parameters = new ArrayList<>();
+		for (AWParameter param : other.parameters) {
+			this.parameters.add(new AWParameter(param));
+		}
+
+		// deep‑copy inner workflows
+		if (other.innerWorkflows != null) {
+			this.innerWorkflows = new ArrayList<>();
+			for (AgnosticWorkflow wf : other.innerWorkflows) {
+				this.innerWorkflows.add(new AgnosticWorkflow(wf));
+			}
+		}
+	}
+	@Override
+	public String toString() {
+		return "AWOperator{" +
+				"name='" + name + '\'' +
+				", classKey='" + classKey + '\'' +
+				", operatorClass=" + operatorClass +
+				", isEnabled=" + isEnabled +
+				", inputPortsAndSchemas=" + inputPortsAndSchemas +
+				", outputPortsAndSchemas=" + outputPortsAndSchemas +
+				", parameters=" + parameters +
+				", hasSubprocesses=" + hasSubprocesses +
+				", numberOfSubprocesses=" + numberOfSubprocesses +
+				", innerWorkflows=" + innerWorkflows +
+				", platformName='" + platformName + '\'' +
+				'}';
+	}
+
+	public int findIndexOfParameterByKey(String key) {
+		int index = 0;
+		for (AWParameter parameter : parameters) {
+			if (parameter.getKey().equals(key))
+				return index;
+			index++;
+		}
+		return -1;
+	}
 	/**
 	 * Returns the name of the operator.
 	 *

@@ -30,7 +30,13 @@ public class AWSchema {
 	 * Creates a new {@link AWSchema} instance with the fields set to default values.
 	 */
 	public AWSchema() {}
-	
+
+	public AWSchema(AWSchema aWSchema) {
+		this.fromMetaData = aWSchema.getFromMetaData();
+		this.size = aWSchema.getSize();
+		this.attributes = aWSchema.getAttributes();
+	}
+
 	/**
 	 * Returns the size of the data set.
 	 *

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-public class CEP extends Transformer{
+public class CEP extends Transformer {
 
     public enum SelectionStrategy { STRICT, RELAXED, NON_DETERMINISTIC }
     public enum ConsumptionPolicy { NONE, NO_SKIP, SKIP_TO_NEXT, SKIP_TO_LAST, SKIP_PAST_LAST_EVENT }
@@ -29,12 +29,16 @@ public class CEP extends Transformer{
     private ConsumptionPolicy consumptionPolicy;
     private Map<String, Map<String, String>> parsedPredicates;
 
+    // NEW / existing booleans
+    private Boolean earlyFiltering;      // added wiring
+    private Boolean reordering;          // added wiring
+    private Boolean pushingPredicates;   // NEW field
+
     private Boolean enableKeyBy;
     private String keyName;
     private Boolean useLoadedModel;
     private String modelName;
     private Boolean recognizeAggEvents;
-
 
     CEP() {
         super(-1);
@@ -60,85 +64,40 @@ public class CEP extends Transformer{
         this.modelName = builder.modelName;
         this.recognizeAggEvents = builder.recognizeAggEvents;
 
+        // assign the new flags from the builder
+        this.earlyFiltering = builder.earlyFiltering;
+        this.reordering = builder.reordering;
+        this.pushingPredicates = builder.pushingPredicates;
     }
 
-    public Boolean getRecognizeAggEvents() {
-        return recognizeAggEvents;
-    }
-
-    public Map<String, Map<String, String>> getParsedPredicates() {
-        return parsedPredicates;
-    }
-
-    public Boolean getEnableKeyBy() {
-        return enableKeyBy;
-    }
-
-    public String getKeyName() {
-        return keyName;
-    }
-
-    public Boolean getUseLoadedModel() {
-        return useLoadedModel;
-    }
-
-    public String getModelName() {
-        return modelName;
-    }
-
-    public void setParsedPredicates(Map<String, Map<String, String>> parsedPredicates) {
-        this.parsedPredicates = parsedPredicates;
-    }
-
-    public String getDirectory() {
-        return directory;
-    }
-
-    public Integer getLength() {
-        return length;
-    }
-
-    public Boolean getModelIncluded() {
-        return isModelIncluded;
-    }
-
-    public SelectionStrategy getSelectionStrategy() {
-        return selectionStrategy;
-    }
-
-    public ConsumptionPolicy getConsumptionPolicy() {
-        return consumptionPolicy;
-    }
-
+    public Boolean getRecognizeAggEvents() { return recognizeAggEvents; }
+    public Map<String, Map<String, String>> getParsedPredicates() { return parsedPredicates; }
+    public Boolean getEnableKeyBy() { return enableKeyBy; }
+    public String getKeyName() { return keyName; }
+    public Boolean getUseLoadedModel() { return useLoadedModel; }
+    public String getModelName() { return modelName; }
+    public void setParsedPredicates(Map<String, Map<String, String>> parsedPredicates) { this.parsedPredicates = parsedPredicates; }
+    public String getDirectory() { return directory; }
+    public Integer getLength() { return length; }
+    public Boolean getModelIncluded() { return isModelIncluded; }
+    public SelectionStrategy getSelectionStrategy() { return selectionStrategy; }
+    public ConsumptionPolicy getConsumptionPolicy() { return consumptionPolicy; }
     public Long getTimeWindow() { return timeWindow; }
+    public String getRegex() { return regex; }
+    public String getKey() { return key; }
+    public String getPatternName() { return patternName; }
+    public void setPatternName(String patternName) { this.patternName = patternName; }
+    public StreamProducer getParent() { return parent; }
+    public StreamConsumer getChild() { return child; }
 
-    public String getRegex() {
-        return regex;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getPatternName() {
-        return patternName;
-    }
-
-    public void setPatternName(String patternName) {
-        this.patternName = patternName;
-    }
-
-    public StreamProducer getParent() {
-        return parent;
-    }
-
-    public StreamConsumer getChild() {
-        return child;
-    }
+    // NEW getters
+    public Boolean getEarlyFiltering() { return earlyFiltering; }
+    public Boolean getReordering() { return reordering; }
+    public Boolean getPushingPredicates() { return pushingPredicates; }
 
     @Override
     public void registerChild(StreamConsumer child) {
-        this.child  = child;
+        this.child = child;
     }
 
     @Override
@@ -162,6 +121,11 @@ public class CEP extends Transformer{
         private ConsumptionPolicy consumptionPolicy;
         private Map<String, Map<String, String>> parsedPredicates;
 
+        // NEW builder fields
+        private Boolean earlyFiltering;      // default null -> treat as false if needed downstream
+        private Boolean reordering;
+        private Boolean pushingPredicates;
+
         private Boolean enableKeyBy;
         private String keyName;
         private Boolean useLoadedModel;
@@ -174,86 +138,70 @@ public class CEP extends Transformer{
 
         public CEP build() {
             CEP node = new CEP(this);
-
             if (node.parent != null) {
                 node.parent.registerChild(node);
             }
-
             return node;
         }
 
         public CEP.Builder withRegex(String regex) {
-            this.regex = regex;
-            return this;
+            this.regex = regex; return this;
         }
-
         public CEP.Builder withPredicates(Map<String, Map<String, String>> parsedPredicates) {
-            this.parsedPredicates = parsedPredicates;
-            return this;
+            this.parsedPredicates = parsedPredicates; return this;
         }
-
         public CEP.Builder withKey(String key){
-            this.key = key;
-            return this;
+            this.key = key; return this;
         }
-
         public CEP.Builder withTimeWindow(Long timeWindow){
-            this.timeWindow = timeWindow;
-            return this;
+            this.timeWindow = timeWindow; return this;
         }
         public CEP.Builder withPatternName(String patternName){
-            this.patternName = patternName;
-            return this;
+            this.patternName = patternName; return this;
         }
         public CEP.Builder withSelectionStrategy(SelectionStrategy selectionStrategy){
-            this.selectionStrategy = selectionStrategy;
-            return this;
+            this.selectionStrategy = selectionStrategy; return this;
         }
         public CEP.Builder withConsumptionPolicy(ConsumptionPolicy consumptionPolicy){
-            this.consumptionPolicy = consumptionPolicy;
-            return this;
+            this.consumptionPolicy = consumptionPolicy; return this;
         }
-
         public CEP.Builder withModelDirectory(String directory) {
-            this.directory = directory;
-            return this;
+            this.directory = directory; return this;
         }
         public CEP.Builder withModelInputLength(int length) {
-            this.length = length;
-            return this;
+            this.length = length; return this;
         }
         public CEP.Builder withParent(StreamProducer parent) {
-            this.parent = parent;
-            return this;
+            this.parent = parent; return this;
         }
-
         public CEP.Builder withIncludeModelFlag (boolean isModelIncluded){
-            this.isModelIncluded = isModelIncluded;
-            return this;
+            this.isModelIncluded = isModelIncluded; return this;
         }
-
         public CEP.Builder withEnableKeyBy(Boolean enableKeyBy) {
-            this.enableKeyBy = enableKeyBy;
-            return this;
+            this.enableKeyBy = enableKeyBy; return this;
         }
         public CEP.Builder withKeyName(String keyName){
-            this.keyName = keyName;
-            return this;
+            this.keyName = keyName; return this;
         }
         public CEP.Builder withUseLoadedModel(boolean useLoadedModel){
-            this.useLoadedModel = useLoadedModel;
-            return this;
+            this.useLoadedModel = useLoadedModel; return this;
         }
         public CEP.Builder withModelName(String modelName){
-            this.modelName = modelName;
-            return this;
+            this.modelName = modelName; return this;
         }
-
         public CEP.Builder withRecognizeAggEvents(boolean recognizeAggEvents){
-            this.recognizeAggEvents = recognizeAggEvents;
-            return this;
+            this.recognizeAggEvents = recognizeAggEvents; return this;
         }
 
+        // NEW builder methods
+        public CEP.Builder withEarlyFiltering(Boolean earlyFiltering) {
+            this.earlyFiltering = earlyFiltering; return this;
+        }
+        public CEP.Builder withReordering(Boolean reordering) {
+            this.reordering = reordering; return this;
+        }
+        public CEP.Builder withPushingPredicates(Boolean pushingPredicates) {
+            this.pushingPredicates = pushingPredicates; return this;
+        }
     }
-
 }

@@ -25,6 +25,12 @@ public class AWPlacementOperator {
 	public AWPlacementOperator() {
 	}
 
+	public AWPlacementOperator(AWPlacementOperator aWPlacementOperator) {
+		this.name = aWPlacementOperator.getName();
+		this.oldPath = aWPlacementOperator.getOldPath();
+		this.newPath = aWPlacementOperator.getNewPath();
+	}
+
 	/**
 	 * Returns the name of the operator placed.
 	 *

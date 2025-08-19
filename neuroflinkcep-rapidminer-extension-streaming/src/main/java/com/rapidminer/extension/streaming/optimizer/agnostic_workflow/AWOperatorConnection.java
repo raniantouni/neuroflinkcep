@@ -30,7 +30,20 @@ public class AWOperatorConnection {
 	 * Creates a new {@link AWOperatorConnection} instance with the fields set to default values.
 	 */
 	public AWOperatorConnection() {}
-	
+
+	/**
+	 * Copy‑constructor: duplicates all fields from another connection.
+	 *
+	 * @param other the AWOperatorConnection to copy
+	 */
+	public AWOperatorConnection(AWOperatorConnection other) {
+		this.fromOperator = other.fromOperator;
+		this.fromPort = other.fromPort;
+		this.fromPortType = other.fromPortType;
+		this.toOperator = other.toOperator;
+		this.toPort = other.toPort;
+		this.toPortType = other.toPortType;
+	}
 	/**
 	 * Returns the name of the source operator of the {@link AWOperatorConnection}.
 	 *

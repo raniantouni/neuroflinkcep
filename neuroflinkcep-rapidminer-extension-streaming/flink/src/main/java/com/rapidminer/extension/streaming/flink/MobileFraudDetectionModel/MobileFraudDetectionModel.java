@@ -70,7 +70,6 @@ public class MobileFraudDetectionModel implements Serializable {
         // Standardize numeric
         for (int i = 0; i < NUMERIC_KEYS.size(); i++) {
             float rawVal = Float.parseFloat(record.optString(NUMERIC_KEYS.get(i), "0"));
-            System.out.println(rawVal);
             features[index++] = (rawVal - MEANS[i]) / STDS[i];
         }
 
@@ -81,7 +80,6 @@ public class MobileFraudDetectionModel implements Serializable {
             String expectedValue = parts[1];
             String actualValue = record.optString(key, "");
             features[index++] = expectedValue.equals(actualValue) ? 1.0f : 0.0f;
-            System.out.println(features[index - 1]);
         }
         float[][] modelInput = new float[1][MODEL_FEATURES];
         modelInput[0] = features;
@@ -93,13 +91,11 @@ public class MobileFraudDetectionModel implements Serializable {
 
             float[][] preds = new float[1][4];
             outputs.get(0).copyTo(preds);
-            System.out.println("OUTPUTS: " + Arrays.deepToString(preds));
             Map<String, String> result = new LinkedHashMap<>();
             String[] labels = {"A", "B", "C", "D"};
             for (int i = 0; i < labels.length; i++) {
                 result.put(labels[i], preds[0][i] > 0.5 ? "1" : "0");
             }
-            System.out.println("Result for the prediction: " + result);
             return result;
         }
     }

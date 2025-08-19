@@ -25,6 +25,29 @@ public class SimpleOptimizationPlan implements OptimizationPlan {
         this.realCost = realCost;
     }
 
+    /**
+     * Deep-copy constructor.
+     *
+     * @param original the plan to copy
+     */
+    public SimpleOptimizationPlan(SimpleOptimizationPlan original) {
+        // 1. Deep-copy the implementation map
+        this.implementationMap = new LinkedHashMap<>(original.implementationMap.size());
+        for (var entry : original.implementationMap.entrySet()) {
+            String opName = entry.getKey();                       // String is immutable
+            Tuple<String, String> oldTuple = entry.getValue();
+            // Create a brand-new Tuple so the copy is independent
+            Tuple<String, String> newTuple =
+                    new Tuple<>(oldTuple._1, oldTuple._2);
+            this.implementationMap.put(opName, newTuple);
+        }
+
+        // 2. Copy the cost fields (primitive ints → deep by definition)
+        this.totalCost = original.totalCost;
+        this.realCost  = original.realCost;
+    }
+
+
     public Set<String> getOperators() {
         return this.implementationMap.keySet();
     }

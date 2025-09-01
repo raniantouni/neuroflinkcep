@@ -8,6 +8,7 @@ package com.rapidminer.extension.streaming.optimizer;/*
  */
 
 import static com.rapidminer.extension.streaming.PluginInitStreaming.getPluginLoader;
+import static com.rapidminer.tools.OperatorService.createOperator;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
@@ -28,6 +29,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.rapidminer.extension.streaming.ioobject.StreamDataContainer;
+import com.rapidminer.extension.streaming.operator.*;
 import org.apache.avro.data.Json;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.math3.util.Pair;
@@ -45,10 +48,6 @@ import com.rapidminer.extension.streaming.deploy.management.db.ManagementDAO;
 import com.rapidminer.extension.streaming.deploy.management.db.StreamingEndpoint;
 import com.rapidminer.extension.streaming.deploy.management.db.Workflow;
 import com.rapidminer.extension.streaming.deploy.management.db.infore.InforeOptimizerStreamingEndpoint;
-import com.rapidminer.extension.streaming.operator.StreamKafkaSink;
-import com.rapidminer.extension.streaming.operator.StreamKafkaSource;
-import com.rapidminer.extension.streaming.operator.StreamingNest;
-import com.rapidminer.extension.streaming.operator.StreamingOptimizationOperator;
 import com.rapidminer.extension.streaming.optimizer.agnostic_workflow.AWOperator;
 import com.rapidminer.extension.streaming.optimizer.agnostic_workflow.AWOperatorConnection;
 import com.rapidminer.extension.streaming.optimizer.agnostic_workflow.AgnosticWorkflow;
@@ -83,7 +82,6 @@ import com.rapidminer.tools.ClassLoaderSwapper;
 import com.rapidminer.tools.LogService;
 import com.rapidminer.tools.OperatorService;
 import com.rapidminer.tools.container.Triple;
-
 
 /**
  * @author Fabian Temme
@@ -161,14 +159,71 @@ public class OptimizationHelper {
 																	  Map<String,
 		List<ConnectionInformationContainerIOObject>> availableSites, boolean continuous, Long numberOfPlans) throws OperatorException,
 		OperatorCreationException {
+
+		ExecutionUnit processCopy = operator.getSubprocess(0);
+		for (Operator currOperator : processCopy.getOperators()) {
+			if (currOperator.getClass().equals(StreamingCEPOperator.class)) {
+				String contiguity = currOperator.getParameterAsString("Selection_Strategy");
+				String modelName = currOperator.getParameterAsString("Model_name");
+				// not strict and not robotic scenario
+				if (!contiguity.equals("Strict") && !modelName.equals("Robotic Scenario")) {
+					try {
+						String predicates = currOperator.getParameterAsString("Predicates_List");
+
+						if (predicates.isEmpty()) {
+							currOperator.setParameter("Reordering", "false");
+							currOperator.setParameter("Pushing Predicates upstream", "false");
+
+						}
+						else {
+							currOperator.setParameter("Reordering", "true");
+							currOperator.setParameter("Pushing Predicates upstream", "true");
+
+						}
+						currOperator.setParameter("Early Filtering", "true");
+
+						currOperator.getParameterType("Early Filtering").setHidden(false);
+
+						currOperator.getParameterType("Reordering").setHidden(false);
+
+						currOperator.getParameterType("Pushing Predicates upstream").setHidden(false);
+						if (!predicates.isEmpty()) {
+
+							StreamFilter newFilter = createOperator(StreamFilter.class);
+							newFilter.setParameter("NeuroFlinkCEP_filtering_mode","true");
+							newFilter.setParameter("predicates", predicates);
+
+							operator.getSubprocess(0).addOperator(newFilter);
+							String fromOperatorName = currOperator.getInputPorts().getPortByName("input stream").getOpposite().getPorts().getOwner().getName();
+							String fromPortName = currOperator.getInputPorts().getPortByName("input stream").getOpposite().getName();
+							operator.getSubprocess(0).getOperatorByName(fromOperatorName)
+									.getOutputPorts().getPortByName(fromPortName).disconnect();
+							operator.getSubprocess(0).getOperatorByName(fromOperatorName)
+									.getOutputPorts().getPortByName(fromPortName)
+									.connectTo(newFilter.getInputPorts().getPortByName("input stream"));
+
+							newFilter.producesOutput(StreamDataContainer.class);
+							newFilter.acceptsInput(StreamDataContainer.class);
+							newFilter.getOutputPorts()
+									.getPortByName("output stream")
+									.connectTo(currOperator.getInputPorts().getPortByName("input stream"));
+
+						}
+					} catch (OperatorCreationException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		}
 		// Create the necessary objects for the optimizer
 		Network network =
 			Network.create(operator.getParameterAsString(StreamingOptimizationOperator.PARAMETER_NETWORK_NAME),
 				availableSites);
+
+		AgnosticWorkflow workflow = AgnosticWorkflowConversion.processToAgnosticWorkflow(
+				operator.getSubprocess(0)).setWorkflowName(operator.getParameterAsString(StreamingOptimizationOperator.PARAMETER_WORKFLOW_NAME));
 		OperatorDictionary dictionary = OperatorDictionary.createFromNetwork(
 			operator.getParameterAsString(StreamingOptimizationOperator.PARAMETER_DICTIONARY_NAME), network, operator.getSubprocess(0).getEnabledOperators());
-		AgnosticWorkflow workflow = AgnosticWorkflowConversion.processToAgnosticWorkflow(
-			operator.getSubprocess(0)).setWorkflowName(operator.getParameterAsString(StreamingOptimizationOperator.PARAMETER_WORKFLOW_NAME));
 		OptimizationParameters.OptimizerAlgorithm algorithm = OptimizationParameters.OptimizerAlgorithm.getMethod(
 			operator.getParameterAsString(StreamingOptimizationOperator.PARAMETER_ALGORITHM));
 		OptimizerRequest request = OptimizerRequest.create(network.getNetwork(),
@@ -195,8 +250,6 @@ public class OptimizationHelper {
 		// Create the OptimizerConnection
 		OptimizerConnection optimizerConnection = OptimizerConnectionHandler.createConnection(
 			operator.getOptimizerSelector().getConnection(), operator);
-		LOGGER.info("Optimizer connection created" + optimizerConnection.toString());
-
 		// Create the entry in the streaming management db
 		String workflowName =
 			operator.getProcess().getProcessLocation().getShortName() + "-" + RandomStringUtils.randomAlphanumeric(5);
@@ -365,6 +418,7 @@ public class OptimizationHelper {
 			// the KafkaConnection from the kafkaOutputPort) for splitted streaming connections, and
 			// wire other connections through the throughput ports of the Streaming Nest operators.
 			updateSplittedConnections(optimizationOperator, subprocess, updateAWPair.getSecond());
+
 		}
 
 		optimizationOperator.fireUpdatePublic();
@@ -395,6 +449,8 @@ public class OptimizationHelper {
 														   List<SplittedConnection> connections) throws OperatorCreationException {
 		// check if we need to create a Multiply operator, cause we have splitted streaming
 		// connections.
+
+		LOGGER.info("Updating splitted connections for subprocess " + subprocess.getName());
 		OutputPort kafkaOutputPort = optimizationOperator.getKafkaOutputPort();
 		int multiplyPortIndex = 0;
 		IOMultiplier multiply = null;
@@ -408,6 +464,7 @@ public class OptimizationHelper {
 					// multiply to the original target of the kafkaOutputPort
 					if (kafkaOutputPort.isConnected()) {
 						InputPort target = kafkaOutputPort.getDestination();
+
 						multiply.getOutputPorts()
 							.getPortByIndex(multiplyPortIndex)
 							.connectTo(target);
@@ -419,6 +476,7 @@ public class OptimizationHelper {
 					// outputport
 					optimizationOperator.fireUpdatePublic(multiply);
 				}
+				LOGGER.info("Optimization operator " + optimizationOperator.getName());
 				multiplyPortIndex = addKafkaOperator(optimizationOperator, subprocess, multiply, true, connection,
 					multiplyPortIndex);
 				optimizationOperator.fireUpdatePublic(multiply);
@@ -528,6 +586,7 @@ public class OptimizationHelper {
 		// Connect the next outputPort of the multiply to the last input port of the port
 		// extender (numberOfPortPairs + 1 (for the 'connection' port of the nest) - 1
 		// (cause we need an index))
+
 		multiply.getOutputPorts()
 			.getPortByIndex(multiplyPortIndex)
 			.connectTo(nest.getInputPorts().getPortByIndex(numberOfPortPairs));
@@ -544,13 +603,24 @@ public class OptimizationHelper {
 		Operator targetOperator = nestSubprocess.getOperatorByName(targetOperatorName);
 		// Connect targetOperator and kafkaOperator
 		if (kafkaSink) {
-			targetOperator.getOutputPorts()
-				.getPortByName(targetPortName)
-				.connectTo(kafkaOperator.getInputPorts().getPortByIndex(1));
+			//CHANGED
+			nestSubprocess.getOperatorByName(targetOperator.getName())
+					.getOutputPorts()
+					.getPortByName(targetPortName)
+					.connectTo(kafkaOperator.getInputPorts().getPortByIndex(1));
+//			targetOperator.getOutputPorts()
+//				.getPortByName(targetPortName)
+//				.connectTo(kafkaOperator.getInputPorts().getPortByIndex(1));
 		} else {
-			kafkaOperator.getOutputPorts()
-				.getPortByIndex(1)
-				.connectTo(targetOperator.getInputPorts().getPortByName(targetPortName));
+			nestSubprocess.getOperatorByName(kafkaOperator.getName())
+					.getOutputPorts()
+					.getAllPorts()
+					.get(1)
+					.connectTo(targetOperator.getInputPorts().getPortByName(targetPortName));
+
+//			kafkaOperator.getOutputPorts()
+//				.getPortByIndex(1)
+//				.connectTo(targetOperator.getInputPorts().getPortByName(targetPortName));
 		}
 		optimizationOperator.fireUpdatePublic(nest);
 		return multiplyPortIndex;

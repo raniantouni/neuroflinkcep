@@ -26,11 +26,11 @@ public class OptimizationParameters {
 		/**
 		 * fast but with large memory footprint
 		 */
-		A_STAR("a*", "op-A*"),
+		A_STAR("DAG*4CER", "op-A*"),
 		/**
 		 * slow but optimal
 		 */
-		EXHAUSTIVE("DAG*4CER", "op-ES"),
+		EXHAUSTIVE("exhaustive", "op-ES"),
 		/**
 		 * Fast but approximate solutions
 		 */

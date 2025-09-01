@@ -43,7 +43,6 @@ public class FlinkCEPTranslator {
     public static int uniqueId = 0;
 
     public DataStream<JSONObject> translate(CEP cep) {
-
         String patternName = cep.getPatternName();
         String key = cep.getKey();
 
@@ -54,7 +53,6 @@ public class FlinkCEPTranslator {
 
         Boolean useLoadedModel = cep.getUseLoadedModel();
         Boolean enableKeyBy = cep.getEnableKeyBy();
-
         String modelName = cep.getModelName();
         String keyName = cep.getKeyName();
 
@@ -62,6 +60,8 @@ public class FlinkCEPTranslator {
         Long timeWindow = cep.getTimeWindow();
         RegexAST parser = new RegexAST(regex);
         Node ast = parser.parse();
+        LOG.info("FOR PAtTERN   {}", regex);
+
         Map<String, Map<String, String>> predicates = cep.getParsedPredicates();
         CEP.SelectionStrategy selectionStrategy = cep.getSelectionStrategy();
         CEP.ConsumptionPolicy consumptionPolicy = cep.getConsumptionPolicy();
@@ -74,24 +74,23 @@ public class FlinkCEPTranslator {
         DataStream<JSONObject> preCepStream;
         if (isModelIncluded && useLoadedModel) {
             if (modelName.equals("Telecom Scenario")) {
-                LOG.info(" -------------------- Using existing loaded model: " + modelName);
                 preCepStream = stream
                         .flatMap(new MobileEventsExtraction("/mobileFraudDetectionModel", recognizeAggEvents));
-
-                LOG.info("CURRENT PATTERN -----------------");
-
             }
             else {
                 RobotGoalPredictionModel rModel = new RobotGoalPredictionModel("/model");
                 preCepStream = stream
-                        .keyBy(obj -> Integer.parseInt(obj.getString(keyName)))
+                        .keyBy(obj -> {
+                            return obj.getInt(keyName);
+            })
                         .process(new RobotBatchProcessor(rModel));
             }
         } else preCepStream = stream;
 
         if (earlyFiltering && !isStrict) {
+            final Set<String> allowedEvents = new HashSet<>(parser.simpleEvents);
             preCepStream = preCepStream
-                    .filter(record -> parser.simpleEvents.contains(record.getString(key)))
+                    .filter(record -> allowedEvents.contains(record.getString(key)))
                     .name("early-filter");
         }
         AfterMatchSkipStrategy consumptionStrategy = getConsumptionStrategy(consumptionPolicy);
@@ -127,7 +126,7 @@ public class FlinkCEPTranslator {
         PatternStream<JSONObject> patternStream;
         if (enableKeyBy) {
             patternStream = org.apache.flink.cep.CEP.pattern(
-                    timestampedStream.keyBy(obj -> obj.getString(keyName)),
+                    timestampedStream.keyBy(obj -> String.valueOf(obj.get(keyName))),
                     pattern
             );
         } else {
@@ -140,23 +139,26 @@ public class FlinkCEPTranslator {
         return patternStream.select((PatternSelectFunction<JSONObject, JSONObject>) match -> {
             JSONArray eventsArray = new JSONArray();
             String keyValue = "";
-
+            long timestamp = 0;
             for (List<JSONObject> events : match.values()) {
                 for (JSONObject event : events) {
                     if (event.has("matches")) {
+                        System.out.println("Events " + event);
+
                         JSONArray matches = event.getJSONArray("matches");
                         matches.forEach(eventsArray::put);
                         continue;
                     }
                     if (event.has(keyName)) {
-                        keyValue = event.getString(keyName);
+                        keyValue = String.valueOf(event.get(keyName));
                     }
                     eventsArray.put(event);
+                    timestamp = event.getLong("timestamp");
                 }
             }
 
             JSONObject res = new JSONObject();
-            res.put(keyName, keyValue);
+
             if (match.size() == 1 && match.values().iterator().next().size() == 1) {
                 res = new JSONObject(match.values().iterator().next().get(0).toString()); // clone the original event
                 res.put("event", patternName);
@@ -164,8 +166,13 @@ public class FlinkCEPTranslator {
                 res = new JSONObject();
                 res.put("event", patternName);
             }
+            if (!res.has("timestamp")) {
+                res.put("timestamp", timestamp);
+            }
             res.put("matches", eventsArray);
-            System.out.println("Res for regex "  + regex + "this is the result  " + res);
+            res.put(keyName, keyValue);
+            System.out.println("Events " + res);
+
             return res;
         }).name(patternName);
 
@@ -177,14 +184,19 @@ public class FlinkCEPTranslator {
                                                                      AfterMatchSkipStrategy consumptionPolicy,
                                                                      boolean isLast, Map<String, Map<String, String>> predicates) {
         if (node instanceof EventTypeNode) {
+            LOG.info("EVENT TYPE NODE");
             return convertEventTypeNode((EventTypeNode) node, key, consumptionPolicy, isLast, predicates);
         } else if (node instanceof BackReferenceGroup) {
+            LOG.info("BACKREFERENCE GROUP");
             return convertBackReferenceGroup((BackReferenceGroup) node, key, isLast, predicates);
         } else if (node instanceof OrNode) {
+            LOG.info("OR NODE");
             return convertOrNode((OrNode) node, key, isLast, predicates);
         } else if (node instanceof QuantifierNode) {
+            LOG.info("QUANTIFIER NODE");
             return convertQuantifierNode((QuantifierNode) node, key, selectionStrategy, consumptionPolicy, isLast, predicates);
         } else if (node instanceof GroupNode) {
+            LOG.info("GROUP NODE");
             return convertGroupNode((GroupNode) node, key, selectionStrategy, consumptionPolicy, isLast, predicates);
         } else {
             throw new IllegalArgumentException("Unsupported node type: " + node.getClass());
@@ -277,7 +289,6 @@ public class FlinkCEPTranslator {
         String label = isLast ? "Last" : "pattern" + uniqueId++;
         return Pattern.<JSONObject>begin(label).where(condition);
     }
-
     private static Pattern<JSONObject, JSONObject> convertQuantifierNode(
             QuantifierNode node,
             String key,
@@ -286,91 +297,184 @@ public class FlinkCEPTranslator {
             boolean isLast,
             Map<String, Map<String, String>> predicates
     ) {
-        // build the underlying child pattern
-        Pattern<JSONObject, JSONObject> child = convertToFlinkCEP(
-                node.getChild(), key, selectionStrategy, consumptionPolicy, isLast, predicates
-        );
-
-        Pattern<JSONObject, JSONObject> quantified;
-        switch (node.getType()) {
-            case ZEROORONE:
-                // “?” → zero or one
-                quantified = child.times(0,1);
-                break;
-
-            case ONEORMORE:
-                // “+” → one or more
-                quantified = child.oneOrMore();
-                break;
-
-            case KL:
-                // “*” → zero or more
-                quantified = child.oneOrMore().optional();
-                break;
-
-            case TIMES:
-                int min = node.getMin();
-                int max = node.getMax();
-                if (max < 0) {
-                    // {m,}
-                    quantified = child.timesOrMore(min);
-                } else {
-                    // {m,n}
-                    quantified = child.times(min, max);
-                }
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown quantifier " + node.getType());
-        }
-        // apply STRICT / RELAXED / NON_DETERMINISTIC
-        return applySelectionStrategy(quantified, selectionStrategy);
+        // Defer quantifier handling to convertGroupNode.
+        // Just build the base (unquantified) child pattern.
+        return convertToFlinkCEP(node.getChild(), key, selectionStrategy, consumptionPolicy, isLast, predicates);
     }
 
-    private static Pattern<JSONObject, JSONObject> convertGroupNode(GroupNode node,
-                                                                    String key,
-                                                                    CEP.SelectionStrategy selectionStrategy,
-                                                                    AfterMatchSkipStrategy consumptionPolicy,
-                                                                    boolean isLast, Map<String, Map<String, String>> predicates) {
+//    private static Pattern<JSONObject, JSONObject> convertQuantifierNode(
+//            QuantifierNode node,
+//            String key,
+//            CEP.SelectionStrategy selectionStrategy,
+//            AfterMatchSkipStrategy consumptionPolicy,
+//            boolean isLast,
+//            Map<String, Map<String, String>> predicates
+//    ) {
+//        LOG.info("QUANTIFIER : " + node.getChild());
+//        // build the underlying child pattern
+//        Pattern<JSONObject, JSONObject> child = convertToFlinkCEP(
+//                node.getChild(), key, selectionStrategy, consumptionPolicy, isLast, predicates
+//        );
+//        LOG.info("CHILD PATTERN : " + child.toString());
+//        Pattern<JSONObject, JSONObject> quantified;
+//        switch (node.getType()) {
+//            case ZEROORONE:
+//                // “?” → zero or one
+//                quantified = child.times(0,1);
+//                break;
+//
+//            case ONEORMORE:
+//                // “+” → one or more
+//                quantified = child.oneOrMore();
+//                break;
+//            case KL:
+//                // “*” → zero or more
+//                quantified = child.oneOrMore().optional();
+//                break;
+//            case TIMES:
+//                int min = node.getMin();
+//                int max = node.getMax();
+//                if (max < 0) {
+//                    // {m,}
+//                    quantified = child.timesOrMore(min);
+//                } else {
+//                    // {m,n}
+//                    quantified = child.times(min, max);
+//                }
+//                break;
+//
+//            default:
+//                throw new IllegalArgumentException("Unknown quantifier " + node.getType());
+//        }
+//        // apply STRICT / RELAXED / NON_DETERMINISTIC
+//        return applySelectionStrategy(quantified, selectionStrategy);
+//    }
+    private static Pattern<JSONObject, JSONObject> convertGroupNode(
+            GroupNode node,
+            String key,
+            CEP.SelectionStrategy selectionStrategy,
+            AfterMatchSkipStrategy consumptionPolicy,
+            boolean isLast, Map<String, Map<String, String>> predicates) {
+
         List<Node> children = node.getChildren();
-        boolean isOptional = false;
-        if (children.isEmpty()) {
-            throw new IllegalArgumentException("GroupNode has no children");
-        }
+        if (children.isEmpty()) throw new IllegalArgumentException("GroupNode has no children");
+
         Pattern<JSONObject, JSONObject> pattern = null;
+
         for (int i = 0; i < children.size(); i++) {
             Node child = children.get(i);
             boolean childIsLast = (i == children.size() - 1) && isLast;
-            Pattern<JSONObject, JSONObject> childPattern = convertToFlinkCEP(child, key, selectionStrategy, consumptionPolicy, childIsLast, predicates);
-            if (childPattern.getQuantifier().hasProperty(Quantifier.QuantifierProperty.OPTIONAL)) isOptional = true;
+
+            // If this is a QuantifierNode, build the base child (without quantifier)
+            Node bareNode = (child instanceof QuantifierNode)
+                    ? ((QuantifierNode) child).getChild()
+                    : child;
+
+            Pattern<JSONObject, JSONObject> baseChild =
+                    convertToFlinkCEP(bareNode, key, selectionStrategy, consumptionPolicy, childIsLast, predicates);
+
+            // 1) Chain base child according to selection strategy / lookaround
             if (pattern == null) {
-                pattern = isOptional ? childPattern.optional() : childPattern;
+                pattern = baseChild; // first element
             } else {
                 switch (selectionStrategy) {
                     case STRICT:
                         if (node.getLookAroundType() == LookAroundType.NEGATIVELOOKAHEAD) {
-                            pattern = pattern.notNext(childPattern.getName());
-                            break;
+                            pattern = pattern.notNext(baseChild.getName());
+                        } else {
+                            pattern = pattern.next(baseChild);
                         }
-                        pattern = isOptional ? pattern.next(childPattern).optional() : pattern.next(childPattern);
                         break;
                     case RELAXED:
                         if (node.getLookAroundType() == LookAroundType.NEGATIVELOOKAHEAD) {
-                            pattern = pattern.notFollowedBy(childPattern.getName()).where(childPattern.getCondition());
-                            break;
+                            pattern = pattern.notFollowedBy(baseChild.getName()).where(baseChild.getCondition());
+                        } else {
+                            pattern = pattern.followedBy(baseChild);
                         }
-                        pattern = isOptional ? pattern.followedBy(childPattern).optional() : pattern.followedBy(childPattern);
                         break;
                     case NON_DETERMINISTIC:
-                        pattern = isOptional ? pattern.followedByAny(childPattern).optional() : pattern.followedByAny(childPattern);
+                        pattern = pattern.followedByAny(baseChild);
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid Selection Strategy: " + selectionStrategy.name());
                 }
             }
+
+            // 2) Apply quantifier NOW (only to the just-added child), then stop.
+            if (child instanceof QuantifierNode) {
+                QuantifierNode q = (QuantifierNode) child;
+                switch (q.getType()) {
+                    case ZEROORONE:           // ?
+                        pattern = pattern.times(0, 1);
+                        break;
+                    case ONEORMORE:           // +
+                        pattern = pattern.oneOrMore();
+                        break;
+                    case KL:                  // *
+                        pattern = pattern.oneOrMore().optional(); // zero-or-more
+                        break;
+                    case TIMES:               // {m,n} or {m,}
+                        if (q.getMax() < 0) pattern = pattern.timesOrMore(q.getMin());
+                        else pattern = pattern.times(q.getMin(), q.getMax());
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown quantifier " + q.getType());
+                }
+                // Apply selection strategy properties to the just-quantified state.
+                pattern = applySelectionStrategy(pattern, selectionStrategy);
+            }
+            // Important: do NOT carry any “optional” flag to the next child.
         }
         return pattern;
     }
+
+//    private static Pattern<JSONObject, JSONObject> convertGroupNode(GroupNode node,
+//                                                                    String key,
+//                                                                    CEP.SelectionStrategy selectionStrategy,
+//                                                                    AfterMatchSkipStrategy consumptionPolicy,
+//                                                                    boolean isLast, Map<String, Map<String, String>> predicates) {
+//        List<Node> children = node.getChildren();
+//        children.forEach(child -> {
+//            LOG.info("I am in groupNode : " + child.toString());
+//        });
+//        boolean isOptional = false;
+//        if (children.isEmpty()) {
+//            throw new IllegalArgumentException("GroupNode has no children");
+//        }
+//        Pattern<JSONObject, JSONObject> pattern = null;
+//        for (int i = 0; i < children.size(); i++) {
+//            Node child = children.get(i);
+//            boolean childIsLast = (i == children.size() - 1) && isLast;
+//            Pattern<JSONObject, JSONObject> childPattern = convertToFlinkCEP(child, key, selectionStrategy, consumptionPolicy, childIsLast, predicates);
+//            if (childPattern.getQuantifier().hasProperty(Quantifier.QuantifierProperty.OPTIONAL)) isOptional = true;
+//            if (pattern == null) {
+//                pattern = isOptional ? childPattern.optional() : childPattern;
+//            } else {
+//                switch (selectionStrategy) {
+//                    case STRICT:
+//                        if (node.getLookAroundType() == LookAroundType.NEGATIVELOOKAHEAD) {
+//                            pattern = pattern.notNext(childPattern.getName());
+//                            break;
+//                        }
+//                        pattern = isOptional ? pattern.next(childPattern).optional() : pattern.next(childPattern);
+//                        break;
+//                    case RELAXED:
+//                        if (node.getLookAroundType() == LookAroundType.NEGATIVELOOKAHEAD) {
+//                            pattern = pattern.notFollowedBy(childPattern.getName()).where(childPattern.getCondition());
+//                            break;
+//                        }
+//                        pattern = isOptional ? pattern.followedBy(childPattern).optional() : pattern.followedBy(childPattern);
+//                        break;
+//                    case NON_DETERMINISTIC:
+//                        pattern = isOptional ? pattern.followedByAny(childPattern).optional() : pattern.followedByAny(childPattern);
+//                        break;
+//                    default:
+//                        throw new IllegalArgumentException("Invalid Selection Strategy: " + selectionStrategy.name());
+//                }
+//            }
+//        }
+//        return pattern;
+//    }
 
     private static Pattern<JSONObject, JSONObject> applySelectionStrategy(Pattern<JSONObject, JSONObject> pattern, CEP.SelectionStrategy selectionStrategy) {
 

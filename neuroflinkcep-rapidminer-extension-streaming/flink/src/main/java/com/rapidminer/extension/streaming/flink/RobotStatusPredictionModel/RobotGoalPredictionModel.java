@@ -146,7 +146,6 @@ public class RobotGoalPredictionModel implements Serializable {
                 float[][] goalStatusArray = new float[1][22];
                 t.copyTo(goalStatusArray);
                 int classIndex = getMaxIndex(goalStatusArray[0]);
-                System.out.println("PREDICTED EVENT " + GOALSTATUSTYPES.get(classIndex));
                 predictions.put("event", GOALSTATUSTYPES.get(classIndex));
             }
 

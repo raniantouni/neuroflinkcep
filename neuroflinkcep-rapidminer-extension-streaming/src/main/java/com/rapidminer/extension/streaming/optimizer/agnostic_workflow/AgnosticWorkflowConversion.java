@@ -94,55 +94,58 @@ public class AgnosticWorkflowConversion {
 			UndefinedParameterError {
 		String workflowName = process.getName();
 		String enclosingOperatorName = process.getEnclosingOperator().getName();
-		ExecutionUnit processCopy = process;
-		for (Operator operator : processCopy.getOperators()) {
-			if (operator.getClass().equals(StreamingCEPOperator.class)) {
-				String contiguity = operator.getParameterAsString("Selection_Strategy");
-				String modelName = operator.getParameterAsString("Model_name");
-				// not strict and not robotic scenario
-				if (!contiguity.equals("Strict") && !modelName.equals("Robotic Scenario")) {
-					try {
-						String predicates = operator.getParameterAsString("Predicates_List");
-						StreamFilter newFilter = createOperator(StreamFilter.class);
-						LOGGER.info(newFilter.getName());
-						newFilter.setParameter("NeuroFlinkCEP_filtering_mode","true");
-						newFilter.setParameter("predicates", predicates);
-
-						if (predicates.isEmpty()) {
-							operator.setParameter("Early Filtering", "false");
-							operator.setParameter("Reordering", "false");
-						}
-						else {
-							operator.setParameter("Early Filtering", "true");
-							operator.setParameter("Reordering", "true");
-						}
-						operator.getParameterType("Early Filtering").setHidden(false);
-
-						operator.setParameter("Reordering", "true");
-						operator.getParameterType("Reordering").setHidden(false);
-
-						operator.setParameter("Pushing Predicates upstream", "true");
-						operator.getParameterType("Pushing Predicates upstream").setHidden(false);
-						process.addOperator(newFilter);
-						String fromOperatorName = operator.getInputPorts().getPortByName("input stream").getOpposite().getPorts().getOwner().getName();
-						String fromPortName = operator.getInputPorts().getPortByName("input stream").getOpposite().getName();
-						process.getOperatorByName(fromOperatorName)
-								.getOutputPorts().getPortByName(fromPortName).disconnect();
-						process.getOperatorByName(fromOperatorName)
-								.getOutputPorts().getPortByName(fromPortName)
-								.connectTo(newFilter.getInputPorts().getPortByName("input stream"));
-
-						newFilter.getOutputPorts()
-								.getPortByName("output stream")
-								.connectTo(operator.getInputPorts().getPortByName("input stream"));
-
-
-					} catch (OperatorCreationException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			}
-		}
+//		ExecutionUnit processCopy = process;
+//		for (Operator operator : processCopy.getOperators()) {
+//			if (operator.getClass().equals(StreamingCEPOperator.class)) {
+//				String contiguity = operator.getParameterAsString("Selection_Strategy");
+//				String modelName = operator.getParameterAsString("Model_name");
+//				// not strict and not robotic scenario
+//				if (!contiguity.equals("Strict") && !modelName.equals("Robotic Scenario")) {
+//					try {
+//						String predicates = operator.getParameterAsString("Predicates_List");
+//
+//						if (predicates.isEmpty()) {
+//							operator.setParameter("Reordering", "false");
+//							operator.setParameter("Pushing Predicates upstream", "false");
+//
+//						}
+//						else {
+//							operator.setParameter("Reordering", "true");
+//							operator.setParameter("Pushing Predicates upstream", "true");
+//
+//						}
+//						operator.setParameter("Early Filtering", "true");
+//
+//						operator.getParameterType("Early Filtering").setHidden(false);
+//
+//						operator.getParameterType("Reordering").setHidden(false);
+//
+//						operator.getParameterType("Pushing Predicates upstream").setHidden(false);
+//						if (!predicates.isEmpty()) {
+//
+//							StreamFilter newFilter = createOperator(StreamFilter.class);
+//							newFilter.setParameter("NeuroFlinkCEP_filtering_mode","true");
+//							newFilter.setParameter("predicates", predicates);
+//							process.addOperator(newFilter);
+//							String fromOperatorName = operator.getInputPorts().getPortByName("input stream").getOpposite().getPorts().getOwner().getName();
+//							String fromPortName = operator.getInputPorts().getPortByName("input stream").getOpposite().getName();
+//							process.getOperatorByName(fromOperatorName)
+//									.getOutputPorts().getPortByName(fromPortName).disconnect();
+//							process.getOperatorByName(fromOperatorName)
+//									.getOutputPorts().getPortByName(fromPortName)
+//									.connectTo(newFilter.getInputPorts().getPortByName("input stream"));
+//
+//							newFilter.getOutputPorts()
+//									.getPortByName("output stream")
+//									.connectTo(operator.getInputPorts().getPortByName("input stream"));
+//
+//						}
+//					} catch (OperatorCreationException e) {
+//						throw new RuntimeException(e);
+//					}
+//				}
+//			}
+//		}
 
 		List<AWPort> innerSourcesPortsAndSchemas = new ArrayList<>(
 				getPortsAndSchemas(process.getInnerSources().getAllPorts(),
@@ -237,8 +240,6 @@ public class AgnosticWorkflowConversion {
 			String toOperatorName = awConnection.getToOperator();
 			String toPortName = awConnection.getToPort();
 			PortType toPortType = awConnection.getToPortType();
-			LOGGER.info("CONNECTION ");
-			LOGGER.info("FROM NAME: " + fromOperatorName + " TO NAME: " + toOperatorName + " TO PORT NAME " + toPortName + "FROM PORT " + fromPortName);
 			OutputPort outputPort = null;
 			if (fromPortType == null || fromPortType == PortType.OUTPUT_PORT) {
 				outputPort = process.getOperatorByName(fromOperatorName)
@@ -303,8 +304,6 @@ public class AgnosticWorkflowConversion {
 				}
 				Gson  gson      = new Gson();
 				String json      = gson.toJson(splits);
-				LOGGER.info("SPLITS: " + json);
-				// json is: [["ABC+","R[]{3}"],["A","BC+","R[]{3}"],...]
 				operator.setParameter("decompositions", json);
 			}
 			List<AWPort> inputPortsAndSchemas = getPortsAndSchemas(
@@ -408,6 +407,7 @@ public class AgnosticWorkflowConversion {
 				schema.setSize(exampleSet.size());
 				schema.setAttributes(getAttributeList(exampleSet));
 			}
+			LOGGER.info("Port: " + port.getName() + " ObjectClass: " + objectClass + "Port ");
 			inputPortsAndSchemas.add(new AWPort().setIsConnected(port.isConnected())
 					.setPortType(portType)
 					.setName(port.getName())
@@ -687,7 +687,6 @@ public class AgnosticWorkflowConversion {
 		List<SplittedConnection> splittedConnection = new ArrayList<>();
 		for (AWOperatorConnection conn : workflow.getOperatorConnections()) {
 			if (conn.getFromOperator().equals(toBePlacedOp)) {
-				LOGGER.info("CONNECTION TO " + conn.getToOperator() + " FROM " + conn.getFromOperator());
 				if (placedOperators.contains(conn.getToOperator())) {
 					// if the toOperator is also in this Streaming Nest operator (in the
 					// placedOperator list) it is a inner Connection in this Streaming Nest

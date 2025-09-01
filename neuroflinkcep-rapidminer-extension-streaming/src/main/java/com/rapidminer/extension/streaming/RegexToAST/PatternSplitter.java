@@ -120,8 +120,16 @@ public class PatternSplitter {
                     }
                 }
                 if (node instanceof OrNode) {
+                    OrNode orNode = (OrNode) node;
+                    StringBuilder sb = new StringBuilder();
+
+                    if (orNode.isInRange())
+                    {
+                        orNode.getRangeChildren().forEach(r -> sb.append(r.toString()));
+                        return "[" + sb + "]";
+                    }
                     return "[" +
-                            ((OrNode)node).getChildren().stream()
+                            orNode.getChildren().stream()
                                     .map(this::apply)
                                     .collect(Collectors.joining())
                             + "]";

@@ -14,8 +14,10 @@ import com.rapidminer.operator.IOMultiplier;
 import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorCreationException;
 import com.rapidminer.operator.io.RepositorySource;
+import com.rapidminer.tools.LogService;
 import com.rapidminer.tools.OperatorService;
 import com.rapidminer.tools.RandomGenerator;
+import com.teamdev.jxbrowser.logging.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,6 +35,7 @@ public class OperatorDictionary {
 
     private String dictionaryName = null;
     private List<DictOperator> operators = null;
+    private static final java.util.logging.Logger LOGGER = LogService.getRoot();
 
     /**
      * Creates a new {@link OperatorDictionary} instance with the fields set to default values.
@@ -101,6 +104,7 @@ public class OperatorDictionary {
 
         List<DictOperator> dictOperators = new ArrayList<>();
         for (Operator operator : operators) {
+            LOGGER.info("Operator with name " + operator.getName());
             String classKey = operator.getOperatorDescription().getKey();
             int[] costCoefficients = new int[]{0, 0, 0, 0};
             costCoefficients[random.nextInt(4)] = 1;
@@ -142,6 +146,9 @@ public class OperatorDictionary {
                         .setPlatforms(Collections.singletonList(platforms));
 
                 sites.put(siteName, currentSite);
+
+                if (operator.getClass().equals(IOMultiplier.class)
+                        || operator.getClass().equals(RepositorySource.class)) break;
             }
 
             // Translate the sites map to a list<map> to be translated to JSON array
@@ -197,7 +204,7 @@ public class OperatorDictionary {
         result.add(OperatorService.createOperator(StreamStringifyField.class));
         result.add(OperatorService.createOperator(StreamUnion.class));
         result.add(OperatorService.createOperator(StreamingCEPOperator.class));
-
+        result.add(OperatorService.createOperator(StreamTimestamp.class));
         result.add(OperatorService.createOperator(StreamAthenaOMLOperator.class));
         result.add(OperatorService.createOperator(StreamSDEOperator.class));
         result.add(OperatorService.createOperator(StreamCEFOperator.class));

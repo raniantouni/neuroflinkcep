@@ -34,6 +34,7 @@ public class RobotBatchProcessor  extends KeyedProcessFunction<Integer, JSONObje
         robotState.update(batch);
         if (batch.size() == 50) {
             Map<String, String> predictedClass = goalPredictionModel.predict(batch);
+
             JSONObject result = new JSONObject(jsonObject.toString());
             predictedClass.forEach(result::put);
             result.put("robotID", robotId);

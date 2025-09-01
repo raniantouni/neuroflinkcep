@@ -39,7 +39,8 @@ dependencies {
     compile group: 'org.apache.flink', name: 'flink-java', version: flinkVersion
     compile group: 'org.apache.flink', name: 'flink-streaming-java_' + flinkScalaVersion, version: flinkVersion
     compile group: 'org.apache.flink', name: 'flink-table-common', version: '1.19.0'
-
+// https://mvnrepository.com/artifact/org.tensorflow/tensorflow-core-platform
+    implementation("org.tensorflow:tensorflow-core-platform:0.2.0")
     compile group: 'org.tensorflow', name: 'tensorflow', version: '1.15.0'
 //    compile group: 'org.tensorflow', name: 'libtensorflow_jni', version: '1.15.0'
 //    compile group: 'org.tensorflow', name: 'libtensorflow', version: '1.15.0'

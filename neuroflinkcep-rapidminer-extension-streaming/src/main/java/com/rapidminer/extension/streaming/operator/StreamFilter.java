@@ -177,6 +177,8 @@ public class StreamFilter extends AbstractStreamTransformOperator {
                 .withOperator(OPERATOR_MAP.get(getParameterAsString(PARAMETER_OPERATOR)))
                 .withValue(getParameterAsString(PARAMETER_VALUE))
                 .withParent(inData.getLastNode())
+                .withPredicates(result)
+                .withMode(getParameterAsBoolean(NeuroFlinkCEP))
                 .build();
     }
 

@@ -226,6 +226,7 @@ public class StreamingCEPOperator extends AbstractStreamTransformOperator {
                 "Input length of the trained model.",
                 1,
                 Integer.MAX_VALUE,
+                1,
                 true
         );
         modelInputSize.registerDependencyCondition(notKnownModelCondition);

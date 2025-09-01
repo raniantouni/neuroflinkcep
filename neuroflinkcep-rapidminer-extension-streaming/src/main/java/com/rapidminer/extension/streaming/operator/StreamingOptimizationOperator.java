@@ -6,7 +6,6 @@
 package com.rapidminer.extension.streaming.operator;
 
 import static com.rapidminer.connection.util.ConnectionI18N.getTypeName;
-
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -416,7 +415,7 @@ public class StreamingOptimizationOperator extends OperatorChain {
      * corresponding entry in the management db is created.
      * <p>
      * The response is used to update the second inner subprocess (the "Optimized Workflow" ; see {@link
-     * OptimizationHelper#updateSubprocess(StreamingOptimizationOperator, String, String, Map)}). The Streaming Nest
+     * OptimizationHelper#updateSubprocess(StreamingOptimizationOperator,OptimizerResponse, String, Map)}). The Streaming Nest
      * operators are created and the operators of the logical workflow are placed according to the optimizer response.
      * Also splitted connections are updated.
      * <p>
@@ -515,7 +514,6 @@ public class StreamingOptimizationOperator extends OperatorChain {
                     AWOperatorConnection newConnection = new AWOperatorConnection(connection);
                     newConnection.setToOperator(rootCepRootDup.get(cepOperator));
                     newConnections.add(newConnection);
-                    LOGGER.info("New connection " + connection.getFromOperator() + " -> " + connection.getToOperator());
                 }
                 toConnections = updatedConnections;
                 AWOperatorConnection newConnection = new AWOperatorConnection();
@@ -610,12 +608,9 @@ public class StreamingOptimizationOperator extends OperatorChain {
                         .setFromPort("output stream 1")
                         .setToPort("input stream")
                         .setToPortType(AWPort.PortType.INPUT_PORT);
-
-                LOGGER.info("new connection:  from "+newConnection.getFromOperator() + " to "+newConnection.getToOperator());
                 newConnections.add(newConnection);
 
                 if (cepOperators.size() % 2 != 0 && i == size - 1) continue;
-                LOGGER.info("AFTER CONTINUE");
                 AWOperatorConnection newConnection2 = new AWOperatorConnection()
                         .setFromOperator(dup.getName())
                         .setToOperator(toOperatorNames.remove(0))
@@ -624,13 +619,114 @@ public class StreamingOptimizationOperator extends OperatorChain {
                         .setToPortType(AWPort.PortType.INPUT_PORT);
                 newConnections.add(newConnection2);
                 tempToOperatorNames.add(dupName);
-
             }
             toOperatorNames.addAll(tempToOperatorNames);
         }
         workflow.getOperatorConnections().addAll(newConnections);
         return duplicateName;
     }
+
+//    private String createDuplicateConnections(
+//            double size,
+//            AgnosticWorkflow workflow,
+//            String cepName,
+//            List<String> cepOperators,
+//            String siteName
+//    ) {
+//        // Work on a copy so we don't mutate the caller's list
+//        List<String> toOperatorNames = new ArrayList<>(cepOperators);
+//        List<AWOperatorConnection> newConnections = new ArrayList<>();
+//        String lastDuplicateName = "";
+//
+//        // Keep splitting until only one target remains (no dup needed if single)
+//        while (toOperatorNames.size() > 1) {
+//
+//            // Number of duplicates to create at this level is ceil(N/2)
+//            int targetsThisLevel = toOperatorNames.size();
+//            int levelDupCount = (int) Math.ceil(targetsThisLevel / 2.0);
+//
+//            List<String> nextLevelTargets = new ArrayList<>(); // reset per level
+//
+//            for (int i = 0; i < levelDupCount; i++) {
+//                String dupName = "dup_" + cepName + "_" + levelDupCount + "_" + i;
+//                lastDuplicateName = dupName;
+//
+//                // Build ports
+//                List<AWPort> inputPorts = new ArrayList<>();
+//                List<AWPort> outputPorts = new ArrayList<>();
+//
+//                AWPort inputPort = new AWPort()
+//                        .setPortType(AWPort.PortType.INPUT_PORT)
+//                        .setName("input stream")
+//                        .setObjectClass(com.rapidminer.extension.streaming.ioobject.StreamDataContainer.class)
+//                        .setIsConnected(true);
+//                inputPorts.add(inputPort);
+//
+//                AWPort out1 = new AWPort()
+//                        .setPortType(AWPort.PortType.OUTPUT_PORT)
+//                        .setName("output stream 1")
+//                        .setObjectClass(com.rapidminer.extension.streaming.ioobject.StreamDataContainer.class)
+//                        .setIsConnected(true);
+//                outputPorts.add(out1);
+//
+//                AWPort out2 = new AWPort(out1);
+//                out2.setName("output stream 2");
+//                outputPorts.add(out2);
+//
+//                // Create dup operator
+//                AWOperator dup = new AWOperator()
+//                        .setName(dupName)
+//                        .setClassKey("streaming:duplicate")
+//                        .setOperatorClass(com.rapidminer.extension.streaming.operator.StreamDuplicate.class)
+//                        .setIsEnabled(true)
+//                        .setInputPortsAndSchemas(inputPorts)
+//                        .setOutputPortsAndSchemas(outputPorts);
+//                workflow.getOperators().add(dup);
+//
+//                // Place it
+//                workflow.getPlacementSiteByName(siteName)
+//                        .getAvailablePlatforms().get(0)
+//                        .getOperators().add(new AWPlacementOperator().setName(dupName));
+//
+//                // Wire first consumer if any
+//                if (!toOperatorNames.isEmpty()) {
+//                    String firstTarget = toOperatorNames.remove(0);
+//                    newConnections.add(new AWOperatorConnection()
+//                            .setFromOperator(dup.getName())
+//                            .setToOperator(firstTarget)
+//                            .setFromPort("output stream 1")
+//                            .setToPort("input stream")
+//                            .setToPortType(AWPort.PortType.INPUT_PORT));
+//                } else {
+//                    // no target -> mark not connected (optional)
+//                    out1.setIsConnected(false);
+//                }
+//
+//                // Wire second consumer if any, else mark port 2 unused
+//                if (!toOperatorNames.isEmpty()) {
+//                    String secondTarget = toOperatorNames.remove(0);
+//                    newConnections.add(new AWOperatorConnection()
+//                            .setFromOperator(dup.getName())
+//                            .setToOperator(secondTarget)
+//                            .setFromPort("output stream 2")
+//                            .setToPort("input stream")
+//                            .setToPortType(AWPort.PortType.INPUT_PORT));
+//                } else {
+//                    out2.setIsConnected(false);
+//                }
+//
+//                // IMPORTANT: carry dup forward to next level every time
+//                nextLevelTargets.add(dupName);
+//            }
+//
+//            // Next level will connect into these dups
+//            toOperatorNames = nextLevelTargets;
+//        }
+//
+//        workflow.getOperatorConnections().addAll(newConnections);
+//        return lastDuplicateName;
+//    }
+
     private AWOperator createUnionOperator(int inputSize, String cepName) {
         AWOperator unionOperator = new AWOperator();
         List<AWPort> inputPortsAndSchemas = new ArrayList<>();
@@ -733,11 +829,14 @@ public class StreamingOptimizationOperator extends OperatorChain {
                     // find the index of the cep operator, in case is the root index=0
                     int regexParameterPos = realRootCepOperator.findIndexOfParameterByKey("Regular_Expression");
                     String rootRegex = realRootCepOperator.getParameters().get(regexParameterPos).getValue();
-                    int includeModelIndex = realRootCepOperator.findIndexOfParameterByKey("Include_Model");
-                    realRootCepOperator.getParameters().get(includeModelIndex).setValue("false");
 
                     AWOperator newCEPoperator = new AWOperator(realRootCepOperator);
+                    int includeModelIndex = realRootCepOperator.findIndexOfParameterByKey("Include_Model");
+                    realRootCepOperator.getParameters().get(includeModelIndex).setValue("false");
                     newCEPoperator.setName(opName);
+                    int newIncludeModelIndex = newCEPoperator.findIndexOfParameterByKey("Include_Model");
+                    newCEPoperator.getParameters().get(newIncludeModelIndex).setValue("true");
+
                     List<AWParameter> parameters;
                     parameters = newCEPoperator.getParameters();
 
@@ -792,6 +891,7 @@ public class StreamingOptimizationOperator extends OperatorChain {
         kafkaOutputPort.deliver(kafkaConnection);
         for (Entry<String, List<ConnectionInformationContainerIOObject>> entry : availableConnections
                 .entrySet()) {
+
             for (ConnectionInformationContainerIOObject connection : entry.getValue()) {
                 OutputPort port = getSubprocess(1).getInnerSources().getPortByName(
                         entry.getKey() + "_" + OptimizationHelper.getPlatformNameFromConnection(connection));

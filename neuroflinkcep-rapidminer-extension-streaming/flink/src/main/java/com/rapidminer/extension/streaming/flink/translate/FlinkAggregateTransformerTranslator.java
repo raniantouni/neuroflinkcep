@@ -104,7 +104,8 @@ public class FlinkAggregateTransformerTranslator {
 					result = count;
 					break;
 			}
-
+			JSONObject tmp = new JSONObject().put(partitionKey, key).put(resultKey, result);
+			System.out.println(tmp);
 			out.collect(new JSONObject().put(partitionKey, key).put(resultKey, result));
 		}
 

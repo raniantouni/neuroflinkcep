@@ -43,7 +43,20 @@ public class PatternSplitter {
                             else              return core + "{" + min + "," + max + "}";
                     }
                 }
+                if (node instanceof RangeNode) {
+                    RangeNode r = (RangeNode) node;
+                    // e.g., C-L
+                    return "[" + String.valueOf(r.getStart()) + "-" + r.getEnd() + "]";
+                }
                 if (node instanceof OrNode) {
+                    OrNode orNode = (OrNode) node;
+                    StringBuilder sb = new StringBuilder();
+
+                    if (((OrNode) node).isInRange())
+                    {
+                        ((OrNode) node).getRangeChildren().forEach(r -> sb.append(r.toString()));
+                        return "[" + sb + "]";
+                    }
                     return "[" +
                             ((OrNode) node).getChildren().stream()
                                     .map(this::apply)
